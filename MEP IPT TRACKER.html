@@ -1,0 +1,2236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEP IPT Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f5;--surface:#ffffff;--surface2:#f5f7fa;--surface3:#ebeef3;
+  --border:#dde2ea;--border2:#c5cdd8;
+  --text:#1a2233;--text2:#4a5872;--text3:#8a97ad;
+  --amber:#d97706;--amber2:#b45309;--amber3:#fef3c7;
+  --blue:#2563eb;--blue2:#1d4ed8;--blue3:#dbeafe;
+  --green:#16a34a;--green2:#15803d;--green3:#dcfce7;
+  --red:#dc2626;--red2:#b91c1c;--red3:#fee2e2;
+  --teal:#0d9488;--teal2:#0f766e;--teal3:#ccfbf1;
+  --radius:6px;--radius2:10px;
+  --sidebar:#1e2d45;--sidebar2:#162338;--sidebar-text:#c8d8ee;--sidebar-text2:#7a99bb;--sidebar-text3:#4a6888;
+}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+.mono{font-family:'IBM Plex Mono',monospace}
+button{cursor:pointer;font-family:inherit;font-size:13px;border:none;outline:none}
+input,select,textarea{font-family:inherit;font-size:13px;background:#fff;border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:7px 10px;outline:none;width:100%}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+select option{background:#fff}
+label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500;letter-spacing:.03em}
+
+/* Layout */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:240px;min-width:240px;background:var(--sidebar);border-right:none;display:flex;flex-direction:column;overflow:hidden}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+
+/* Sidebar */
+.logo{padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.logo-title{font-size:13px;font-weight:600;color:#f5c842;letter-spacing:.08em;text-transform:uppercase}
+.logo-sub{font-size:11px;color:var(--sidebar-text3);margin-top:2px}
+.nav{flex:1;overflow-y:auto;padding:10px 0}
+.nav-section{padding:8px 18px 4px;font-size:10px;font-weight:600;color:var(--sidebar-text3);letter-spacing:.1em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;color:var(--sidebar-text2);font-size:13px;transition:all .15s;border-left:2px solid transparent}
+.nav-item:hover{color:var(--sidebar-text);background:rgba(255,255,255,.06)}
+.nav-item.active{color:#f5c842;background:rgba(245,200,66,.1);border-left-color:#f5c842}
+.nav-icon{width:16px;height:16px;flex-shrink:0;opacity:.8}
+.sidebar-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:var(--sidebar-text3)}
+
+/* Header */
+.page-header{padding:22px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.page-title{font-size:20px;font-weight:600;color:var(--text)}
+.page-sub{font-size:13px;color:var(--text2);margin-top:3px}
+.header-actions{display:flex;gap:8px;align-items:center}
+
+/* Buttons */
+.btn{padding:8px 16px;border-radius:var(--radius);font-weight:500;font-size:13px;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-amber{background:var(--amber);color:#fff}
+.btn-amber:hover{background:var(--amber2)}
+.btn-ghost{background:#fff;border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber);background:#fff}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-red{background:var(--red3);border:1px solid #fca5a5;color:var(--red)}
+.btn-red:hover{background:var(--red2);color:#fff;border-color:var(--red2)}
+.btn-green{background:var(--green3);border:1px solid #86efac;color:var(--green)}
+.btn-green:hover{background:var(--green2);color:#fff;border-color:var(--green2)}
+
+/* Content */
+.content{padding:18px 28px 32px}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card-title{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:14px;letter-spacing:.04em;text-transform:uppercase}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.stat-label{font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.stat-value{font-size:22px;font-weight:600;margin-top:6px;font-family:'IBM Plex Mono',monospace}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.c-amber{color:var(--amber)}
+.c-blue{color:var(--blue)}
+.c-green{color:var(--green)}
+.c-red{color:var(--red)}
+.c-teal{color:var(--teal)}
+
+/* Table */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--surface2);color:var(--text3);font-weight:600;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;background:#fff}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.num{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12px}
+td.num{color:var(--text2)}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-green{background:var(--green3);color:var(--green2);border:1px solid #86efac}
+.badge-amber{background:var(--amber3);color:var(--amber2);border:1px solid #fcd34d}
+.badge-red{background:var(--red3);color:var(--red2);border:1px solid #fca5a5}
+.badge-blue{background:var(--blue3);color:var(--blue2);border:1px solid #93c5fd}
+.badge-teal{background:var(--teal3);color:var(--teal2);border:1px solid #5eead4}
+
+/* Progress bar */
+.progress-wrap{width:100%;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.progress-bar{height:100%;border-radius:3px;transition:width .3s}
+.progress-green{background:var(--green)}
+.progress-amber{background:var(--amber)}
+.progress-red{background:var(--red)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,25,50,.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal{background:#fff;border:1px solid var(--border);border-radius:var(--radius2);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2)}
+.modal-title{font-size:15px;font-weight:600;color:var(--text)}
+.modal-body{padding:20px 22px}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:var(--surface2)}
+.close-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;line-height:1;padding:2px}
+.close-btn:hover{color:var(--text)}
+
+/* Form */
+.form-row{display:grid;gap:14px;margin-bottom:14px}
+.form-grid-2{grid-template-columns:1fr 1fr}
+.form-grid-3{grid-template-columns:1fr 1fr 1fr}
+
+/* Section tabs */
+.tabs{display:flex;gap:4px;padding:18px 28px 0;flex-shrink:0}
+.tab{padding:8px 18px;border-radius:var(--radius) var(--radius) 0 0;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;border-bottom:none;color:var(--text2);transition:all .15s}
+.tab.active{background:var(--surface);border-color:var(--border);color:var(--amber)}
+.tab:not(.active):hover{color:var(--text);background:var(--surface2)}
+.tab-content{border-top:1px solid var(--border);flex:1}
+
+/* Progress cell */
+.progress-cell{min-width:120px}
+
+/* Input number right align */
+input[type=number]{text-align:right}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+
+/* Divider */
+.divider{height:1px;background:var(--border);margin:16px 0}
+
+/* th section heading */
+.th-section{background:var(--surface2);padding:10px 14px;font-size:12px;font-weight:600;color:var(--amber);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+
+/* Summary row */
+.summary-row td{background:var(--surface2);font-weight:600;color:var(--text)}
+
+/* Chip */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;background:var(--surface2);border:1px solid var(--border2);color:var(--text2)}
+.chip-remove{cursor:pointer;color:var(--text3);margin-left:2px;font-size:13px;line-height:1}
+.chip-remove:hover{color:var(--red)}
+
+/* alert */
+.alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:14px}
+.alert-amber{background:var(--amber3);border:1px solid #fcd34d;color:var(--amber2)}
+
+/* Month selector */
+.month-bar{display:flex;align-items:center;gap:10px;padding:12px 28px;background:#fff;border-bottom:1px solid var(--border);flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.05);flex-wrap:wrap}
+.month-label{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase}
+.month-pill{padding:5px 13px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--text2);background:#fff;transition:all .15s}
+.month-pill.active{background:var(--amber);border-color:var(--amber);color:#fff;font-weight:600}
+.month-pill:hover:not(.active){border-color:var(--amber);color:var(--amber)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const {useState,useEffect,useRef,useCallback,useMemo}=React;
+const h=React.createElement;
+
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const CATEGORIES=['HVAC','Electrical','Plumbing'];
+const CAT_COLORS={HVAC:'teal',Electrical:'blue',Plumbing:'amber'};
+
+const fmt=(n)=>{
+  if(n===undefined||n===null||isNaN(n))return'AED 0';
+  return'AED '+parseFloat(n).toLocaleString('en-AE',{minimumFractionDigits:0,maximumFractionDigits:0});
+};
+const pct=(v,t)=>t>0?Math.min(100,Math.round((v/t)*100)):0;
+const uid=()=>Math.random().toString(36).slice(2,9);
+const today=new Date();
+const CY=today.getFullYear();
+
+/* ============ VILLA TYPE PRESETS ============ */
+const VILLA_TYPE_PRESETS=['3BDRM','4BDRM','4BDRM-LUX','4BDRM-STANDALONE','5BDRM-LUX'];
+
+/* ============ DEFAULT SEED DATA ============ */
+const seedData=()=>{
+  // All TH-01 to TH-33 pre-filled, quantities empty (to be set by user)
+  const thNames=Array.from({length:33},(_,i)=>`TH-${String(i+1).padStart(2,'0')}`);
+  const ths=thNames.map((name,i)=>({id:`th${String(i+1).padStart(2,'0')}`,name,villaTypes:[]}));
+  const elecActs=[
+    {id:'a1',name:'Underground Works',category:'Electrical',order:0},
+    {id:'a2',name:'External',category:'Electrical',order:1},
+    {id:'a3',name:'1F Slab',category:'Electrical',order:2},
+    {id:'a4',name:'2F Slab',category:'Electrical',order:3},
+    {id:'a5',name:'RF Slab',category:'Electrical',order:4},
+    {id:'a6',name:'Cutting & Chipping',category:'Electrical',order:5},
+    {id:'a7',name:'1st Fix - GF',category:'Electrical',order:6},
+    {id:'a8',name:'1st Fix - 1F',category:'Electrical',order:7},
+    {id:'a9',name:'1st Fix - 2F',category:'Electrical',order:8},
+    {id:'a10',name:'GF Floor Piping',category:'Electrical',order:9},
+    {id:'a11',name:'1F Floor Piping',category:'Electrical',order:10},
+    {id:'a12',name:'2F Floor Piping',category:'Electrical',order:11},
+    {id:'a13',name:'RF Floor Piping',category:'Electrical',order:12},
+    {id:'a14',name:'Exposed Piping',category:'Electrical',order:13},
+    {id:'a15',name:'Wiring & Data Cables',category:'Electrical',order:14},
+    {id:'a16',name:'LV Cables',category:'Electrical',order:15},
+    {id:'a17',name:'Final Fix - Lights & Wiring Acc',category:'Electrical',order:16},
+    {id:'a18',name:'Earthing Works',category:'Electrical',order:17},
+    {id:'a19',name:'LV Switchgears',category:'Electrical',order:18},
+    {id:'a20',name:'12U Assembly & Termination',category:'Electrical',order:19},
+    {id:'a21',name:'T&C',category:'Electrical',order:20},
+  ];
+  const plumActs=[
+    {id:'a22',name:'UG Drainage & PPR',category:'Plumbing',order:0},
+    {id:'a23',name:'External DR & PPR',category:'Plumbing',order:1},
+    {id:'a24',name:'1F Slab - Sleeves',category:'Plumbing',order:2},
+    {id:'a25',name:'2F Slab - Sleeves',category:'Plumbing',order:3},
+    {id:'a26',name:'RF Slab - Sleeves',category:'Plumbing',order:4},
+    {id:'a27',name:'Drainage & PPR Risers',category:'Plumbing',order:5},
+    {id:'a28',name:'Cutting & Chipping',category:'Plumbing',order:6},
+    {id:'a29',name:'1st Fix - GF PEX & DR',category:'Plumbing',order:7},
+    {id:'a30',name:'1st Fix - 1F PEX & DR',category:'Plumbing',order:8},
+    {id:'a31',name:'1st Fix - 2F PEX & DR',category:'Plumbing',order:9},
+    {id:'a32',name:'DR H/L & RWO',category:'Plumbing',order:10},
+    {id:'a33',name:'PPR H/L & Roof Works',category:'Plumbing',order:11},
+    {id:'a34',name:'T&C',category:'Plumbing',order:12},
+  ];
+  const hvacActs=[
+    {id:'a35',name:'Shaft Duct & Cu Pipe Works',category:'HVAC',order:0},
+    {id:'a36',name:'Roof Duct & Cu Pipe Works',category:'HVAC',order:1},
+    {id:'a37',name:'AC Machines & Fans',category:'HVAC',order:2},
+    {id:'a38',name:'H/L Ducts & Cu Pipe',category:'HVAC',order:3},
+    {id:'a39',name:'Air Outlets',category:'HVAC',order:4},
+    {id:'a40',name:'T&C',category:'HVAC',order:5},
+  ];
+  // Villa types master database
+  const villaTypeDB=[
+    {id:'vt1',name:'3BDRM',description:'3 Bedroom Villa',color:'#2563eb'},
+    {id:'vt2',name:'4BDRM',description:'4 Bedroom Villa',color:'#16a34a'},
+    {id:'vt3',name:'4BDRM-LUX',description:'4 Bedroom Luxury Villa',color:'#d97706'},
+    {id:'vt4',name:'4BDRM-STANDALONE',description:'4 Bedroom Standalone Villa',color:'#dc2626'},
+    {id:'vt5',name:'5BDRM-LUX',description:'5 Bedroom Luxury Villa',color:'#7c3aed'},
+  ];
+  return{townhouses:ths,activities:[...elecActs,...plumActs,...hvacActs],villaTypeDB,entries:{}};
+};
+
+/* ============ STORAGE ============ */
+const STORE_KEY='mep_tracker_v5';
+
+const loadStore=()=>{
+  try{const d=localStorage.getItem(STORE_KEY);return d?JSON.parse(d):null}catch{return null}
+};
+const saveStore=(data)=>{try{localStorage.setItem(STORE_KEY,JSON.stringify(data))}catch{}};
+
+/* ============ ICON SVGs ============ */
+const Icon=({name,size=16})=>{
+  const icons={
+    dashboard:'M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 0h7v7h-7z',
+    building:'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10',
+    activity:'M22 12h-4l-3 9L9 3l-3 9H2',
+    report:'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8',
+    plus:'M12 5v14M5 12h14',
+    trash:'M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6',
+    edit:'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z',
+    download:'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3',
+    check:'M20 6L9 17l-5-5',
+    x:'M18 6L6 18M6 6l12 12',
+    settings:'M12 15a3 3 0 100-6 3 3 0 000 6zM19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z',
+    filter:'M22 3H2l8 9.46V19l4 2v-8.54L22 3z',
+    calendar:'M3 4h18v18H3zM16 2v4M8 2v4M3 10h18',
+    drycost:'M12 2a10 10 0 100 20A10 10 0 0012 2zM12 6v6l4 2M8 2.5l-4 4M16 2.5l4 4',
+    layers:'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
+  };
+  return h('svg',{width:size,height:size,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:1.8,strokeLinecap:'round',strokeLinejoin:'round'},
+    h('path',{d:icons[name]||''}));
+};
+
+/* ============ PROGRESS BAR ============ */
+const ProgressBar=({value})=>{
+  const cls=value>=100?'progress-green':value>=50?'progress-amber':'progress-red';
+  return h('div',{style:{minWidth:100}},
+    h('div',{className:'progress-wrap'},h('div',{className:`progress-bar ${cls}`,style:{width:`${Math.min(value,100)}%`}})),
+    h('div',{style:{fontSize:10,color:'var(--text3)',marginTop:3,fontFamily:'monospace'}},`${value}%`)
+  );
+};
+
+/* ============ MODAL ============ */
+const Modal=({title,onClose,children,footer})=>
+  h('div',{className:'modal-overlay',onClick:e=>{if(e.target.className==='modal-overlay')onClose()}},
+    h('div',{className:'modal'},
+      h('div',{className:'modal-header'},
+        h('span',{className:'modal-title'},title),
+        h('button',{className:'close-btn',onClick:onClose},'×')
+      ),
+      h('div',{className:'modal-body'},children),
+      footer&&h('div',{className:'modal-footer'},footer)
+    )
+  );
+
+/* ============ SETUP PAGE ============ */
+const SetupPage=({data,setData})=>{
+  const[showActModal,setShowActModal]=useState(false);
+  const[editAct,setEditAct]=useState(null);
+  const[activeTab,setActiveTab]=useState('townhouses');
+  const[editingTH,setEditingTH]=useState(null);
+  const[showAddTH,setShowAddTH]=useState(false);
+  const[showVTModal,setShowVTModal]=useState(false);
+  const[editVT,setEditVT]=useState(null);
+
+  // Villa type DB
+  const villaTypeDB=useMemo(()=>data.villaTypeDB||VILLA_TYPE_PRESETS.map((n,i)=>({id:`vt${i+1}`,name:n,description:'',color:'#2563eb'})),[data.villaTypeDB]);
+
+  const saveVT=(vt)=>{
+    setData(d=>{
+      const db=d.villaTypeDB||villaTypeDB;
+      if(editVT){return{...d,villaTypeDB:db.map(v=>v.id===editVT.id?{...v,...vt}:v)};}
+      return{...d,villaTypeDB:[...db,{id:uid(),...vt}]};
+    });
+    setShowVTModal(false);setEditVT(null);
+  };
+  const deleteVT=(id)=>{
+    if(!confirm('Delete this villa type? This may affect TH data.'))return;
+    setData(d=>({...d,villaTypeDB:(d.villaTypeDB||villaTypeDB).filter(v=>v.id!==id)}));
+  };
+
+  const VTModal=()=>{
+    const VT_COLORS=['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#be185d','#ea580c','#65a30d'];
+    const[name,setName]=useState(editVT?.name||'');
+    const[desc,setDesc]=useState(editVT?.description||'');
+    const[color,setColor]=useState(editVT?.color||VT_COLORS[0]);
+    return h(Modal,{title:editVT?'Edit Villa Type':'Add Villa Type',
+      onClose:()=>{setShowVTModal(false);setEditVT(null)},
+      footer:[
+        h('button',{className:'btn btn-ghost',onClick:()=>{setShowVTModal(false);setEditVT(null)}},'Cancel'),
+        h('button',{className:'btn btn-amber',onClick:()=>{if(!name.trim())return;saveVT({name:name.trim(),description:desc,color});}},'Save')
+      ]},
+      h('div',{className:'form-row'},h('div',null,h('label',null,'Villa Type Name'),h('input',{value:name,onChange:e=>setName(e.target.value),placeholder:'e.g. 6BDRM-PENTHOUSE',autoFocus:true}))),
+      h('div',{className:'form-row'},h('div',null,h('label',null,'Description (optional)'),h('input',{value:desc,onChange:e=>setDesc(e.target.value),placeholder:'e.g. 6 Bedroom Penthouse'}))),
+      h('div',{style:{marginBottom:14}},
+        h('label',null,'Colour Tag'),
+        h('div',{style:{display:'flex',gap:8,flexWrap:'wrap',marginTop:6}},
+          VT_COLORS.map(c=>h('div',{key:c,onClick:()=>setColor(c),style:{
+            width:28,height:28,borderRadius:'50%',background:c,cursor:'pointer',
+            border:color===c?'3px solid #1a2233':'3px solid transparent',
+            boxShadow:color===c?`0 0 0 2px #fff, 0 0 0 4px ${c}`:'none',
+            transition:'all .15s'
+          }}))
+        )
+      ),
+      h('div',{style:{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',background:'var(--surface2)',borderRadius:'var(--radius)',border:'1px solid var(--border)'}},
+        h('span',{style:{width:12,height:12,borderRadius:'50%',background:color,display:'inline-block'}}),
+        h('span',{style:{fontWeight:600,fontSize:13}},name||'Villa Type Name'),
+        desc&&h('span',{style:{fontSize:12,color:'var(--text3)'}},desc)
+      )
+    );
+  };
+
+  // All preset TH names TH-01 .. TH-33
+  const TH_PRESETS=Array.from({length:33},(_,i)=>`TH-${String(i+1).padStart(2,'0')}`);
+
+  // Villa types from DB + any custom ones already in data
+  const allVillaTypes=useMemo(()=>{
+    const s=new Set(villaTypeDB.map(v=>v.name));
+    data.townhouses.forEach(th=>th.villaTypes.forEach(vt=>s.add(vt.type)));
+    return Array.from(s);
+  },[villaTypeDB,data.townhouses]);
+
+  // Which TH names are already added
+  const existingNames=new Set(data.townhouses.map(t=>t.name));
+
+  // Inline edit state for a TH row: {[vtType]: qty}
+  const[rowEdit,setRowEdit]=useState({}); // {[thId]: {[vtType]: qty}}
+
+  const getRowQty=(thId,vt)=>{
+    if(rowEdit[thId]!==undefined) return rowEdit[thId][vt]??'';
+    const th=data.townhouses.find(t=>t.id===thId);
+    if(!th)return'';
+    const found=th.villaTypes.find(v=>v.type===vt);
+    return found?found.count:'';
+  };
+
+  const startEdit=(thId)=>{
+    const th=data.townhouses.find(t=>t.id===thId);
+    const init={};
+    allVillaTypes.forEach(vt=>{
+      const f=th.villaTypes.find(v=>v.type===vt);
+      init[vt]=f?f.count:'';
+    });
+    setRowEdit(r=>({...r,[thId]:init}));
+    setEditingTH(thId);
+  };
+
+  const cancelEdit=(thId)=>{
+    setRowEdit(r=>{const n={...r};delete n[thId];return n;});
+    setEditingTH(null);
+  };
+
+  const saveEdit=(thId)=>{
+    const vals=rowEdit[thId]||{};
+    const villaTypes=allVillaTypes
+      .filter(vt=>(parseInt(vals[vt])||0)>0)
+      .map(vt=>({id:uid(),type:vt,count:parseInt(vals[vt])||0}));
+    setData(d=>({...d,townhouses:d.townhouses.map(t=>t.id===thId?{...t,villaTypes}:t)}));
+    cancelEdit(thId);
+  };
+
+  const deleteTH=(id)=>{
+    if(!confirm('Remove this townhouse?'))return;
+    setData(d=>({...d,townhouses:d.townhouses.filter(t=>t.id!==id)}));
+  };
+
+  // Add TH modal state
+  const[newTHName,setNewTHName]=useState('');
+  const[newTHCustom,setNewTHCustom]=useState('');
+  const[newTHVals,setNewTHVals]=useState({});
+
+  const openAddTH=()=>{
+    setNewTHName('');setNewTHCustom('');setNewTHVals({});setShowAddTH(true);
+  };
+
+  const saveNewTH=()=>{
+    const name=(newTHName==='__custom'?newTHCustom:newTHName).trim();
+    if(!name)return;
+    const villaTypes=allVillaTypes
+      .filter(vt=>(parseInt(newTHVals[vt])||0)>0)
+      .map(vt=>({id:uid(),type:vt,count:parseInt(newTHVals[vt])||0}));
+    setData(d=>({...d,townhouses:[...d.townhouses,{id:uid(),name,villaTypes}]}));
+    setShowAddTH(false);
+  };
+
+  // Bulk Add modal
+  const[showBulkModal,setShowBulkModal]=useState(false);
+  const[bulkPrefix,setBulkPrefix]=useState('TH-');
+  const[bulkFrom,setBulkFrom]=useState(1);
+  const[bulkTo,setBulkTo]=useState(33);
+  const[bulkPad,setBulkPad]=useState(true);
+  const[bulkSkipExisting,setBulkSkipExisting]=useState(true);
+  const getBulkPreview=()=>{
+    const from=parseInt(bulkFrom)||1;
+    const to=parseInt(bulkTo)||1;
+    if(from>to||to-from>199)return[];
+    return Array.from({length:to-from+1},(_,i)=>{
+      const n=from+i;
+      const name=(bulkPrefix||'')+(bulkPad?String(n).padStart(2,'0'):String(n));
+      return{name,exists:existingNames.has(name)};
+    });
+  };
+  const doBulkAdd=()=>{
+    const preview=getBulkPreview();
+    const toAdd=bulkSkipExisting?preview.filter(p=>!p.exists):preview;
+    if(!toAdd.length){alert('Nothing new to add.');return;}
+    setData(d=>({...d,townhouses:[...d.townhouses,...toAdd.map(({name})=>({id:uid(),name,villaTypes:[]}))]}));
+    setShowBulkModal(false);
+  };
+  const BulkAddModal=()=>{
+    const preview=getBulkPreview();
+    const toAdd=bulkSkipExisting?preview.filter(p=>!p.exists):preview;
+    return h(Modal,{title:'Bulk Add Townhouses',onClose:()=>setShowBulkModal(false),
+      footer:[
+        h('button',{className:'btn btn-ghost',onClick:()=>setShowBulkModal(false)},'Cancel'),
+        h('button',{className:'btn btn-amber',onClick:doBulkAdd},h(Icon,{name:'plus',size:14}),`Add ${toAdd.length} Townhouse${toAdd.length!==1?'s':''}`)
+      ]},
+      h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:14}},
+        h('div',null,h('label',null,'Name Prefix'),h('input',{value:bulkPrefix,onChange:e=>setBulkPrefix(e.target.value),placeholder:'e.g. TH- or BLOCK-'})),
+        h('div',null,h('label',null,'Zero-pad numbers'),
+          h('select',{value:String(bulkPad),onChange:e=>setBulkPad(e.target.value==='true')},
+            h('option',{value:'true'},'Yes  (01, 02 … 33)'),
+            h('option',{value:'false'},'No  (1, 2 … 33)')
+          )
+        ),
+        h('div',null,h('label',null,'From number'),h('input',{type:'number',min:1,max:999,value:bulkFrom,onChange:e=>setBulkFrom(e.target.value)})),
+        h('div',null,h('label',null,'To number'),h('input',{type:'number',min:1,max:999,value:bulkTo,onChange:e=>setBulkTo(e.target.value)}))
+      ),
+      h('div',{style:{display:'flex',alignItems:'center',gap:10,marginBottom:14,padding:'10px 12px',background:'var(--surface2)',borderRadius:'var(--radius)',border:'1px solid var(--border)'}},
+        h('input',{type:'checkbox',id:'skipEx',checked:bulkSkipExisting,onChange:e=>setBulkSkipExisting(e.target.checked),style:{width:'auto',margin:0}}),
+        h('label',{htmlFor:'skipEx',style:{margin:0,cursor:'pointer',color:'var(--text)',fontSize:13}},'Skip already-existing names')
+      ),
+      preview.length>0&&h('div',null,
+        h('div',{style:{fontSize:12,fontWeight:600,color:'var(--text2)',marginBottom:8,textTransform:'uppercase',letterSpacing:'.05em'}},
+          `Preview — ${toAdd.length} will be added`+(preview.length-toAdd.length>0?`, ${preview.length-toAdd.length} skipped`:'')
+        ),
+        h('div',{style:{display:'flex',flexWrap:'wrap',gap:5,maxHeight:160,overflowY:'auto',padding:'10px',background:'var(--surface2)',borderRadius:'var(--radius)',border:'1px solid var(--border)'}},
+          preview.map(p=>h('span',{key:p.name,style:{
+            padding:'3px 10px',borderRadius:20,fontSize:12,fontWeight:600,
+            background:p.exists?'#fee2e2':'#dcfce7',
+            color:p.exists?'#b91c1c':'#15803d',
+            border:`1px solid ${p.exists?'#fca5a5':'#86efac'}`
+          }},p.name,p.exists?' ✓':' +'))
+        ),
+        h('div',{style:{fontSize:11,color:'var(--text3)',marginTop:6}},
+          h('span',{style:{color:'#15803d',fontWeight:600}},'Green + '),'= will be added  ·  ',
+          h('span',{style:{color:'#b91c1c',fontWeight:600}},'Red ✓ '),'= already exists'
+        )
+      ),
+      preview.length===0&&h('div',{style:{color:'var(--text3)',fontSize:13,textAlign:'center',padding:'16px'}},'Enter a valid range to preview')
+    );
+  };
+
+  const deleteAct=(id)=>setData(d=>({...d,activities:d.activities.filter(a=>a.id!==id)}));
+
+  const ActModal=()=>{
+    const[name,setName]=useState(editAct?.name||'');
+    const[cat,setCat]=useState(editAct?.category||'Electrical');
+    const save=()=>{
+      if(!name.trim())return;
+      if(editAct){
+        setData(d=>({...d,activities:d.activities.map(a=>a.id===editAct.id?{...a,name:name.trim(),category:cat}:a)}));
+      }else{
+        const acts=data.activities.filter(a=>a.category===cat);
+        const maxOrder=acts.reduce((m,a)=>Math.max(m,a.order||0),-1);
+        setData(d=>({...d,activities:[...d.activities,{id:uid(),name:name.trim(),category:cat,order:maxOrder+1}]}));
+      }
+      setShowActModal(false);setEditAct(null);
+    };
+    return h(Modal,{title:editAct?'Edit Activity':'Add Activity',onClose:()=>{setShowActModal(false);setEditAct(null)},
+      footer:[
+        h('button',{className:'btn btn-ghost',onClick:()=>{setShowActModal(false);setEditAct(null)}},'Cancel'),
+        h('button',{className:'btn btn-amber',onClick:save},'Save')
+      ]},
+      h('div',{className:'form-row form-grid-2'},
+        h('div',null,h('label',null,'Activity Name'),h('input',{value:name,onChange:e=>setName(e.target.value),placeholder:'e.g. Final Fix',autoFocus:true})),
+        h('div',null,h('label',null,'Category'),h('select',{value:cat,onChange:e=>setCat(e.target.value)},CATEGORIES.map(c=>h('option',{key:c,value:c},c))))
+      )
+    );
+  };
+
+  // Add TH modal
+  const AddTHModal=()=>h(Modal,{
+    title:'Add Townhouse',
+    onClose:()=>setShowAddTH(false),
+    footer:[
+      h('button',{className:'btn btn-ghost',onClick:()=>setShowAddTH(false)},'Cancel'),
+      h('button',{className:'btn btn-amber',onClick:saveNewTH},'Add Townhouse')
+    ]},
+    h('div',{className:'form-row',style:{marginBottom:16}},
+      h('div',null,
+        h('label',null,'Townhouse Name'),
+        h('select',{value:newTHName,onChange:e=>setNewTHName(e.target.value)},
+          h('option',{value:''},'-- Select --'),
+          TH_PRESETS.filter(n=>!existingNames.has(n)).map(n=>h('option',{key:n,value:n},n)),
+          h('option',{value:'__custom'},'+ Custom name...')
+        ),
+        newTHName==='__custom'&&h('input',{style:{marginTop:8},value:newTHCustom,onChange:e=>setNewTHCustom(e.target.value),placeholder:'e.g. TH-34'})
+      )
+    ),
+    h('div',{style:{fontWeight:600,fontSize:12,color:'var(--text2)',textTransform:'uppercase',letterSpacing:'.05em',marginBottom:12}},'Villa Quantities'),
+    h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(170px,1fr))',gap:10}},
+      allVillaTypes.map(vt=>
+        h('div',{key:vt,style:{background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:'var(--radius)',padding:'10px 12px'}},
+          h('label',{style:{marginBottom:6,color:'var(--text)',fontWeight:600,fontSize:12}},vt),
+          h('input',{type:'number',min:0,placeholder:'0',
+            value:newTHVals[vt]||'',
+            onChange:e=>setNewTHVals(v=>({...v,[vt]:e.target.value})),
+            style:{textAlign:'center'}
+          })
+        )
+      )
+    )
+  );
+
+  const groupedActs={};
+  CATEGORIES.forEach(c=>{groupedActs[c]=[...data.activities.filter(a=>a.category===c)].sort((a,b)=>(a.order||0)-(b.order||0))});
+
+  // sorted THs
+  const sortedTHs=[...data.townhouses].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+  const totalVillas=data.townhouses.reduce((s,th)=>s+th.villaTypes.reduce((ss,v)=>ss+v.count,0),0);
+
+  return h('div',null,
+    showActModal&&h(ActModal,null),
+    showAddTH&&h(AddTHModal,null),
+    showBulkModal&&h(BulkAddModal,null),
+    showVTModal&&h(VTModal,null),
+    h('div',{className:'page-header'},
+      h('div',null,
+        h('div',{className:'page-title'},'Project Setup'),
+        h('div',{className:'page-sub'},'Manage townhouses, villa quantities and MEP activities')
+      )
+    ),
+    h('div',{className:'tabs'},
+      ['townhouses','villatypes','activities'].map(t=>h('div',{key:t,className:`tab${activeTab===t?' active':''}`,onClick:()=>setActiveTab(t)},
+        t==='townhouses'?'Townhouses':t==='villatypes'?'Villa Types':'Activities'
+      ))
+    ),
+    h('div',{className:'content'},
+
+      /* ===== TOWNHOUSES TAB ===== */
+      activeTab==='townhouses'&&h('div',null,
+
+        // Stats bar
+        h('div',{className:'stats-row',style:{marginBottom:16}},
+          h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Townhouses'),h('div',{className:'stat-value c-amber'},data.townhouses.length),h('div',{className:'stat-sub'},'configured')),
+          h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Total Villas'),h('div',{className:'stat-value c-blue'},totalVillas),h('div',{className:'stat-sub'},'across all THs')),
+          h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Villa Types'),h('div',{className:'stat-value c-green'},allVillaTypes.length),h('div',{className:'stat-sub'},'configured'))
+        ),
+
+        // Action bar
+        h('div',{style:{display:'flex',gap:10,marginBottom:18,flexWrap:'wrap'}},
+          h('button',{className:'btn btn-amber',onClick:openAddTH},h(Icon,{name:'plus',size:14}),'Add Townhouse'),
+          h('button',{className:'btn btn-ghost',onClick:()=>setShowBulkModal(true)},h(Icon,{name:'plus',size:14}),'Bulk Add'),
+        ),
+
+        // Main table — sticky header + villa type columns
+        h('div',{className:'table-wrap',style:{overflowX:'auto'}},
+          h('table',{style:{minWidth:allVillaTypes.length*120+320}},
+            h('thead',null,
+              h('tr',null,
+                h('th',{style:{minWidth:110,position:'sticky',left:0,zIndex:3,background:'var(--surface2)'}},'Townhouse'),
+                h('th',{style:{minWidth:60,textAlign:'center'}},'Total'),
+                ...allVillaTypes.map(vt=>h('th',{key:vt,style:{minWidth:110,textAlign:'center',whiteSpace:'normal',lineHeight:1.3}},vt)),
+                h('th',{style:{minWidth:110,textAlign:'center'}},'Actions')
+              )
+            ),
+            h('tbody',null,
+              ...sortedTHs.map((th,idx)=>{
+                const isEditing=editingTH===th.id;
+                const totalCount=th.villaTypes.reduce((s,v)=>s+v.count,0);
+                return h('tr',{key:th.id,style:{background:idx%2===0?'#fff':'var(--surface2)'}},
+                  // TH name — sticky
+                  h('td',{style:{fontWeight:700,color:'var(--amber)',position:'sticky',left:0,zIndex:1,background:idx%2===0?'#fff':'var(--surface2)',fontSize:13}},th.name),
+                  // Total
+                  h('td',{style:{textAlign:'center'}},
+                    totalCount>0?h('span',{className:'badge badge-blue'},totalCount):h('span',{style:{color:'var(--text3)',fontSize:12}},'—')
+                  ),
+                  // Villa type qty cells
+                  ...allVillaTypes.map(vt=>{
+                    const qty=isEditing
+                      ?(rowEdit[th.id]||{})[vt]??''
+                      :(th.villaTypes.find(v=>v.type===vt)?.count||'');
+                    return h('td',{key:vt,style:{textAlign:'center',padding:'6px 8px'}},
+                      isEditing
+                        ?h('input',{
+                            type:'number',min:0,placeholder:'0',
+                            value:qty,
+                            onChange:e=>setRowEdit(r=>({...r,[th.id]:{...(r[th.id]||{}),[vt]:e.target.value}})),
+                            style:{width:80,textAlign:'center',border:'1px solid var(--blue)',borderRadius:4,padding:'5px 6px',fontSize:13,background:'#eff6ff'}
+                          })
+                        :qty
+                          ?h('span',{style:{fontFamily:'monospace',fontWeight:600,fontSize:13,color:'var(--text)'}},qty)
+                          :h('span',{style:{color:'var(--border2)',fontSize:12}},'—')
+                    );
+                  }),
+                  // Actions
+                  h('td',{style:{textAlign:'center',padding:'6px 8px'}},
+                    isEditing
+                      ?h('div',{style:{display:'flex',gap:5,justifyContent:'center'}},
+                          h('button',{className:'btn btn-green btn-sm',onClick:()=>saveEdit(th.id)},h(Icon,{name:'check',size:13}),'Save'),
+                          h('button',{className:'btn btn-ghost btn-sm',onClick:()=>cancelEdit(th.id)},'Cancel')
+                        )
+                      :h('div',{style:{display:'flex',gap:5,justifyContent:'center'}},
+                          h('button',{className:'btn btn-ghost btn-sm',onClick:()=>startEdit(th.id)},h(Icon,{name:'edit',size:13}),'Edit'),
+                          h('button',{className:'btn btn-red btn-sm',onClick:()=>deleteTH(th.id)},h(Icon,{name:'trash',size:13}))
+                        )
+                  )
+                );
+              }),
+              // Totals row
+              h('tr',{className:'summary-row'},
+                h('td',{style:{position:'sticky',left:0,background:'var(--surface2)',fontWeight:700}},'TOTAL'),
+                h('td',{style:{textAlign:'center',fontWeight:700,fontFamily:'monospace'}},totalVillas||'—'),
+                ...allVillaTypes.map(vt=>{
+                  const sum=data.townhouses.reduce((s,th)=>s+(th.villaTypes.find(v=>v.type===vt)?.count||0),0);
+                  return h('td',{key:vt,style:{textAlign:'center',fontFamily:'monospace',fontWeight:700,color:'var(--amber)'}},sum||'—');
+                }),
+                h('td',null)
+              )
+            )
+          )
+        )
+      ),
+
+      /* ===== VILLA TYPES TAB ===== */
+      activeTab==='villatypes'&&h('div',null,
+        h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}},
+          h('div',{style:{fontSize:13,color:'var(--text2)'}},villaTypeDB.length,' villa types configured'),
+          h('button',{className:'btn btn-amber',onClick:()=>{setEditVT(null);setShowVTModal(true);}},h(Icon,{name:'plus',size:14}),'Add Villa Type')
+        ),
+        h('div',{style:{
+          background:'#fff',border:'1px solid var(--border)',borderRadius:'var(--radius2)',
+          overflow:'hidden',boxShadow:'0 1px 4px rgba(0,0,0,.06)',maxWidth:520
+        }},
+          h('div',{style:{
+            background:'var(--surface2)',padding:'10px 16px',
+            fontWeight:700,fontSize:11,color:'var(--text3)',
+            letterSpacing:'.08em',textTransform:'uppercase',
+            borderBottom:'1px solid var(--border)'
+          }},'Villa Type'),
+          villaTypeDB.length===0&&h('div',{style:{padding:'20px 16px',color:'var(--text3)',fontSize:13}},'No villa types yet. Click "Add Villa Type" to get started.'),
+          villaTypeDB.map((vt,i)=>h('div',{key:vt.id,style:{
+            display:'flex',alignItems:'center',justifyContent:'space-between',
+            padding:'13px 16px',
+            borderBottom:i<villaTypeDB.length-1?'1px solid var(--border)':'none',
+            background:'#fff'
+          }},
+            h('div',{style:{display:'flex',alignItems:'center',gap:12}},
+              h('span',{style:{
+                width:12,height:12,borderRadius:'50%',
+                background:vt.color,flexShrink:0,
+                boxShadow:`0 0 0 3px ${vt.color}22`
+              }}),
+              h('span',{style:{fontWeight:600,fontSize:14,color:'var(--text)'}},vt.name),
+              vt.description&&h('span',{style:{fontSize:12,color:'var(--text3)',marginLeft:4}},vt.description)
+            ),
+            h('div',{style:{display:'flex',gap:6,alignItems:'center'}},
+              (()=>{
+                const total=data.townhouses.reduce((s,th)=>s+(th.villaTypes.find(v=>v.type===vt.name)?.count||0),0);
+                return total>0&&h('span',{style:{
+                  fontSize:11,color:vt.color,fontWeight:600,
+                  background:vt.color+'15',padding:'2px 8px',borderRadius:20,
+                  border:`1px solid ${vt.color}33`
+                }},total,' villas');
+              })(),
+              h('button',{className:'btn btn-ghost btn-sm',onClick:()=>{setEditVT(vt);setShowVTModal(true);}},h(Icon,{name:'edit',size:12}),'Edit'),
+              h('button',{className:'btn btn-red btn-sm',onClick:()=>deleteVT(vt.id)},h(Icon,{name:'trash',size:12}))
+            )
+          ))
+        )
+      ),
+
+      /* ===== ACTIVITIES TAB ===== */
+      activeTab==='activities'&&h('div',null,
+        h('div',{style:{display:'flex',justifyContent:'flex-end',marginBottom:16}},
+          h('button',{className:'btn btn-amber',onClick:()=>{setEditAct(null);setShowActModal(true);}},h(Icon,{name:'plus',size:14}),'Add Activity')
+        ),
+        CATEGORIES.map(cat=>h('div',{key:cat,className:'card',style:{marginBottom:14}},
+          h('div',{className:'card-title',style:{color:`var(--${CAT_COLORS[cat]})`}},cat,' (',groupedActs[cat].length,' activities)'),
+          groupedActs[cat].length===0
+            ?h('div',{style:{color:'var(--text3)',fontSize:13}},'No activities yet.')
+            :h('div',{className:'table-wrap'},
+              h('table',null,
+                h('thead',null,h('tr',null,h('th',null,'#'),h('th',null,'Activity Name'),h('th',{style:{textAlign:'right'}},'Actions'))),
+                h('tbody',null,...groupedActs[cat].map((act,i)=>
+                  h('tr',{key:act.id},
+                    h('td',{style:{color:'var(--text3)',fontSize:12,width:32}},i+1),
+                    h('td',null,act.name),
+                    h('td',{style:{textAlign:'right'}},
+                      h('div',{style:{display:'flex',gap:6,justifyContent:'flex-end'}},
+                        h('button',{className:'btn btn-ghost btn-sm',onClick:()=>{setEditAct(act);setShowActModal(true);}},h(Icon,{name:'edit',size:13}),'Edit'),
+                        h('button',{className:'btn btn-red btn-sm',onClick:()=>deleteAct(act.id)},h(Icon,{name:'trash',size:13}))
+                      )
+                    )
+                  )
+                ))
+              )
+            )
+        ))
+      )
+    )
+  );
+};
+
+/* ============ COST ENTRY PAGE ============ */
+const CostEntryPage=({data,setData,selMonth,selYear})=>{
+  const[selCat,setSelCat]=useState('Plumbing');
+  const[selTH,setSelTH]=useState(data.townhouses[0]?.id||'');
+  const[editEntry,setEditEntry]=useState(null);
+  const[showModal,setShowModal]=useState(false);
+
+  const monthKey=`${selYear}-${String(selMonth+1).padStart(2,'0')}`;
+
+  const getEntry=(thId,actId)=>{
+    const entries=data.entries||{};
+    return entries[monthKey]?.[thId]?.[actId]||null;
+  };
+
+  const activities=data.activities.filter(a=>a.category===selCat);
+  const th=data.townhouses.find(t=>t.id===selTH);
+
+  const openModal=(act)=>{
+    const ex=getEntry(selTH,act.id);
+    const prevEntries=getPrevEntries(selTH,act.id);
+    setEditEntry({act,existing:ex,prevMatOrdered:prevEntries.matOrdered,prevInstDone:prevEntries.instDone});
+    setShowModal(true);
+  };
+
+  const getPrevEntries=(thId,actId)=>{
+    const entries=data.entries||{};
+    let matOrdered=0,instDone=0;
+    Object.keys(entries).forEach(mk=>{
+      if(mk>=monthKey)return;
+      const e=entries[mk]?.[thId]?.[actId];
+      if(e){matOrdered+=e.matOrderedPct||0;instDone+=e.instPct||0;}
+    });
+    return{matOrdered:Math.min(matOrdered,100),instDone:Math.min(instDone,100)};
+  };
+
+  const saveEntry=(entry)=>{
+    setData(d=>{
+      const entries=JSON.parse(JSON.stringify(d.entries||{}));
+      if(!entries[monthKey])entries[monthKey]={};
+      if(!entries[monthKey][selTH])entries[monthKey][selTH]={};
+      entries[monthKey][selTH][editEntry.act.id]=entry;
+      return{...d,entries};
+    });
+    setShowModal(false);setEditEntry(null);
+  };
+
+  const EntryModal=()=>{
+    const act=editEntry.act;
+    const ex=editEntry.existing||{};
+    const prevMat=editEntry.prevMatOrdered;
+    const prevInst=editEntry.prevInstDone;
+    const maxMat=100-prevMat;
+    const maxInst=100-prevInst;
+
+    const[matCost,setMatCost]=useState(ex.matCost||0);
+    const[instCost,setInstCost]=useState(ex.instCost||0);
+    const[matPct,setMatPct]=useState(ex.matOrderedPct||0);
+    const[instPct,setInstPct]=useState(ex.instPct||0);
+    const[matStatus,setMatStatus]=useState(ex.matStatus||'Pending');
+    const[instStatus,setInstStatus]=useState(ex.instStatus||'Pending');
+    const[remarks,setRemarks]=useState(ex.remarks||'');
+
+    const matBal=matCost*(maxMat/100);
+    const instBal=instCost*(maxInst/100);
+
+    const save=()=>{
+      saveEntry({matCost:parseFloat(matCost)||0,instCost:parseFloat(instCost)||0,matOrderedPct:parseFloat(matPct)||0,instPct:parseFloat(instPct)||0,matStatus,instStatus,remarks,matBal,instBal});
+    };
+
+    return h(Modal,{title:`${act.name} — ${th?.name}`,onClose:()=>{setShowModal(false);setEditEntry(null)},
+      footer:[h('button',{className:'btn btn-ghost',onClick:()=>{setShowModal(false);setEditEntry(null)}},'Cancel'),h('button',{className:'btn btn-amber',onClick:save},'Save Entry')]},
+      h('div',{className:'alert alert-amber',style:{marginBottom:14}},
+        `Previous cumulative: Material ${prevMat}% ordered, Installation ${prevInst}% done. Max this month: Material ${maxMat}%, Install ${maxInst}%`
+      ),
+      h('div',{style:{fontWeight:600,color:'var(--text2)',fontSize:11,textTransform:'uppercase',letterSpacing:'.06em',marginBottom:12}},'Material'),
+      h('div',{className:'form-row form-grid-2'},
+        h('div',null,h('label',null,'Target Cost (AED)'),h('input',{type:'number',value:matCost,onChange:e=>setMatCost(e.target.value),min:0,placeholder:'0'})),
+        h('div',null,h('label',null,`Ordered % (max ${maxMat}%)`),h('input',{type:'number',value:matPct,onChange:e=>setMatPct(Math.min(maxMat,Math.max(0,parseFloat(e.target.value)||0))),min:0,max:maxMat}))
+      ),
+      h('div',{className:'form-row form-grid-2'},
+        h('div',null,h('label',null,'Delivery Status'),h('select',{value:matStatus,onChange:e=>setMatStatus(e.target.value)},['Pending','Partial','Delivered','Not Started'].map(s=>h('option',{key:s,value:s},s)))),
+        h('div',null,h('label',null,'Balance This Month'),h('input',{readOnly:true,value:fmt(matCost*(matPct/100)),style:{color:'var(--amber)',background:'var(--amber3)'}}))
+      ),
+      h('div',{className:'divider'}),
+      h('div',{style:{fontWeight:600,color:'var(--text2)',fontSize:11,textTransform:'uppercase',letterSpacing:'.06em',marginBottom:12}},'Installation'),
+      h('div',{className:'form-row form-grid-2'},
+        h('div',null,h('label',null,'Installation Cost (AED)'),h('input',{type:'number',value:instCost,onChange:e=>setInstCost(e.target.value),min:0,placeholder:'0'})),
+        h('div',null,h('label',null,`Done % (max ${maxInst}%)`),h('input',{type:'number',value:instPct,onChange:e=>setInstPct(Math.min(maxInst,Math.max(0,parseFloat(e.target.value)||0))),min:0,max:maxInst}))
+      ),
+      h('div',{className:'form-row form-grid-2'},
+        h('div',null,h('label',null,'Installation Status'),h('select',{value:instStatus,onChange:e=>setInstStatus(e.target.value)},['Pending','In Progress','Completed','Not Started'].map(s=>h('option',{key:s,value:s},s)))),
+        h('div',null,h('label',null,'Cost Available'),h('input',{readOnly:true,value:fmt(instCost*(instPct/100)),style:{color:'var(--green)',background:'var(--green3)'}}))
+      ),
+      h('div',{className:'form-row'},h('div',null,h('label',null,'Remarks'),h('input',{value:remarks,onChange:e=>setRemarks(e.target.value),placeholder:'Optional notes...'})))
+    );
+  };
+
+  return h('div',null,
+    showModal&&editEntry&&h(EntryModal,null),
+    h('div',{className:'page-header'},
+      h('div',null,h('div',{className:'page-title'},'Cost Entry'),h('div',{className:'page-sub'},`${MONTHS[selMonth]} ${selYear} — Enter material & installation costs`))
+    ),
+    h('div',{className:'content'},
+      h('div',{style:{display:'flex',gap:12,marginBottom:18,flexWrap:'wrap'}},
+        h('div',{style:{flex:1,minWidth:180}},
+          h('label',null,'Townhouse'),
+          h('select',{value:selTH,onChange:e=>setSelTH(e.target.value)},data.townhouses.map(t=>h('option',{key:t.id,value:t.id},t.name)))
+        ),
+        h('div',{style:{flex:1,minWidth:180}},
+          h('label',null,'Category'),
+          h('select',{value:selCat,onChange:e=>setSelCat(e.target.value)},CATEGORIES.map(c=>h('option',{key:c,value:c},c)))
+        )
+      ),
+      th&&h('div',{style:{marginBottom:12}},
+        h('div',{style:{display:'flex',gap:6,flexWrap:'wrap'}},
+          th.villaTypes.map(v=>h('span',{key:v.id,className:'chip'},`${v.type}: ${v.count} villas`))
+        )
+      ),
+      h('div',{className:'table-wrap'},
+        h('table',null,
+          h('thead',null,h('tr',null,
+            h('th',null,'Activity'),
+            h('th',{className:'num'},'Mat Cost'),h('th',{className:'num'},'Mat %'),h('th',null,'Mat Status'),
+            h('th',{className:'num'},'Mat Available'),
+            h('th',{className:'num'},'Inst Cost'),h('th',{className:'num'},'Inst %'),h('th',null,'Inst Status'),
+            h('th',{className:'num'},'Inst Available'),
+            h('th',{style:{textAlign:'right'}},'Action')
+          )),
+          h('tbody',null,...activities.map(act=>{
+            const e=getEntry(selTH,act.id)||{};
+            const matAvail=(e.matCost||0)*((e.matOrderedPct||0)/100);
+            const instAvail=(e.instCost||0)*((e.instPct||0)/100);
+            const statusBadge=(s)=>{
+              if(!s||s==='Pending'||s==='Not Started')return h('span',{className:'badge badge-amber'},s||'—');
+              if(s==='Delivered'||s==='Completed')return h('span',{className:'badge badge-green'},s);
+              return h('span',{className:'badge badge-blue'},s);
+            };
+            return h('tr',{key:act.id},
+              h('td',null,h('span',{style:{fontWeight:500}},act.name)),
+              h('td',{className:'num'},fmt(e.matCost||0)),
+              h('td',{className:'num'},h(ProgressBar,{value:e.matOrderedPct||0})),
+              h('td',null,statusBadge(e.matStatus)),
+              h('td',{className:'num',style:{color:'var(--amber)'}},fmt(matAvail)),
+              h('td',{className:'num'},fmt(e.instCost||0)),
+              h('td',{className:'num'},h(ProgressBar,{value:e.instPct||0})),
+              h('td',null,statusBadge(e.instStatus)),
+              h('td',{className:'num',style:{color:'var(--green)'}},fmt(instAvail)),
+              h('td',{style:{textAlign:'right'}},
+                h('button',{className:'btn btn-ghost btn-sm',onClick:()=>openModal(act)},h(Icon,{name:'edit',size:13}),'Entry')
+              )
+            );
+          }))
+        )
+      )
+    )
+  );
+};
+
+/* ============ DASHBOARD PAGE ============ */
+const DashboardPage=({data,selMonth,selYear})=>{
+  const monthKey=`${selYear}-${String(selMonth+1).padStart(2,'0')}`;
+  const entries=data.entries||{};
+
+  const getSummary=(cat)=>{
+    let matCost=0,instCost=0,matAvail=0,instAvail=0;
+    data.townhouses.forEach(th=>{
+      data.activities.filter(a=>a.category===cat).forEach(act=>{
+        const e=entries[monthKey]?.[th.id]?.[act.id];
+        if(e){
+          matCost+=e.matCost||0;
+          instCost+=e.instCost||0;
+          matAvail+=(e.matCost||0)*((e.matOrderedPct||0)/100);
+          instAvail+=(e.instCost||0)*((e.instPct||0)/100);
+        }
+      });
+    });
+    return{matCost,instCost,matAvail,instAvail,total:matCost+instCost};
+  };
+
+  const summaries={};
+  CATEGORIES.forEach(c=>{summaries[c]=getSummary(c)});
+  const grand={
+    matCost:CATEGORIES.reduce((s,c)=>s+summaries[c].matCost,0),
+    instCost:CATEGORIES.reduce((s,c)=>s+summaries[c].instCost,0),
+    matAvail:CATEGORIES.reduce((s,c)=>s+summaries[c].matAvail,0),
+    instAvail:CATEGORIES.reduce((s,c)=>s+summaries[c].instAvail,0),
+  };
+  grand.total=grand.matCost+grand.instCost;
+
+  const catColors={HVAC:'teal',Electrical:'blue',Plumbing:'amber'};
+
+  return h('div',null,
+    h('div',{className:'page-header'},
+      h('div',null,h('div',{className:'page-title'},'Dashboard'),h('div',{className:'page-sub'},`${MONTHS[selMonth]} ${selYear} — Cost overview`))
+    ),
+    h('div',{className:'content'},
+      h('div',{className:'stats-row'},
+        h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Total Target Cost'),h('div',{className:'stat-value c-amber'},fmt(grand.total)),h('div',{className:'stat-sub'},'Material + Installation')),
+        h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Material Ordered'),h('div',{className:'stat-value c-blue'},fmt(grand.matAvail)),h('div',{className:'stat-sub'},`of ${fmt(grand.matCost)}`)),
+        h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Installation Done'),h('div',{className:'stat-value c-green'},fmt(grand.instAvail)),h('div',{className:'stat-sub'},`of ${fmt(grand.instCost)}`)),
+        h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Balance Remaining'),h('div',{className:'stat-value c-red'},fmt((grand.matCost-grand.matAvail)+(grand.instCost-grand.instAvail))),h('div',{className:'stat-sub'},'Target vs Actual'))
+      ),
+      h('div',{className:'card'},
+        h('div',{className:'card-title'},'Category Summary'),
+        h('div',{className:'table-wrap'},
+          h('table',null,
+            h('thead',null,h('tr',null,
+              h('th',null,'Category'),
+              h('th',{className:'num'},'Mat Target'),h('th',{className:'num'},'Mat Ordered'),h('th',{className:'num'},'Mat Bal'),
+              h('th',{className:'num'},'Inst Target'),h('th',{className:'num'},'Inst Done'),h('th',{className:'num'},'Inst Bal'),
+              h('th',{className:'num'},'Grand Total')
+            )),
+            h('tbody',null,
+              ...CATEGORIES.map(cat=>{
+                const s=summaries[cat];
+                return h('tr',{key:cat},
+                  h('td',null,h('span',{className:`badge badge-${catColors[cat]}`},cat)),
+                  h('td',{className:'num'},fmt(s.matCost)),
+                  h('td',{className:'num',style:{color:'var(--amber)'}},fmt(s.matAvail)),
+                  h('td',{className:'num',style:{color:'var(--red)'}},fmt(s.matCost-s.matAvail)),
+                  h('td',{className:'num'},fmt(s.instCost)),
+                  h('td',{className:'num',style:{color:'var(--green)'}},fmt(s.instAvail)),
+                  h('td',{className:'num',style:{color:'var(--red)'}},fmt(s.instCost-s.instAvail)),
+                  h('td',{className:'num',style:{color:'var(--amber)',fontWeight:600}},fmt(s.total))
+                );
+              }),
+              h('tr',{className:'summary-row'},
+                h('td',null,'Grand Total'),
+                h('td',{className:'num'},fmt(grand.matCost)),
+                h('td',{className:'num'},fmt(grand.matAvail)),
+                h('td',{className:'num'},fmt(grand.matCost-grand.matAvail)),
+                h('td',{className:'num'},fmt(grand.instCost)),
+                h('td',{className:'num'},fmt(grand.instAvail)),
+                h('td',{className:'num'},fmt(grand.instCost-grand.instAvail)),
+                h('td',{className:'num',style:{color:'var(--amber)'}},fmt(grand.total))
+              )
+            )
+          )
+        )
+      ),
+      h('div',{className:'card'},
+        h('div',{className:'card-title'},'Per Townhouse Breakdown'),
+        h('div',{className:'table-wrap'},
+          h('table',null,
+            h('thead',null,h('tr',null,h('th',null,'Townhouse'),h('th',null,'Types'),h('th',{className:'num'},'Mat Total'),h('th',{className:'num'},'Inst Total'),h('th',null,'Mat Progress'),h('th',null,'Inst Progress'))),
+            h('tbody',null,...data.townhouses.map(th=>{
+              let matCost=0,instCost=0,matAvail=0,instAvail=0;
+              data.activities.forEach(act=>{
+                const e=entries[monthKey]?.[th.id]?.[act.id];
+                if(e){matCost+=e.matCost||0;instCost+=e.instCost||0;matAvail+=(e.matCost||0)*((e.matOrderedPct||0)/100);instAvail+=(e.instCost||0)*((e.instPct||0)/100);}
+              });
+              return h('tr',{key:th.id},
+                h('td',null,h('span',{style:{color:'var(--amber)',fontWeight:600}},th.name)),
+                h('td',null,h('div',{style:{display:'flex',gap:4,flexWrap:'wrap'}},th.villaTypes.map(v=>h('span',{key:v.id,className:'chip',style:{fontSize:10,padding:'2px 6px'}},`${v.type}×${v.count}`)))),
+                h('td',{className:'num'},fmt(matCost)),
+                h('td',{className:'num'},fmt(instCost)),
+                h('td',null,h(ProgressBar,{value:pct(matAvail,matCost)})),
+                h('td',null,h(ProgressBar,{value:pct(instAvail,instCost)}))
+              );
+            }))
+          )
+        )
+      )
+    )
+  );
+};
+
+/* ============ REPORT PAGE ============ */
+const ReportPage=({data,selMonth,selYear})=>{
+  const monthKey=`${selYear}-${String(selMonth+1).padStart(2,'0')}`;
+  const entries=data.entries||{};
+
+  const generatePDF=()=>{
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a3'});
+    const pageW=doc.internal.pageSize.getWidth();
+    const pageH=doc.internal.pageSize.getHeight();
+
+    const drawHeader=()=>{
+      doc.setFillColor(13,15,18);
+      doc.rect(0,0,pageW,pageH,'F');
+      doc.setFillColor(20,24,32);
+      doc.rect(0,0,pageW,22,'F');
+      doc.setTextColor(245,166,35);
+      doc.setFontSize(14);doc.setFont('helvetica','bold');
+      doc.text('MEP TARGET COST BREAKDOWN',14,12);
+      doc.setTextColor(143,163,192);doc.setFontSize(9);doc.setFont('helvetica','normal');
+      doc.text(`Period: ${MONTHS[selMonth]} ${selYear}  |  Generated: ${new Date().toLocaleDateString('en-AE')}`,14,18);
+      doc.setTextColor(90,114,153);doc.setFont('helvetica','bold');
+      doc.text('MODUN GULF BUILDING CONTRACTING LLC',pageW-14,18,{align:'right'});
+      doc.text('Sdmbrk Collections',pageW-14,12,{align:'right'});
+    };
+
+    const catColor={HVAC:[20,184,166],Electrical:[59,130,246],Plumbing:[245,166,35]};
+
+    CATEGORIES.forEach((cat,ci)=>{
+      if(ci>0)doc.addPage();
+      drawHeader();
+
+      doc.setTextColor(...catColor[cat]);
+      doc.setFontSize(11);doc.setFont('helvetica','bold');
+      doc.text(cat.toUpperCase()+' — MATERIAL & INSTALLATION COST',14,30);
+
+      const acts=data.activities.filter(a=>a.category===cat);
+      const headers=[['TH','Villa Types','Villas','Activity','Mat Target','Mat %','Mat Status','Mat Available','Inst Target','Inst %','Inst Status','Inst Available','Remarks']];
+      const rows=[];
+      let totMat=0,totInst=0,totMatAvail=0,totInstAvail=0;
+
+      data.townhouses.forEach(th=>{
+        acts.forEach(act=>{
+          const e=entries[monthKey]?.[th.id]?.[act.id]||{};
+          const matAvail=(e.matCost||0)*((e.matOrderedPct||0)/100);
+          const instAvail=(e.instCost||0)*((e.instPct||0)/100);
+          totMat+=e.matCost||0;totInst+=e.instCost||0;totMatAvail+=matAvail;totInstAvail+=instAvail;
+          rows.push([
+            th.name,
+            th.villaTypes.map(v=>`${v.type}×${v.count}`).join(', '),
+            th.villaTypes.reduce((s,v)=>s+v.count,0),
+            act.name,
+            `AED ${(e.matCost||0).toLocaleString()}`,
+            `${e.matOrderedPct||0}%`,
+            e.matStatus||'—',
+            `AED ${matAvail.toLocaleString()}`,
+            `AED ${(e.instCost||0).toLocaleString()}`,
+            `${e.instPct||0}%`,
+            e.instStatus||'—',
+            `AED ${instAvail.toLocaleString()}`,
+            e.remarks||''
+          ]);
+        });
+      });
+
+      rows.push(['','','','TOTAL',
+        `AED ${totMat.toLocaleString()}`,'','',`AED ${totMatAvail.toLocaleString()}`,
+        `AED ${totInst.toLocaleString()}`,'','',`AED ${totInstAvail.toLocaleString()}`,'']);
+
+      doc.autoTable({
+        head:headers,body:rows,startY:34,
+        styles:{fontSize:7,cellPadding:2,textColor:[232,237,245],fillColor:[20,24,32],lineColor:[42,53,72],lineWidth:.1},
+        headStyles:{fillColor:[35,45,63],textColor:[143,163,192],fontStyle:'bold',fontSize:7},
+        columnStyles:{0:{cellWidth:15},1:{cellWidth:25},2:{cellWidth:10},3:{cellWidth:30},4:{cellWidth:22,halign:'right'},5:{cellWidth:12,halign:'center'},6:{cellWidth:18},7:{cellWidth:22,halign:'right'},8:{cellWidth:22,halign:'right'},9:{cellWidth:12,halign:'center'},10:{cellWidth:18},11:{cellWidth:22,halign:'right'},12:{cellWidth:20}},
+        didParseCell:(d)=>{
+          if(d.row.index===rows.length-1){d.cell.styles.fontStyle='bold';d.cell.styles.fillColor=[35,45,63];}
+          if(d.column.index===7&&d.section==='body')d.cell.styles.textColor=catColor[cat];
+          if(d.column.index===11&&d.section==='body')d.cell.styles.textColor=[34,197,94];
+        },
+        margin:{left:14,right:14}
+      });
+    });
+
+    // Summary page
+    doc.addPage();
+    drawHeader();
+    doc.setTextColor(245,166,35);doc.setFontSize(12);doc.setFont('helvetica','bold');
+    doc.text('GRAND SUMMARY — ALL CATEGORIES',14,30);
+
+    const summaryRows=CATEGORIES.map(cat=>{
+      let mat=0,inst=0,mA=0,iA=0;
+      data.townhouses.forEach(th=>{data.activities.filter(a=>a.category===cat).forEach(act=>{const e=entries[monthKey]?.[th.id]?.[act.id]||{};mat+=e.matCost||0;inst+=e.instCost||0;mA+=(e.matCost||0)*((e.matOrderedPct||0)/100);iA+=(e.instCost||0)*((e.instPct||0)/100);});});
+      return[cat,`AED ${mat.toLocaleString()}`,`AED ${mA.toLocaleString()}`,`AED ${(mat-mA).toLocaleString()}`,`AED ${inst.toLocaleString()}`,`AED ${iA.toLocaleString()}`,`AED ${(inst-iA).toLocaleString()}`,`AED ${(mat+inst).toLocaleString()}`];
+    });
+
+    let gMat=0,gInst=0,gMA=0,gIA=0;
+    CATEGORIES.forEach(cat=>{data.townhouses.forEach(th=>{data.activities.filter(a=>a.category===cat).forEach(act=>{const e=entries[monthKey]?.[th.id]?.[act.id]||{};gMat+=e.matCost||0;gInst+=e.instCost||0;gMA+=(e.matCost||0)*((e.matOrderedPct||0)/100);gIA+=(e.instCost||0)*((e.instPct||0)/100);});});});
+    summaryRows.push(['GRAND TOTAL',`AED ${gMat.toLocaleString()}`,`AED ${gMA.toLocaleString()}`,`AED ${(gMat-gMA).toLocaleString()}`,`AED ${gInst.toLocaleString()}`,`AED ${gIA.toLocaleString()}`,`AED ${(gInst-gIA).toLocaleString()}`,`AED ${(gMat+gInst).toLocaleString()}`]);
+
+    doc.autoTable({
+      head:[['Category','Material Target','Material Ordered','Material Balance','Install Target','Install Done','Install Balance','Grand Total']],
+      body:summaryRows,startY:34,
+      styles:{fontSize:9,cellPadding:3,textColor:[232,237,245],fillColor:[20,24,32],lineColor:[42,53,72],lineWidth:.1},
+      headStyles:{fillColor:[35,45,63],textColor:[143,163,192],fontStyle:'bold'},
+      columnStyles:{1:{halign:'right'},2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',fontStyle:'bold'}},
+      didParseCell:(d)=>{if(d.row.index===summaryRows.length-1){d.cell.styles.fontStyle='bold';d.cell.styles.fillColor=[35,45,63];d.cell.styles.textColor=[245,166,35];}},
+      margin:{left:14,right:14}
+    });
+
+    doc.save(`MEP_Cost_${MONTHS[selMonth]}_${selYear}.pdf`);
+  };
+
+  const entries_=data.entries||{};
+  const getSummary=(cat)=>{
+    let mat=0,inst=0,mA=0,iA=0;
+    data.townhouses.forEach(th=>{data.activities.filter(a=>a.category===cat).forEach(act=>{const e=entries_[monthKey]?.[th.id]?.[act.id]||{};mat+=e.matCost||0;inst+=e.instCost||0;mA+=(e.matCost||0)*((e.matOrderedPct||0)/100);iA+=(e.instCost||0)*((e.instPct||0)/100);});});
+    return{mat,inst,mA,iA};
+  };
+
+  return h('div',null,
+    h('div',{className:'page-header'},
+      h('div',null,h('div',{className:'page-title'},'Monthly Report'),h('div',{className:'page-sub'},`${MONTHS[selMonth]} ${selYear}`)),
+      h('div',{className:'header-actions'},
+        h('button',{className:'btn btn-amber',onClick:generatePDF},h(Icon,{name:'download',size:14}),'Export PDF')
+      )
+    ),
+    h('div',{className:'content'},
+      CATEGORIES.map(cat=>{
+        const s=getSummary(cat);
+        const acts=data.activities.filter(a=>a.category===cat);
+        const col=CAT_COLORS[cat];
+        return h('div',{key:cat,className:'card'},
+          h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}},
+            h('div',{className:'card-title',style:{margin:0,color:`var(--${col})`}},cat),
+            h('div',{style:{display:'flex',gap:16,fontSize:12}},
+              h('span',{style:{color:'var(--text3)'}},`Mat: `,h('span',{style:{color:`var(--${col})`,fontFamily:'monospace'}},fmt(s.mA),' / ',fmt(s.mat))),
+              h('span',{style:{color:'var(--text3)'}},`Inst: `,h('span',{style:{color:'var(--green)',fontFamily:'monospace'}},fmt(s.iA),' / ',fmt(s.inst))),
+              h('span',{style:{color:'var(--text3)'}},`Total: `,h('span',{style:{color:'var(--amber)',fontFamily:'monospace',fontWeight:600}},fmt(s.mat+s.inst)))
+            )
+          ),
+          h('div',{className:'table-wrap'},
+            h('table',null,
+              h('thead',null,h('tr',null,h('th',null,'TH'),h('th',null,'Activity'),h('th',{className:'num'},'Mat Target'),h('th',{className:'num'},'Mat %'),h('th',null,'Mat Status'),h('th',{className:'num'},'Mat Avail'),h('th',{className:'num'},'Inst Target'),h('th',{className:'num'},'Inst %'),h('th',null,'Inst Status'),h('th',{className:'num'},'Inst Avail'),h('th',null,'Remarks'))),
+              h('tbody',null,...data.townhouses.flatMap(th=>
+                acts.map(act=>{
+                  const e=entries_[monthKey]?.[th.id]?.[act.id]||{};
+                  const mA=(e.matCost||0)*((e.matOrderedPct||0)/100);
+                  const iA=(e.instCost||0)*((e.instPct||0)/100);
+                  const stBadge=(s,type)=>{
+                    if(!s||s==='Pending'||s==='Not Started')return h('span',{className:'badge badge-amber'},s||'—');
+                    if(s==='Delivered'||s==='Completed')return h('span',{className:'badge badge-green'},s);
+                    return h('span',{className:'badge badge-blue'},s);
+                  };
+                  return h('tr',{key:`${th.id}-${act.id}`},
+                    h('td',null,h('span',{style:{color:`var(--${col})`,fontWeight:600}},th.name)),
+                    h('td',null,act.name),
+                    h('td',{className:'num'},fmt(e.matCost||0)),
+                    h('td',null,h(ProgressBar,{value:e.matOrderedPct||0})),
+                    h('td',null,stBadge(e.matStatus)),
+                    h('td',{className:'num',style:{color:`var(--${col})`}},fmt(mA)),
+                    h('td',{className:'num'},fmt(e.instCost||0)),
+                    h('td',null,h(ProgressBar,{value:e.instPct||0})),
+                    h('td',null,stBadge(e.instStatus)),
+                    h('td',{className:'num',style:{color:'var(--green)'}},fmt(iA)),
+                    h('td',{style:{fontSize:11,color:'var(--text3)'}},e.remarks||'')
+                  );
+                })
+              ))
+            )
+          )
+        );
+      }),
+      h('div',{className:'card',style:{borderColor:'var(--amber2)'}},
+        h('div',{className:'card-title',style:{color:'var(--amber)'}},'Grand Total Summary'),
+        h('div',{className:'table-wrap'},
+          h('table',null,
+            h('thead',null,h('tr',null,h('th',null,'Category'),h('th',{className:'num'},'Material Target'),h('th',{className:'num'},'Material Ordered'),h('th',{className:'num'},'Material Balance'),h('th',{className:'num'},'Install Target'),h('th',{className:'num'},'Install Done'),h('th',{className:'num'},'Install Balance'),h('th',{className:'num'},'Grand Total'))),
+            h('tbody',null,
+              ...CATEGORIES.map(cat=>{
+                const s=getSummary(cat);
+                return h('tr',{key:cat},
+                  h('td',null,h('span',{className:`badge badge-${CAT_COLORS[cat]}`},cat)),
+                  h('td',{className:'num'},fmt(s.mat)),h('td',{className:'num',style:{color:'var(--amber)'}},fmt(s.mA)),h('td',{className:'num',style:{color:'var(--red)'}},fmt(s.mat-s.mA)),
+                  h('td',{className:'num'},fmt(s.inst)),h('td',{className:'num',style:{color:'var(--green)'}},fmt(s.iA)),h('td',{className:'num',style:{color:'var(--red)'}},fmt(s.inst-s.iA)),
+                  h('td',{className:'num',style:{color:'var(--amber)',fontWeight:600}},fmt(s.mat+s.inst))
+                );
+              }),
+              (()=>{
+                const tots=CATEGORIES.reduce((acc,cat)=>{const s=getSummary(cat);return{mat:acc.mat+s.mat,inst:acc.inst+s.inst,mA:acc.mA+s.mA,iA:acc.iA+s.iA};},{mat:0,inst:0,mA:0,iA:0});
+                return h('tr',{className:'summary-row'},h('td',null,'GRAND TOTAL'),h('td',{className:'num'},fmt(tots.mat)),h('td',{className:'num'},fmt(tots.mA)),h('td',{className:'num'},fmt(tots.mat-tots.mA)),h('td',{className:'num'},fmt(tots.inst)),h('td',{className:'num'},fmt(tots.iA)),h('td',{className:'num'},fmt(tots.inst-tots.iA)),h('td',{className:'num',style:{color:'var(--amber)'}},fmt(tots.mat+tots.inst)));
+              })()
+            )
+          )
+        )
+      )
+    )
+  );
+};
+
+/* ============ DRY COST PAGE ============ */
+// dryCosts: { [villaType]: { [activityId]: { mat, inst } } }
+const DryCostPage=({data,setData})=>{
+  const[selVilla,setSelVilla]=useState('');
+  const[showActModal,setShowActModal]=useState(false);
+  const[editAct,setEditAct]=useState(null);
+  const[editModes,setEditModes]=useState({}); // {cat: bool}
+
+  const villaTypeDB=useMemo(()=>data.villaTypeDB||VILLA_TYPE_PRESETS.map((n,i)=>({id:`vt${i+1}`,name:n,description:'',color:'#2563eb'})),[data.villaTypeDB]);
+  const allVillaTypes=villaTypeDB.map(v=>v.name);
+  const curVilla=selVilla&&allVillaTypes.includes(selVilla)?selVilla:(allVillaTypes[0]||'');
+
+  const dryCosts=data.dryCosts||{};
+  const getDC=(vt,actId)=>(dryCosts[vt]||{})[actId]||{mat:'',inst:''};
+
+  const setDC=(vt,actId,field,val)=>{
+    setData(d=>{
+      const dc=JSON.parse(JSON.stringify(d.dryCosts||{}));
+      if(!dc[vt])dc[vt]={};
+      if(!dc[vt][actId])dc[vt][actId]={mat:'',inst:''};
+      dc[vt][actId]={...dc[vt][actId],[field]:val===''?'':parseFloat(val)||0};
+      return{...d,dryCosts:dc};
+    });
+  };
+
+  const getSortedActs=(cat)=>[...data.activities.filter(a=>a.category===cat)].sort((a,b)=>(a.order||0)-(b.order||0));
+
+  const moveAct=(cat,idx,dir)=>{
+    const acts=getSortedActs(cat);
+    const toIdx=idx+dir;
+    if(toIdx<0||toIdx>=acts.length)return;
+    setData(d=>({...d,activities:d.activities.map(a=>{
+      if(a.id===acts[idx].id)return{...a,order:toIdx};
+      if(a.id===acts[toIdx].id)return{...a,order:idx};
+      return a;
+    })}));
+  };
+
+  const deleteAct=(id)=>{if(!confirm('Delete this activity?'))return;setData(d=>({...d,activities:d.activities.filter(a=>a.id!==id)}));};
+
+  const ActModal=()=>{
+    const[name,setName]=useState(editAct?.name||'');
+    const[cat,setCat]=useState(editAct?.category||'Electrical');
+    const save=()=>{
+      if(!name.trim())return;
+      if(editAct){
+        setData(d=>({...d,activities:d.activities.map(a=>a.id===editAct.id?{...a,name:name.trim(),category:cat}:a)}));
+      }else{
+        const acts=data.activities.filter(a=>a.category===cat);
+        const maxOrder=acts.reduce((m,a)=>Math.max(m,a.order||0),-1);
+        setData(d=>({...d,activities:[...d.activities,{id:uid(),name:name.trim(),category:cat,order:maxOrder+1}]}));
+      }
+      setShowActModal(false);setEditAct(null);
+    };
+    return h(Modal,{title:editAct?'Edit Activity':'Add Activity',
+      onClose:()=>{setShowActModal(false);setEditAct(null)},
+      footer:[
+        h('button',{className:'btn btn-ghost',onClick:()=>{setShowActModal(false);setEditAct(null)}},'Cancel'),
+        h('button',{className:'btn btn-amber',onClick:save},'Save')
+      ]},
+      h('div',{className:'form-row form-grid-2'},
+        h('div',null,h('label',null,'Activity Name'),h('input',{value:name,onChange:e=>setName(e.target.value),placeholder:'Activity name',autoFocus:true})),
+        h('div',null,h('label',null,'Category'),h('select',{value:cat,onChange:e=>setCat(e.target.value)},CATEGORIES.map(c=>h('option',{key:c,value:c},c))))
+      )
+    );
+  };
+
+  // Compute totals for a villa type across all disciplines
+  const getVillaTotals=(vt)=>{
+    let mat=0,inst=0;
+    data.activities.forEach(act=>{
+      const dc=getDC(vt,act.id);
+      mat+=parseFloat(dc.mat)||0;
+      inst+=parseFloat(dc.inst)||0;
+    });
+    return{mat,inst,total:mat+inst};
+  };
+
+  const getCatTotal=(vt,cat)=>{
+    let mat=0,inst=0;
+    getSortedActs(cat).forEach(act=>{
+      const dc=getDC(vt,act.id);
+      mat+=parseFloat(dc.mat)||0;
+      inst+=parseFloat(dc.inst)||0;
+    });
+    return{mat,inst};
+  };
+
+  // Export PDF - one page per villa type matching the PDF format
+  const exportPDF=()=>{
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+
+    // ── Calculate how much vertical space one villa type needs ──
+    // Total rows = sum of all activity counts across 3 disciplines + 3 subtotal rows
+    const totalActRows=CATEGORIES.reduce((s,cat)=>s+getSortedActs(cat).length+1,0);
+    // Rows: discipline headers × 3, activity rows, subtotal rows, grand total bar, footer
+    // We'll auto-size row height to always fit on one page
+
+    const ML=10,MR=10;           // left/right margins
+    const HDR_H=11;              // compact header height (≈50% of 22)
+    const COL_H=4;               // column-label row height
+    const GT_H=7;                // grand total bar
+    const FTR_H=6;               // footer
+    const DISC_H=5;              // discipline header bar height
+    const SUB_GAP=1;             // gap after subtotal
+
+    const ph=297; const pw=210;
+    const usable=ph-HDR_H-COL_H-GT_H-FTR_H-4; // 4mm top/bottom padding
+    // Sections = 3 discipline bars + totalActRows data rows + 3 sub-gaps
+    const totalSections=3*DISC_H + totalActRows + 3*SUB_GAP;
+    // Row height: distribute usable space
+    const ROW_H=Math.min(5.2, Math.max(3.8, usable/totalSections));
+
+    const CW=pw-ML-MR;
+    const COL_ACT=ML+2;
+    const COL_MAT=ML+CW*0.54;
+    const COL_INST=ML+CW*0.78;
+
+    const fmtAED=(n)=>n>0?n.toLocaleString('en-AE',{minimumFractionDigits:0,maximumFractionDigits:0}):'—';
+    const catColors={Electrical:[59,130,246],Plumbing:[217,119,6],HVAC:[13,148,136]};
+    const date=new Date().toLocaleDateString('en-AE');
+
+    allVillaTypes.forEach((vt,vi)=>{
+      if(vi>0)doc.addPage();
+
+      // ── Compact header (HDR_H = 11mm) ──
+      doc.setFillColor(30,45,69);
+      doc.rect(0,0,pw,HDR_H,'F');
+      doc.setTextColor(245,200,66);doc.setFontSize(8.5);doc.setFont('helvetica','bold');
+      doc.text(`DRY COST — ${vt}`,ML,7);
+      doc.setTextColor(200,216,238);doc.setFontSize(6);doc.setFont('helvetica','normal');
+      doc.text('MODUN GULF BUILDING CONTRACTING LLC',pw-MR,5.5,{align:'right'});
+      doc.text('Sdmbrk Collections  |  '+date,pw-MR,9,{align:'right'});
+
+      // ── Column header strip ──
+      doc.setFillColor(45,62,85);
+      doc.rect(0,HDR_H,pw,COL_H,'F');
+      doc.setTextColor(160,190,220);doc.setFontSize(5.5);doc.setFont('helvetica','bold');
+      doc.text('ACTIVITY',COL_ACT,HDR_H+3);
+      doc.text('MATERIAL (AED)',COL_MAT,HDR_H+3);
+      doc.text('INSTALLATION (AED)',COL_INST,HDR_H+3);
+
+      let y=HDR_H+COL_H+1;
+
+      CATEGORIES.forEach((cat,ci)=>{
+        const acts=getSortedActs(cat);
+        const catTot=getCatTotal(vt,cat);
+        const cc=catColors[cat];
+
+        // Discipline header bar
+        doc.setFillColor(...cc);
+        doc.rect(0,y,pw,DISC_H,'F');
+        doc.setTextColor(255,255,255);doc.setFontSize(6.5);doc.setFont('helvetica','bold');
+        doc.text(cat.toUpperCase(),ML,y+DISC_H-1.2);
+        doc.text('MATERIAL',COL_MAT,y+DISC_H-1.2);
+        doc.text('INSTALLATION',COL_INST,y+DISC_H-1.2);
+        y+=DISC_H;
+
+        // Activity rows
+        acts.forEach((act,i)=>{
+          const dc=getDC(vt,act.id);
+          const mat=parseFloat(dc.mat)||0;
+          const inst=parseFloat(dc.inst)||0;
+          // alternating row bg
+          doc.setFillColor(i%2===0?248:255, i%2===0?250:255, i%2===0?252:255);
+          doc.rect(0,y,pw,ROW_H,'F');
+          // thin left accent
+          const lc=cc.map(v=>Math.min(255,v+110));
+          doc.setFillColor(...lc);
+          doc.rect(0,y,1.2,ROW_H,'F');
+          doc.setTextColor(30,40,55);doc.setFontSize(6);doc.setFont('helvetica','normal');
+          const actLabel=doc.splitTextToSize(act.name, CW*0.50)[0];
+          doc.text(actLabel,COL_ACT,y+ROW_H-1.5);
+          doc.setFont('helvetica','bold');
+          doc.text(fmtAED(mat),COL_MAT,y+ROW_H-1.5);
+          doc.text(fmtAED(inst),COL_INST,y+ROW_H-1.5);
+          y+=ROW_H;
+        });
+
+        // Subtotal row
+        doc.setFillColor(228,235,245);
+        doc.rect(0,y,pw,ROW_H,'F');
+        doc.setFillColor(...cc);doc.rect(0,y,1.2,ROW_H,'F');
+        doc.setFontSize(6);doc.setFont('helvetica','bold');
+        doc.setTextColor(...cc);
+        doc.text('SUBTOTAL',COL_ACT,y+ROW_H-1.5);
+        doc.text(fmtAED(catTot.mat),COL_MAT,y+ROW_H-1.5);
+        doc.text(fmtAED(catTot.inst),COL_INST,y+ROW_H-1.5);
+        y+=ROW_H+SUB_GAP;
+      });
+
+      // ── Grand total bar ──
+      const gt=getVillaTotals(vt);
+      doc.setFillColor(30,45,69);
+      doc.rect(0,y,pw,GT_H,'F');
+      doc.setTextColor(245,200,66);doc.setFontSize(7);doc.setFont('helvetica','bold');
+      doc.text('GRAND TOTAL — '+vt,ML,y+GT_H-1.8);
+      doc.setTextColor(255,255,255);
+      doc.text(fmtAED(gt.mat),COL_MAT,y+GT_H-1.8);
+      doc.text(fmtAED(gt.inst),COL_INST,y+GT_H-1.8);
+      doc.setTextColor(245,200,66);
+      doc.text('TOTAL: AED '+(gt.mat+gt.inst).toLocaleString('en-AE',{minimumFractionDigits:0}),pw-MR,y+GT_H-1.8,{align:'right'});
+      y+=GT_H;
+
+      // ── Footer ──
+      doc.setDrawColor(180,180,180);doc.setLineWidth(0.15);
+      doc.line(ML,ph-FTR_H+1,pw-MR,ph-FTR_H+1);
+      doc.setTextColor(140,140,140);doc.setFontSize(5.5);doc.setFont('helvetica','normal');
+      doc.text('Sdmbrk Collections — MODUN GULF BUILDING CONTRACTING LLC — Confidential',ML,ph-3);
+      doc.text(`${vi+1} / ${allVillaTypes.length}`,pw-MR,ph-3,{align:'right'});
+    });
+
+    doc.save('DRY_COST_ALL_VILLA_TYPES.pdf');
+  };
+
+  // Discipline section rendered as a table block (PDF format)
+  const DisciplineTable=({vt,cat})=>{
+    const acts=getSortedActs(cat);
+    const catTotal=getCatTotal(vt,cat);
+    const borderColor={Electrical:'var(--blue)',Plumbing:'var(--amber)',HVAC:'var(--teal)'}[cat];
+    const bgLight={Electrical:'#eff6ff',Plumbing:'#fffbeb',HVAC:'#f0fdfa'}[cat];
+    const textColor={Electrical:'var(--blue2)',Plumbing:'var(--amber2)',HVAC:'var(--teal2)'}[cat];
+    const isEditing=editModes[cat]||false;
+    const toggleEdit=()=>setEditModes(m=>({...m,[cat]:!m[cat]}));
+    const cols=isEditing?'32px 1fr 140px 140px 90px':'32px 1fr 140px 140px';
+
+    return h('div',{style:{marginBottom:20,borderRadius:'var(--radius2)',overflow:'hidden',border:`1.5px solid ${borderColor}`,boxShadow:'0 1px 4px rgba(0,0,0,.07)'}},
+      // Discipline header
+      h('div',{style:{background:borderColor,padding:'8px 16px',display:'flex',alignItems:'center',justifyContent:'space-between'}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:10}},
+          h('span',{style:{color:'#fff',fontWeight:700,fontSize:13,letterSpacing:'.04em'}},cat.toUpperCase()),
+          h('button',{style:{background:'rgba(255,255,255,.18)',border:'none',color:'#fff',borderRadius:4,padding:'2px 10px',fontSize:11,cursor:'pointer',fontWeight:500},
+            onClick:()=>{setEditAct(null);setShowActModal(true);}
+          },'+ Add'),
+          h('button',{
+            onClick:toggleEdit,
+            style:{
+              background:isEditing?'rgba(255,255,255,.35)':'rgba(255,255,255,.12)',
+              border:'1px solid rgba(255,255,255,.4)',
+              color:'#fff',borderRadius:4,padding:'2px 10px',
+              fontSize:11,cursor:'pointer',fontWeight:600,
+              letterSpacing:'.02em',transition:'all .15s'
+            }
+          },isEditing?'✓ Done':'✎ Edit')
+        ),
+        h('div',{style:{display:'flex',gap:20,fontSize:12,color:'rgba(255,255,255,.9)'}},
+          h('span',null,'Mat: ',h('b',null,catTotal.mat>0?fmt(catTotal.mat):'—')),
+          h('span',null,'Install: ',h('b',null,catTotal.inst>0?fmt(catTotal.inst):'—'))
+        )
+      ),
+      // Column headers
+      h('div',{style:{display:'grid',gridTemplateColumns:cols,background:bgLight,padding:'6px 12px',borderBottom:`1px solid ${borderColor}22`}},
+        h('div',{style:{fontSize:10,color:'var(--text3)',fontWeight:600}},'#'),
+        h('div',{style:{fontSize:10,color:'var(--text3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'.05em'}},'Activity'),
+        h('div',{style:{fontSize:10,color:'var(--green2)',fontWeight:600,textAlign:'right',textTransform:'uppercase',letterSpacing:'.05em'}},'Material Cost'),
+        h('div',{style:{fontSize:10,color:'var(--blue2)',fontWeight:600,textAlign:'right',textTransform:'uppercase',letterSpacing:'.05em'}},'Installation Cost'),
+        isEditing&&h('div',{style:{fontSize:10,color:'var(--text3)',fontWeight:600,textAlign:'center'}},'Actions')
+      ),
+      // Activity rows
+      ...acts.map((act,idx)=>{
+        const dc=getDC(vt,act.id);
+        const matVal=dc.mat!==''?dc.mat:0;
+        const instVal=dc.inst!==''?dc.inst:0;
+        return h('div',{key:act.id,style:{
+          display:'grid',gridTemplateColumns:cols,
+          padding:'5px 12px',
+          background:idx%2===0?'#fff':bgLight,
+          borderBottom:'1px solid var(--border)',
+          alignItems:'center',
+          minHeight:38
+        }},
+          // Row number
+          h('div',{style:{fontSize:11,color:'var(--text3)',fontFamily:'monospace'}},idx+1),
+          // Activity name
+          h('div',{style:{fontSize:13,fontWeight:500,color:'var(--text)'}},act.name),
+          // Material cost input
+          h('div',{style:{padding:'0 4px'}},
+            h('input',{
+              type:'text',inputMode:'decimal',
+              value:matVal===0?'':matVal,
+              placeholder:'0',
+              onChange:e=>{
+                const v=e.target.value.replace(/[^0-9.]/g,'');
+                setDC(vt,act.id,'mat',v===''?'':v);
+              },
+              onBlur:e=>{
+                const v=parseFloat(e.target.value)||0;
+                setDC(vt,act.id,'mat',v||'');
+              },
+              style:{width:'100%',border:'1px solid var(--border)',borderRadius:4,padding:'5px 10px',fontSize:12,
+                textAlign:'right',background:'#f0fdf4',color:'var(--green2)',fontFamily:'monospace',fontWeight:600}
+            })
+          ),
+          // Installation cost input
+          h('div',{style:{padding:'0 4px'}},
+            h('input',{
+              type:'text',inputMode:'decimal',
+              value:instVal===0?'':instVal,
+              placeholder:'0',
+              onChange:e=>{
+                const v=e.target.value.replace(/[^0-9.]/g,'');
+                setDC(vt,act.id,'inst',v===''?'':v);
+              },
+              onBlur:e=>{
+                const v=parseFloat(e.target.value)||0;
+                setDC(vt,act.id,'inst',v||'');
+              },
+              style:{width:'100%',border:'1px solid var(--border)',borderRadius:4,padding:'5px 10px',fontSize:12,
+                textAlign:'right',background:'#eff6ff',color:'var(--blue2)',fontFamily:'monospace',fontWeight:600}
+            })
+          ),
+          // Row actions — only shown in edit mode
+          isEditing&&h('div',{style:{display:'flex',gap:3,justifyContent:'center'}},
+            h('button',{onClick:()=>moveAct(cat,idx,-1),disabled:idx===0,title:'Move up',
+              style:{border:'1px solid var(--border)',borderRadius:3,padding:'2px 5px',background:'#fff',cursor:idx===0?'default':'pointer',color:idx===0?'#ccc':'var(--text2)',fontSize:9}},'▲'),
+            h('button',{onClick:()=>moveAct(cat,idx,1),disabled:idx===acts.length-1,title:'Move down',
+              style:{border:'1px solid var(--border)',borderRadius:3,padding:'2px 5px',background:'#fff',cursor:idx===acts.length-1?'default':'pointer',color:idx===acts.length-1?'#ccc':'var(--text2)',fontSize:9}},'▼'),
+            h('button',{onClick:()=>{setEditAct(act);setShowActModal(true);},title:'Edit',
+              style:{border:'1px solid var(--border)',borderRadius:3,padding:'2px 6px',background:'#fff',cursor:'pointer',color:'var(--text2)',fontSize:10}},'✎'),
+            h('button',{onClick:()=>deleteAct(act.id),title:'Delete',
+              style:{border:'1px solid #fca5a5',borderRadius:3,padding:'2px 6px',background:'#fff5f5',cursor:'pointer',color:'var(--red)',fontSize:10}},'✕')
+          )
+        );
+      }),
+      // Category total row
+      h('div',{style:{
+        display:'grid',gridTemplateColumns:cols,
+        padding:'8px 12px',background:bgLight,
+        borderTop:`2px solid ${borderColor}55`,
+        alignItems:'center'
+      }},
+        h('div',null),
+        h('div',{style:{fontWeight:700,fontSize:13,color:textColor}},'TOTAL'),
+        h('div',{style:{textAlign:'right',fontFamily:'monospace',fontWeight:700,fontSize:13,color:'var(--green2)'}},catTotal.mat>0?fmt(catTotal.mat):'—'),
+        h('div',{style:{textAlign:'right',fontFamily:'monospace',fontWeight:700,fontSize:13,color:'var(--blue2)'}},catTotal.inst>0?fmt(catTotal.inst):'—'),
+        isEditing&&h('div',null)
+      )
+    );
+  };
+
+  const grandTotals=allVillaTypes.reduce((acc,vt)=>{
+    const t=getVillaTotals(vt);
+    return{mat:acc.mat+t.mat,inst:acc.inst+t.inst};
+  },{mat:0,inst:0});
+
+  // Weighted project totals: unit_cost × quantity_of_that_villa_type across all THs
+  // vtQty: { villaTypeName: totalCount across all THs }
+  const vtQty=useMemo(()=>{
+    const q={};
+    data.townhouses.forEach(th=>th.villaTypes.forEach(v=>{q[v.type]=(q[v.type]||0)+v.count;}));
+    return q;
+  },[data.townhouses]);
+
+  const totalVillas530=Object.values(vtQty).reduce((s,n)=>s+n,0);
+
+  // Per discipline weighted totals
+  const discTotals=useMemo(()=>{
+    const result={};
+    CATEGORIES.forEach(cat=>{
+      let mat=0,inst=0;
+      allVillaTypes.forEach(vt=>{
+        const qty=vtQty[vt]||0;
+        if(qty===0)return;
+        const ct=getCatTotal(vt,cat);
+        mat+=ct.mat*qty;
+        inst+=ct.inst*qty;
+      });
+      result[cat]={mat,inst};
+    });
+    return result;
+  },[data.dryCosts,data.activities,vtQty,allVillaTypes]);
+
+  const projMat=CATEGORIES.reduce((s,c)=>s+(discTotals[c]?.mat||0),0);
+  const projInst=CATEGORIES.reduce((s,c)=>s+(discTotals[c]?.inst||0),0);
+  const catColors530={Electrical:'var(--blue)',Plumbing:'var(--amber)',HVAC:'var(--teal)'};
+  const catBg530={Electrical:'var(--blue3)',Plumbing:'var(--amber3)',HVAC:'var(--teal3)'};
+
+  return h('div',null,
+    showActModal&&h(ActModal,null),
+
+    h('div',{className:'page-header'},
+      h('div',null,
+        h('div',{className:'page-title'},'Dry Cost Register'),
+        h('div',{className:'page-sub'},'Unit cost per villa type — Material & Installation for all MEP disciplines')
+      ),
+      h('div',{className:'header-actions'},
+        h('button',{className:'btn btn-ghost',onClick:()=>{setEditAct(null);setShowActModal(true);}},h(Icon,{name:'plus',size:14}),'Add Activity'),
+        h('button',{className:'btn btn-amber',onClick:exportPDF},h(Icon,{name:'download',size:14}),'Export PDF')
+      )
+    ),
+
+    h('div',{className:'content'},
+
+      // ── Project-wide weighted totals section ──
+      h('div',{style:{marginBottom:22}},
+        // Header row
+        h('div',{style:{display:'flex',alignItems:'baseline',gap:12,marginBottom:12}},
+          h('div',{style:{fontWeight:700,fontSize:13,color:'var(--text)'}},
+            'Project Total — ',h('span',{style:{color:'var(--amber)'}},totalVillas530,' Villas')
+          ),
+          h('div',{style:{fontSize:11,color:'var(--text3)'}},'(unit cost × villa quantities across all TH blocks)')
+        ),
+        // Discipline breakdown cards
+        h('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,1fr) 1.1fr',gap:12}},
+          // One card per discipline
+          ...CATEGORIES.map(cat=>h('div',{key:cat,style:{
+            background:'#fff',border:`1.5px solid ${catColors530[cat]}33`,
+            borderTop:`3px solid ${catColors530[cat]}`,
+            borderRadius:'var(--radius2)',padding:'14px 16px',
+            boxShadow:'0 1px 4px rgba(0,0,0,.06)'
+          }},
+            h('div',{style:{fontSize:10,fontWeight:700,color:catColors530[cat],textTransform:'uppercase',letterSpacing:'.08em',marginBottom:8}},cat),
+            h('div',{style:{display:'flex',gap:8}},
+              h('div',{style:{flex:1,background:catBg530[cat],borderRadius:'var(--radius)',padding:'8px 10px'}},
+                h('div',{style:{fontSize:9,color:'var(--text3)',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}},'Material'),
+                h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:13,color:'var(--green2)'}},
+                  discTotals[cat]?.mat>0?fmt(discTotals[cat].mat):'—'
+                )
+              ),
+              h('div',{style:{flex:1,background:'var(--blue3)',borderRadius:'var(--radius)',padding:'8px 10px'}},
+                h('div',{style:{fontSize:9,color:'var(--text3)',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}},'Installation'),
+                h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:13,color:'var(--blue2)'}},
+                  discTotals[cat]?.inst>0?fmt(discTotals[cat].inst):'—'
+                )
+              )
+            )
+          )),
+          // Grand total card
+          h('div',{style:{
+            background:'linear-gradient(135deg,var(--sidebar) 0%,#2d4a6e 100%)',
+            borderRadius:'var(--radius2)',padding:'14px 16px',
+            boxShadow:'0 2px 6px rgba(0,0,0,.12)'
+          }},
+            h('div',{style:{fontSize:10,fontWeight:700,color:'#7a99bb',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:8}},'Grand Total'),
+            h('div',{style:{fontFamily:'monospace',fontWeight:800,fontSize:17,color:'#f5c842',marginBottom:6}},
+              projMat+projInst>0?fmt(projMat+projInst):'—'
+            ),
+            h('div',{style:{display:'flex',gap:10}},
+              h('div',null,
+                h('div',{style:{fontSize:9,color:'#7a99bb',marginBottom:2}},'MAT'),
+                h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:12,color:'#4ade80'}},projMat>0?fmt(projMat):'—')
+              ),
+              h('div',{style:{width:1,background:'rgba(255,255,255,.15)'}}),
+              h('div',null,
+                h('div',{style:{fontSize:9,color:'#7a99bb',marginBottom:2}},'INSTALL'),
+                h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:12,color:'#60a5fa'}},projInst>0?fmt(projInst):'—')
+              )
+            )
+          )
+        )
+      ),
+
+      // Villa type selector tabs
+      h('div',{style:{display:'flex',gap:6,flexWrap:'wrap',marginBottom:22,borderBottom:'2px solid var(--border)',paddingBottom:0}},
+        allVillaTypes.map(vt=>{
+          const active=curVilla===vt;
+          const t=getVillaTotals(vt);
+          const hasData=t.total>0;
+          const vtColor=(villaTypeDB.find(v=>v.name===vt)||{}).color||'#2563eb';
+          return h('button',{key:vt,onClick:()=>setSelVilla(vt),style:{
+            padding:'9px 18px',border:'none',
+            borderBottom:active?`2px solid ${vtColor}`:'2px solid transparent',
+            marginBottom:-2,background:'transparent',cursor:'pointer',
+            fontWeight:active?700:400,fontSize:13,
+            color:active?vtColor:'var(--text2)',
+            transition:'all .15s',display:'flex',alignItems:'center',gap:6
+          }},
+            h('span',{style:{width:7,height:7,borderRadius:'50%',background:hasData?'var(--green)':'#ddd',display:'inline-block'}}),
+            vt
+          );
+        })
+      ),
+
+      // Current villa type sheet — PDF format with all 3 disciplines stacked
+      curVilla&&h('div',null,
+        // Villa type header banner
+        h('div',{style:{
+          background:'linear-gradient(135deg,var(--sidebar) 0%,#2d4a6e 100%)',
+          borderRadius:'var(--radius2)',padding:'16px 24px',marginBottom:22,
+          display:'flex',justifyContent:'space-between',alignItems:'center'
+        }},
+          h('div',null,
+            h('div',{style:{fontSize:11,color:'#7a99bb',letterSpacing:'.1em',textTransform:'uppercase',marginBottom:4}},'Dry Cost Sheet'),
+            h('div',{style:{fontSize:22,fontWeight:700,color:'#f5c842',fontFamily:'IBM Plex Mono,monospace'}},'DRY COST — ',curVilla)
+          ),
+          h('div',{style:{display:'flex',gap:24,textAlign:'right'}},
+            h('div',null,
+              h('div',{style:{fontSize:10,color:'#7a99bb',textTransform:'uppercase',marginBottom:3}},'Total Material'),
+              h('div',{style:{fontSize:18,fontWeight:700,color:'#4ade80',fontFamily:'monospace'}},
+                (()=>{const t=getVillaTotals(curVilla);return t.mat>0?fmt(t.mat):'—';})()
+              )
+            ),
+            h('div',null,
+              h('div',{style:{fontSize:10,color:'#7a99bb',textTransform:'uppercase',marginBottom:3}},'Total Installation'),
+              h('div',{style:{fontSize:18,fontWeight:700,color:'#60a5fa',fontFamily:'monospace'}},
+                (()=>{const t=getVillaTotals(curVilla);return t.inst>0?fmt(t.inst):'—';})()
+              )
+            ),
+            h('div',null,
+              h('div',{style:{fontSize:10,color:'#7a99bb',textTransform:'uppercase',marginBottom:3}},'Grand Total'),
+              h('div',{style:{fontSize:18,fontWeight:700,color:'#f5c842',fontFamily:'monospace'}},
+                (()=>{const t=getVillaTotals(curVilla);return t.total>0?fmt(t.total):'—';})()
+              )
+            )
+          )
+        ),
+
+        // Three discipline tables stacked exactly like PDF
+        CATEGORIES.map(cat=>h(DisciplineTable,{key:cat,vt:curVilla,cat})),
+
+        // Projected total across all THs using this villa type
+        (()=>{
+          const ths=data.townhouses.filter(th=>th.villaTypes.some(v=>v.type===curVilla));
+          if(ths.length===0)return null;
+          const gt=getVillaTotals(curVilla);
+          return h('div',{className:'card',style:{borderColor:'var(--amber2)',marginTop:8}},
+            h('div',{className:'card-title',style:{color:'var(--amber)'}},'Projected LPO Value — THs using '+curVilla),
+            h('div',{className:'table-wrap'},
+              h('table',null,
+                h('thead',null,h('tr',null,h('th',null,'Townhouse'),h('th',{className:'num'},'Qty'),h('th',{className:'num'},'Material LPO'),h('th',{className:'num'},'Subcon LPO'),h('th',{className:'num'},'Total LPO'))),
+                h('tbody',null,
+                  ...ths.map(th=>{
+                    const qty=th.villaTypes.filter(v=>v.type===curVilla).reduce((s,v)=>s+v.count,0);
+                    return h('tr',{key:th.id},
+                      h('td',null,h('b',{style:{color:'var(--amber)'}},th.name)),
+                      h('td',{className:'num'},h('span',{className:'badge badge-blue'},qty,'×')),
+                      h('td',{className:'num',style:{color:'var(--green2)'}},fmt(gt.mat*qty)),
+                      h('td',{className:'num',style:{color:'var(--blue2)'}},fmt(gt.inst*qty)),
+                      h('td',{className:'num',style:{fontWeight:700,color:'var(--amber)'}},fmt(gt.total*qty))
+                    );
+                  }),
+                  (()=>{
+                    const totalQty=ths.reduce((s,th)=>s+th.villaTypes.filter(v=>v.type===curVilla).reduce((ss,v)=>ss+v.count,0),0);
+                    return h('tr',{className:'summary-row'},
+                      h('td',null,'TOTAL'),
+                      h('td',{className:'num',style:{fontFamily:'monospace',fontWeight:700}},totalQty,'×'),
+                      h('td',{className:'num',style:{fontFamily:'monospace',fontWeight:700,color:'var(--green2)'}},fmt(gt.mat*totalQty)),
+                      h('td',{className:'num',style:{fontFamily:'monospace',fontWeight:700,color:'var(--blue2)'}},fmt(gt.inst*totalQty)),
+                      h('td',{className:'num',style:{fontFamily:'monospace',fontWeight:700,color:'var(--amber)'}},fmt(gt.total*totalQty))
+                    );
+                  })()
+                )
+              )
+            )
+          );
+        })()
+      )
+    )
+  );
+};
+
+/* ============ DATABASE PAGE ============ */
+const DatabasePage=({data,setData})=>{
+  const[activeTab,setActiveTab]=useState('townhouses');
+  const[showVTModal,setShowVTModal]=useState(false);
+  const[editVT,setEditVT]=useState(null);
+  const[editingTH,setEditingTH]=useState(null);
+  const[showAddTH,setShowAddTH]=useState(false);
+  const[rowEdit,setRowEdit]=useState({});
+
+  const villaTypeDB=data.villaTypeDB||VILLA_TYPE_PRESETS.map((n,i)=>({id:`vt${i+1}`,name:n,description:'',color:'#2563eb'}));
+  const allVTNames=villaTypeDB.map(v=>v.name);
+
+  const saveVT=(vt)=>{
+    setData(d=>{
+      const db=d.villaTypeDB||[];
+      if(editVT){return{...d,villaTypeDB:db.map(v=>v.id===editVT.id?{...v,...vt}:v)};}
+      return{...d,villaTypeDB:[...db,{id:uid(),...vt}]};
+    });
+    setShowVTModal(false);setEditVT(null);
+  };
+  const deleteVT=(id)=>{
+    if(!confirm('Delete this villa type?'))return;
+    setData(d=>({...d,villaTypeDB:(d.villaTypeDB||[]).filter(v=>v.id!==id)}));
+  };
+
+  const TH_PRESETS=Array.from({length:33},(_,i)=>`TH-${String(i+1).padStart(2,'0')}`);
+  const existingNames=new Set(data.townhouses.map(t=>t.name));
+  const sortedTHs=[...data.townhouses].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+  const totalVillas=data.townhouses.reduce((s,th)=>s+th.villaTypes.reduce((ss,v)=>ss+v.count,0),0);
+
+  const startEdit=(thId)=>{
+    const th=data.townhouses.find(t=>t.id===thId);
+    const init={};
+    allVTNames.forEach(vt=>{const f=th.villaTypes.find(v=>v.type===vt);init[vt]=f?f.count:'';});
+    setRowEdit(r=>({...r,[thId]:init}));setEditingTH(thId);
+  };
+  const cancelEdit=(thId)=>{setRowEdit(r=>{const n={...r};delete n[thId];return n;});setEditingTH(null);};
+  const saveEdit=(thId)=>{
+    const vals=rowEdit[thId]||{};
+    const villaTypes=allVTNames.filter(vt=>(parseInt(vals[vt])||0)>0).map(vt=>({id:uid(),type:vt,count:parseInt(vals[vt])||0}));
+    setData(d=>({...d,townhouses:d.townhouses.map(t=>t.id===thId?{...t,villaTypes}:t)}));
+    cancelEdit(thId);
+  };
+  const deleteTH=(id)=>{if(!confirm('Remove this townhouse?'))return;setData(d=>({...d,townhouses:d.townhouses.filter(t=>t.id!==id)}));};
+
+  // Bulk Add modal state
+  const[showBulkModal,setShowBulkModal]=useState(false);
+  const[bulkPrefix,setBulkPrefix]=useState('TH-');
+  const[bulkFrom,setBulkFrom]=useState(1);
+  const[bulkTo,setBulkTo]=useState(33);
+  const[bulkPad,setBulkPad]=useState(true);
+  const[bulkSkipExisting,setBulkSkipExisting]=useState(true);
+  const getBulkPreview=()=>{
+    const from=parseInt(bulkFrom)||1;
+    const to=parseInt(bulkTo)||1;
+    if(from>to||to-from>99)return[];
+    return Array.from({length:to-from+1},(_,i)=>{
+      const n=from+i;
+      const name=(bulkPrefix||'')+(bulkPad?String(n).padStart(2,'0'):n);
+      return{name,exists:existingNames.has(name)};
+    });
+  };
+  const doBulkAdd=()=>{
+    const preview=getBulkPreview();
+    const toAdd=bulkSkipExisting?preview.filter(p=>!p.exists):preview;
+    if(!toAdd.length){alert('Nothing to add.');return;}
+    setData(d=>({...d,townhouses:[...d.townhouses,...toAdd.map(({name})=>({id:uid(),name,villaTypes:[]}))]}));
+    setShowBulkModal(false);
+  };
+
+  const BulkAddModal=()=>{
+    const preview=getBulkPreview();
+    const toAdd=bulkSkipExisting?preview.filter(p=>!p.exists):preview;
+    return h(Modal,{title:'Bulk Add Townhouses',onClose:()=>setShowBulkModal(false),
+      footer:[
+        h('button',{className:'btn btn-ghost',onClick:()=>setShowBulkModal(false)},'Cancel'),
+        h('button',{className:'btn btn-amber',onClick:doBulkAdd,disabled:toAdd.length===0},
+          h(Icon,{name:'plus',size:14}),`Add ${toAdd.length} Townhouse${toAdd.length!==1?'s':''}`)
+      ]},
+      h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:14}},
+        h('div',null,
+          h('label',null,'Name Prefix'),
+          h('input',{value:bulkPrefix,onChange:e=>setBulkPrefix(e.target.value),placeholder:'e.g. TH- or BLOCK-'})
+        ),
+        h('div',null,
+          h('label',null,'Zero-pad numbers'),
+          h('select',{value:String(bulkPad),onChange:e=>setBulkPad(e.target.value==='true')},
+            h('option',{value:'true'},'Yes  (01, 02 … 33)'),
+            h('option',{value:'false'},'No  (1, 2 … 33)')
+          )
+        ),
+        h('div',null,
+          h('label',null,'From number'),
+          h('input',{type:'number',min:1,max:999,value:bulkFrom,onChange:e=>setBulkFrom(e.target.value)})
+        ),
+        h('div',null,
+          h('label',null,'To number'),
+          h('input',{type:'number',min:1,max:999,value:bulkTo,onChange:e=>setBulkTo(e.target.value)})
+        )
+      ),
+      h('div',{style:{display:'flex',alignItems:'center',gap:10,marginBottom:14,padding:'10px 12px',background:'var(--surface2)',borderRadius:'var(--radius)',border:'1px solid var(--border)'}},
+        h('input',{type:'checkbox',id:'skipExisting',checked:bulkSkipExisting,onChange:e=>setBulkSkipExisting(e.target.checked),style:{width:'auto',margin:0}}),
+        h('label',{htmlFor:'skipExisting',style:{margin:0,cursor:'pointer',color:'var(--text)',fontSize:13}},'Skip already-existing names')
+      ),
+      preview.length>0&&h('div',null,
+        h('div',{style:{fontSize:12,fontWeight:600,color:'var(--text2)',marginBottom:8,textTransform:'uppercase',letterSpacing:'.05em'}},
+          `Preview — ${toAdd.length} will be added`+(preview.length-toAdd.length>0?`, ${preview.length-toAdd.length} skipped`:'')
+        ),
+        h('div',{style:{
+          display:'flex',flexWrap:'wrap',gap:5,maxHeight:160,overflowY:'auto',
+          padding:'10px',background:'var(--surface2)',borderRadius:'var(--radius)',border:'1px solid var(--border)'
+        }},
+          preview.map(p=>h('span',{key:p.name,style:{
+            padding:'3px 9px',borderRadius:20,fontSize:12,fontWeight:600,
+            background:p.exists?'#fee2e2':'#dcfce7',
+            color:p.exists?'#b91c1c':'#15803d',
+            border:`1px solid ${p.exists?'#fca5a5':'#86efac'}`
+          }},p.name,p.exists?' ✓':' +'))
+        ),
+        h('div',{style:{fontSize:11,color:'var(--text3)',marginTop:6}},
+          h('span',{style:{color:'#15803d',fontWeight:600}},'Green + '),'= will be added  ·  ',
+          h('span',{style:{color:'#b91c1c',fontWeight:600}},'Red ✓ '),'= already exists'
+        )
+      ),
+      preview.length===0&&h('div',{style:{color:'var(--text3)',fontSize:13,textAlign:'center',padding:'16px'}},
+        'Enter a valid range to preview names'
+      )
+    );
+  };
+
+  // Villa Type Modal
+  const VTModal=()=>{
+    const VT_COLORS=['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#be185d','#ea580c','#65a30d'];
+    const[name,setName]=useState(editVT?.name||'');
+    const[desc,setDesc]=useState(editVT?.description||'');
+    const[color,setColor]=useState(editVT?.color||VT_COLORS[0]);
+    return h(Modal,{title:editVT?'Edit Villa Type':'Add Villa Type',
+      onClose:()=>{setShowVTModal(false);setEditVT(null)},
+      footer:[
+        h('button',{className:'btn btn-ghost',onClick:()=>{setShowVTModal(false);setEditVT(null)}},'Cancel'),
+        h('button',{className:'btn btn-amber',onClick:()=>{if(!name.trim())return;saveVT({name:name.trim(),description:desc,color:color});}},'Save Villa Type')
+      ]},
+      h('div',{className:'form-row'},h('div',null,h('label',null,'Villa Type Name'),h('input',{value:name,onChange:e=>setName(e.target.value),placeholder:'e.g. 6BDRM-PENTHOUSE',autoFocus:true}))),
+      h('div',{className:'form-row'},h('div',null,h('label',null,'Description (optional)'),h('input',{value:desc,onChange:e=>setDesc(e.target.value),placeholder:'e.g. 6 Bedroom Penthouse Villa'}))),
+      h('div',{style:{marginBottom:14}},
+        h('label',null,'Colour Tag'),
+        h('div',{style:{display:'flex',gap:8,flexWrap:'wrap',marginTop:6}},
+          VT_COLORS.map(c=>h('div',{key:c,onClick:()=>setColor(c),style:{
+            width:28,height:28,borderRadius:'50%',background:c,cursor:'pointer',
+            border:color===c?'3px solid #1a2233':'3px solid transparent',
+            boxShadow:color===c?'0 0 0 2px #fff, 0 0 0 4px '+c:'none',
+            transition:'all .15s'
+          }}))
+        )
+      ),
+      h('div',{style:{display:'flex',alignItems:'center',gap:12,padding:'10px 14px',background:'var(--surface2)',borderRadius:'var(--radius)',border:'1px solid var(--border)'}},
+        h('div',{style:{width:12,height:12,borderRadius:'50%',background:color,flexShrink:0}}),
+        h('span',{style:{fontWeight:600,fontSize:13}},name||'Villa Type Name')
+      )
+    );
+  };
+
+  // Add TH modal
+  const[newTHName,setNewTHName]=useState('');
+  const[newTHCustom,setNewTHCustom]=useState('');
+  const[newTHVals,setNewTHVals]=useState({});
+  const AddTHModal=()=>h(Modal,{
+    title:'Add Townhouse',onClose:()=>setShowAddTH(false),
+    footer:[
+      h('button',{className:'btn btn-ghost',onClick:()=>setShowAddTH(false)},'Cancel'),
+      h('button',{className:'btn btn-amber',onClick:()=>{
+        const name=(newTHName==='__custom'?newTHCustom:newTHName).trim();
+        if(!name)return;
+        const villaTypes=allVTNames.filter(vt=>(parseInt(newTHVals[vt])||0)>0).map(vt=>({id:uid(),type:vt,count:parseInt(newTHVals[vt])||0}));
+        setData(d=>({...d,townhouses:[...d.townhouses,{id:uid(),name,villaTypes}]}));
+        setShowAddTH(false);setNewTHName('');setNewTHCustom('');setNewTHVals({});
+      }},'Add Townhouse')
+    ]},
+    h('div',{className:'form-row',style:{marginBottom:16}},
+      h('div',null,
+        h('label',null,'Townhouse'),
+        h('select',{value:newTHName,onChange:e=>setNewTHName(e.target.value)},
+          h('option',{value:''},'-- Select --'),
+          TH_PRESETS.filter(n=>!existingNames.has(n)).map(n=>h('option',{key:n,value:n},n)),
+          h('option',{value:'__custom'},'+ Custom name...')
+        ),
+        newTHName==='__custom'&&h('input',{style:{marginTop:8},value:newTHCustom,onChange:e=>setNewTHCustom(e.target.value),placeholder:'e.g. TH-34'})
+      )
+    ),
+    h('div',{style:{fontWeight:600,fontSize:12,color:'var(--text2)',textTransform:'uppercase',letterSpacing:'.05em',marginBottom:10}},'Villa Quantities'),
+    h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))',gap:10}},
+      villaTypeDB.map(vt=>h('div',{key:vt.id,style:{background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:'var(--radius)',padding:'10px 12px'}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:6,marginBottom:6}},
+          h('span',{style:{width:8,height:8,borderRadius:'50%',background:vt.color,flexShrink:0}}),
+          h('span',{style:{fontWeight:600,fontSize:12}},vt.name)
+        ),
+        h('input',{type:'number',min:0,placeholder:'0',value:newTHVals[vt.name]||'',
+          onChange:e=>setNewTHVals(v=>({...v,[vt.name]:e.target.value})),style:{textAlign:'center'}})
+      ))
+    )
+  );
+
+  // Column header colours matching image
+  const VT_HEADER_STYLE=(vt)=>{
+    const bg=vt.color;
+    return{background:bg,color:'#fff',fontWeight:700,fontSize:12,textAlign:'center',
+      padding:'8px 6px',whiteSpace:'nowrap',letterSpacing:'.03em'};
+  };
+
+  return h('div',null,
+    showVTModal&&h(VTModal,null),
+    showAddTH&&h(AddTHModal,null),
+    showBulkModal&&h(BulkAddModal,null),
+    h('div',{className:'page-header'},
+      h('div',null,
+        h('div',{className:'page-title'},'Project Database'),
+        h('div',{className:'page-sub'},'TAORMINA VILLAGE-01 — Villa & Townhouse master data')
+      )
+    ),
+    h('div',{className:'tabs'},
+      [['townhouses','Townhouses'],['villatypes','Villa Types']].map(([k,l])=>
+        h('div',{key:k,className:`tab${activeTab===k?' active':''}`,onClick:()=>setActiveTab(k)},l)
+      )
+    ),
+    h('div',{className:'content'},
+
+      /* ===== TOWNHOUSES TAB — Excel-style table ===== */
+      activeTab==='townhouses'&&h('div',null,
+
+        // Action bar
+        h('div',{style:{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}},
+          h('button',{className:'btn btn-amber',onClick:()=>{setNewTHName('');setNewTHCustom('');setNewTHVals({});setShowAddTH(true);}},h(Icon,{name:'plus',size:14}),'Add Townhouse'),
+          h('button',{className:'btn btn-ghost',onClick:()=>setShowBulkModal(true)},h(Icon,{name:'plus',size:14}),'Bulk Add'),
+          h('span',{style:{marginLeft:'auto',fontSize:12,color:'var(--text3)'}},
+            `${data.townhouses.length} townhouses · ${totalVillas} total villas`
+          )
+        ),
+
+        // Excel-style table
+        h('div',{style:{overflowX:'auto',borderRadius:'var(--radius2)',border:'2px solid #333',boxShadow:'0 2px 8px rgba(0,0,0,.12)'}},
+          h('table',{style:{width:'100%',borderCollapse:'collapse',minWidth:villaTypeDB.length*100+300}},
+            h('thead',null,
+              // Title row
+              h('tr',null,
+                h('th',{colSpan:3+villaTypeDB.length,style:{
+                  background:'#1e2d45',color:'#f5c842',fontSize:14,fontWeight:700,
+                  textAlign:'center',padding:'10px',letterSpacing:'.05em',border:'1px solid #333'
+                }},'TAORMINA VILLAGE-01 (',h('span',{style:{color:'#fff'}},totalVillas,' VILLAS'),')')
+              ),
+              // Column headers
+              h('tr',null,
+                h('th',{style:{background:'#f59e0b',color:'#1a2233',fontWeight:700,fontSize:12,padding:'8px 10px',border:'1px solid #333',textAlign:'center',width:40}},'#'),
+                h('th',{style:{background:'#f59e0b',color:'#1a2233',fontWeight:700,fontSize:12,padding:'8px 16px',border:'1px solid #333',textAlign:'center',minWidth:80}},'BLOCK'),
+                h('th',{style:{background:'#f59e0b',color:'#1a2233',fontWeight:700,fontSize:12,padding:'8px 10px',border:'1px solid #333',textAlign:'center',minWidth:60}},'TOTAL'),
+                ...villaTypeDB.map(vt=>h('th',{key:vt.id,style:{...VT_HEADER_STYLE(vt),border:'1px solid #333',minWidth:90}},vt.name))
+              )
+            ),
+            h('tbody',null,
+              ...sortedTHs.map((th,idx)=>{
+                const isEditing=editingTH===th.id;
+                const totalCount=th.villaTypes.reduce((s,v)=>s+v.count,0);
+                const rowBg=idx%2===0?'#ffffff':'#f5f7fa';
+                // highlight rows that have LUX/special types (pink like image)
+                const hasSpecial=th.villaTypes.some(v=>v.type.includes('LUX')||v.type.includes('STANDALONE'));
+                const thBg=hasSpecial?'#f0abfc':th.villaTypes.some(v=>v.type.includes('4BR'))?'#67e8f9':'#a3e635';
+                const thTextColor='#1a2233';
+                return h('tr',{key:th.id},
+                  // Row number
+                  h('td',{style:{textAlign:'center',fontSize:12,color:'var(--text3)',border:'1px solid #ddd',padding:'6px',background:rowBg}},idx+1),
+                  // TH name — coloured like image
+                  h('td',{style:{
+                    textAlign:'center',fontWeight:700,fontSize:13,
+                    background:hasSpecial?'#e879f9':totalCount===0?'#e5e7eb':'#22d3ee',
+                    color:'#1a2233',border:'1px solid #ddd',padding:'6px 10px',
+                    cursor:isEditing?'default':'pointer',
+                    position:'relative'
+                  },
+                    onDoubleClick:()=>!isEditing&&startEdit(th.id),
+                    title:'Double-click to edit'
+                  },th.name),
+                  // Total — yellow background like image
+                  h('td',{style:{
+                    textAlign:'center',fontWeight:700,fontSize:13,
+                    background:totalCount>0?'#fde047':'#f3f4f6',
+                    color:'#1a2233',border:'1px solid #ddd',padding:'6px',
+                    minWidth:55
+                  }},totalCount||''),
+                  // Villa type qty cells
+                  ...villaTypeDB.map(vt=>{
+                    const qty=isEditing
+                      ?(rowEdit[th.id]||{})[vt.name]??''
+                      :(th.villaTypes.find(v=>v.type===vt.name)?.count||'');
+                    const hasVal=parseInt(qty)>0;
+                    return h('td',{key:vt.id,style:{
+                      textAlign:'center',border:'1px solid #ddd',
+                      padding:isEditing?'3px':'6px',
+                      background:isEditing?vt.color+'18':hasVal?'#fff':'#d1d5db',
+                      minWidth:90
+                    }},
+                      isEditing
+                        ?h('input',{
+                            type:'number',min:0,placeholder:'0',value:qty,
+                            onChange:e=>setRowEdit(r=>({...r,[th.id]:{...(r[th.id]||{}),[vt.name]:e.target.value}})),
+                            style:{width:'100%',textAlign:'center',border:`2px solid ${vt.color}`,
+                              borderRadius:3,padding:'4px 2px',fontSize:13,fontWeight:700,background:'#fff'}
+                          })
+                        :hasVal?h('span',{style:{fontWeight:700,fontSize:13,color:'#1a2233'}},qty):''
+                    );
+                  }),
+                  // Actions — shown on hover via edit row
+                  h('td',{style:{textAlign:'center',padding:'4px 6px',border:'1px solid #ddd',background:rowBg,minWidth:110}},
+                    isEditing
+                      ?h('div',{style:{display:'flex',gap:4,justifyContent:'center'}},
+                          h('button',{className:'btn btn-green btn-sm',onClick:()=>saveEdit(th.id)},h(Icon,{name:'check',size:12}),'Save'),
+                          h('button',{className:'btn btn-ghost btn-sm',onClick:()=>cancelEdit(th.id)},'✕')
+                        )
+                      :h('div',{style:{display:'flex',gap:4,justifyContent:'center'}},
+                          h('button',{className:'btn btn-ghost btn-sm',onClick:()=>startEdit(th.id)},h(Icon,{name:'edit',size:12}),'Edit'),
+                          h('button',{className:'btn btn-red btn-sm',onClick:()=>deleteTH(th.id)},h(Icon,{name:'trash',size:12}))
+                        )
+                  )
+                );
+              }),
+              // Totals row — yellow like image
+              h('tr',null,
+                h('td',{colSpan:2,style:{background:'#fde047',fontWeight:700,fontSize:13,textAlign:'center',border:'1px solid #333',padding:'8px',color:'#1a2233'}},'TOTAL'),
+                h('td',{style:{background:'#fde047',fontWeight:700,fontSize:14,textAlign:'center',border:'1px solid #333',padding:'8px',color:'#1a2233'}},totalVillas||''),
+                ...villaTypeDB.map(vt=>{
+                  const sum=data.townhouses.reduce((s,th)=>s+(th.villaTypes.find(v=>v.type===vt.name)?.count||0),0);
+                  return h('td',{key:vt.id,style:{
+                    background:'#fde047',fontWeight:700,fontSize:13,textAlign:'center',
+                    border:'1px solid #333',padding:'8px',color:'#1a2233'
+                  }},sum||'');
+                }),
+                h('td',{style:{background:'#fde047',border:'1px solid #333'}})
+              ),
+              // Grand total row
+              h('tr',null,
+                h('td',{colSpan:3+villaTypeDB.length+1,style:{
+                  background:'#fde047',fontWeight:800,fontSize:16,textAlign:'center',
+                  border:'2px solid #333',padding:'10px',color:'#1a2233',letterSpacing:'.05em'
+                }},totalVillas)
+              )
+            )
+          )
+        ),
+        h('div',{style:{marginTop:8,fontSize:11,color:'var(--text3)'}},
+          'Tip: click Edit or double-click a TH name row to enter quantities'
+        )
+      ),
+
+      /* ===== VILLA TYPES TAB — clean list like image ===== */
+      activeTab==='villatypes'&&h('div',null,
+        h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}},
+          h('div',{style:{fontSize:13,color:'var(--text2)'}},villaTypeDB.length,' villa types configured'),
+          h('button',{className:'btn btn-amber',onClick:()=>{setEditVT(null);setShowVTModal(true);}},h(Icon,{name:'plus',size:14}),'Add Villa Type')
+        ),
+
+        // Clean list matching image 1
+        h('div',{style:{
+          background:'#fff',border:'1px solid var(--border)',borderRadius:'var(--radius2)',
+          overflow:'hidden',boxShadow:'0 1px 4px rgba(0,0,0,.06)',maxWidth:480
+        }},
+          h('div',{style:{
+            background:'var(--surface2)',padding:'10px 16px',
+            fontWeight:700,fontSize:11,color:'var(--text3)',
+            letterSpacing:'.08em',textTransform:'uppercase',
+            borderBottom:'1px solid var(--border)'
+          }},'Villa Type'),
+          villaTypeDB.map((vt,i)=>h('div',{key:vt.id,style:{
+            display:'flex',alignItems:'center',justifyContent:'space-between',
+            padding:'13px 16px',
+            borderBottom:i<villaTypeDB.length-1?'1px solid var(--border)':'none',
+            background:'#fff'
+          }},
+            h('div',{style:{display:'flex',alignItems:'center',gap:12}},
+              h('span',{style:{
+                width:12,height:12,borderRadius:'50%',
+                background:vt.color,flexShrink:0,
+                boxShadow:`0 0 0 3px ${vt.color}22`
+              }}),
+              h('span',{style:{fontWeight:600,fontSize:14,color:'var(--text)'}},vt.name),
+              vt.description&&h('span',{style:{fontSize:12,color:'var(--text3)',marginLeft:4}},vt.description)
+            ),
+            h('div',{style:{display:'flex',gap:6,alignItems:'center'}},
+              h('span',{style:{
+                fontSize:11,color:vt.color,fontWeight:600,
+                background:vt.color+'15',padding:'2px 8px',borderRadius:20,
+                border:`1px solid ${vt.color}33`
+              }},
+                (()=>{
+                  const total=data.townhouses.reduce((s,th)=>s+(th.villaTypes.find(v=>v.type===vt.name)?.count||0),0);
+                  return total>0?total+' villas':'—';
+                })()
+              ),
+              h('button',{className:'btn btn-ghost btn-sm',onClick:()=>{setEditVT(vt);setShowVTModal(true);}},h(Icon,{name:'edit',size:12})),
+              h('button',{className:'btn btn-red btn-sm',onClick:()=>deleteVT(vt.id)},h(Icon,{name:'trash',size:12}))
+            )
+          ))
+        )
+      )
+    )
+  );
+};
+
+
+
+const App=()=>{
+  const[page,setPage]=useState('dashboard');
+  const[selMonth,setSelMonth]=useState(today.getMonth());
+  const[selYear,setSelYear]=useState(CY);
+  const[data,setData]=useState(()=>{
+    const saved=loadStore();
+    if(saved)return saved;
+    const seed=seedData();
+    return{...seed,entries:{}};
+  });
+
+  useEffect(()=>saveStore(data),[data]);
+
+  const setDataAndSave=(updater)=>{
+    setData(prev=>{
+      const next=typeof updater==='function'?updater(prev):updater;
+      saveStore(next);return next;
+    });
+  };
+
+  const navItems=[
+    {id:'dashboard',label:'Dashboard',icon:'dashboard'},
+    {id:'drycost',label:'Dry Cost',icon:'layers'},
+    {id:'setup',label:'Setup',icon:'settings'},
+  ];
+
+  return h('div',{className:'app'},
+    h('div',{className:'sidebar'},
+      h('div',{className:'logo'},h('div',{className:'logo-title'},'MEP IPT Tracker'),h('div',{className:'logo-sub'},'In-Progress Tracking')),
+      h('div',{className:'nav'},
+        h('div',{className:'nav-section'},'Menu'),
+        navItems.map(n=>h('div',{key:n.id,className:`nav-item${page===n.id?' active':''}`,onClick:()=>setPage(n.id)},h(Icon,{name:n.icon,size:16}),n.label))
+      ),
+      h('div',{className:'sidebar-footer'},'Sdmbrk Collections')
+    ),
+    h('div',{className:'main'},
+      (page!=='drycost'&&page!=='setup')&&h('div',{className:'month-bar'},
+        h('span',{className:'month-label'},'Month:'),
+        MONTHS.map((m,i)=>h('div',{key:m,className:`month-pill${selMonth===i?' active':''}`,onClick:()=>setSelMonth(i)},m)),
+        h('select',{value:selYear,onChange:e=>setSelYear(parseInt(e.target.value)),style:{width:90,marginLeft:8}},
+          [CY-1,CY,CY+1].map(y=>h('option',{key:y,value:y},y))
+        )
+      ),
+      page==='dashboard'&&h(DashboardPage,{data,selMonth,selYear}),
+      page==='drycost'&&h(DryCostPage,{data,setData:setDataAndSave}),
+      page==='setup'&&h(SetupPage,{data,setData:setDataAndSave})
+    )
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(h(App,null));
+</script>
+</body>
+</html>
