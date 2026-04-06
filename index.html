@@ -165,6 +165,142 @@ input[type=number]{-moz-appearance:textfield}
 .month-pill{padding:5px 13px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--text2);background:#fff;transition:all .15s}
 .month-pill.active{background:var(--amber);border-color:var(--amber);color:#fff;font-weight:600}
 .month-pill:hover:not(.active){border-color:var(--amber);color:var(--amber)}
+
+/* Mobile topbar — hidden on desktop */
+.mobile-topbar{display:none}
+
+/* ── Mobile hamburger ── */
+.hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;width:38px;height:38px;cursor:pointer;border:none;background:none;gap:5px;flex-shrink:0}
+.hamburger span{display:block;width:22px;height:2px;background:#f5c842;border-radius:2px;transition:all .25s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ── Mobile overlay ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
+
+/* ══════════════════════════════════════
+   TABLET  (≤ 1024px)
+══════════════════════════════════════ */
+@media(max-width:1024px){
+  .sidebar{width:200px;min-width:200px}
+  .content{padding:14px 18px 28px}
+  .page-header{padding:18px 18px 0}
+  .tabs{padding:14px 18px 0}
+  .month-bar{padding:10px 18px}
+  .stats-row{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+}
+
+/* ══════════════════════════════════════
+   MOBILE  (≤ 768px) — portrait first
+══════════════════════════════════════ */
+@media(max-width:768px){
+  /* App shell */
+  .app{flex-direction:column;height:100vh;overflow:hidden}
+
+  /* Sidebar becomes a slide-in drawer */
+  .sidebar{
+    position:fixed;top:0;left:0;bottom:0;
+    width:260px;min-width:0;
+    z-index:200;
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    box-shadow:4px 0 24px rgba(0,0,0,.3);
+  }
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{display:block;opacity:0;pointer-events:none;transition:opacity .28s}
+  .sidebar-overlay.open{opacity:1;pointer-events:all}
+
+  /* Top bar replaces sidebar on mobile */
+  .mobile-topbar{
+    display:flex;align-items:center;gap:10px;
+    background:var(--sidebar);padding:10px 14px;
+    flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.08);
+    position:sticky;top:0;z-index:100;
+  }
+  .mobile-topbar-title{font-size:12px;font-weight:700;color:#f5c842;letter-spacing:.07em;text-transform:uppercase;flex:1}
+  .mobile-topbar-sub{font-size:10px;color:var(--sidebar-text3);margin-top:1px}
+  .hamburger{display:flex}
+
+  /* Main scrolls */
+  .main{flex:1;overflow-y:auto;min-height:0}
+
+  /* Content padding */
+  .content{padding:12px 14px 28px}
+  .page-header{padding:14px 14px 0;flex-wrap:wrap;gap:10px}
+  .page-title{font-size:16px}
+  .page-sub{font-size:12px}
+  .header-actions{flex-wrap:wrap;gap:6px}
+  .tabs{padding:10px 14px 0;flex-wrap:wrap;gap:4px;overflow-x:auto}
+  .tab{padding:6px 13px;font-size:12px;white-space:nowrap}
+
+  /* Month bar compact */
+  .month-bar{padding:8px 14px;gap:6px;overflow-x:auto;flex-wrap:nowrap}
+  .month-pill{padding:4px 10px;font-size:11px;white-space:nowrap}
+  .month-label{display:none}
+
+  /* Stats cards — 2 columns on mobile */
+  .stats-row{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .stat-card{padding:12px 14px}
+  .stat-value{font-size:18px}
+
+  /* Cards */
+  .card{padding:14px 14px}
+
+  /* Tables — allow horizontal scroll */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:480px}
+  th,td{padding:7px 10px;font-size:12px}
+
+  /* Modals — full width on mobile */
+  .modal-overlay{padding:0;align-items:flex-end}
+  .modal{max-width:100%;width:100%;max-height:88vh;border-radius:var(--radius2) var(--radius2) 0 0;margin:0}
+
+  /* Buttons compact */
+  .btn{padding:7px 12px;font-size:12px;gap:4px}
+  .btn-sm{padding:4px 9px;font-size:11px}
+
+  /* Form grids collapse to 1 col */
+  .form-grid-2,.form-grid-3{grid-template-columns:1fr}
+
+  /* IPT table scrollable */
+  .ipt-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
+
+/* ══════════════════════════════════════
+   SMALL MOBILE  (≤ 400px)
+══════════════════════════════════════ */
+@media(max-width:400px){
+  .stats-row{grid-template-columns:1fr}
+  .page-title{font-size:15px}
+  .month-pill{padding:3px 8px;font-size:10px}
+  .content{padding:10px 10px 24px}
+}
+
+/* ── Mobile bottom nav bar ── */
+.mobile-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--sidebar);
+  border-top:1px solid rgba(255,255,255,.12);
+  z-index:150;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.mobile-bottom-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:8px 4px 6px;cursor:pointer;
+  color:var(--sidebar-text2);font-size:9px;font-weight:500;
+  letter-spacing:.02em;flex:1;gap:3px;
+  border-top:2px solid transparent;
+  transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.mobile-bottom-item.active{color:#f5c842;border-top-color:#f5c842;background:rgba(245,200,66,.08)}
+.mobile-bottom-item svg{width:22px;height:22px;flex-shrink:0}
+@media(max-width:768px){
+  .mobile-bottom-nav{display:flex}
+  .main{padding-bottom:calc(58px + env(safe-area-inset-bottom,0px))}
+}
 </style>
 </head>
 <body>
@@ -174,6 +310,8 @@ const {useState,useEffect,useRef,useCallback,useMemo}=React;
 const h=React.createElement;
 
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const lastDayOfMonth=(month,year)=>new Date(year,month+1,0).getDate();
 const CATEGORIES=['HVAC','Electrical','Plumbing'];
 const CAT_COLORS={HVAC:'teal',Electrical:'blue',Plumbing:'amber'};
 
@@ -349,7 +487,7 @@ const SetupPage=({data,setData})=>{
           VT_COLORS.map(c=>h('div',{key:c,onClick:()=>setColor(c),style:{
             width:28,height:28,borderRadius:'50%',background:c,cursor:'pointer',
             border:color===c?'3px solid #1a2233':'3px solid transparent',
-            boxShadow:color===c?`0 0 0 2px #fff, 0 0 0 4px ${c}`:'none',
+            boxShadow:color===c?'0 0 0 2px #fff, 0 0 0 4px '+c:'none',
             transition:'all .15s'
           }}))
         )
@@ -465,7 +603,7 @@ const SetupPage=({data,setData})=>{
     return h(Modal,{title:'Bulk Add Townhouses',onClose:()=>setShowBulkModal(false),
       footer:[
         h('button',{className:'btn btn-ghost',onClick:()=>setShowBulkModal(false)},'Cancel'),
-        h('button',{className:'btn btn-amber',onClick:doBulkAdd},h(Icon,{name:'plus',size:14}),`Add ${toAdd.length} Townhouse${toAdd.length!==1?'s':''}`)
+        h('button',{className:'btn btn-amber',onClick:doBulkAdd},h(Icon,{name:'plus',size:14}),'Add '+toAdd.length+' Townhouse'+(toAdd.length!==1?'s':''))
       ]},
       h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:14}},
         h('div',null,h('label',null,'Name Prefix'),h('input',{value:bulkPrefix,onChange:e=>setBulkPrefix(e.target.value),placeholder:'e.g. TH- or BLOCK-'})),
@@ -484,14 +622,14 @@ const SetupPage=({data,setData})=>{
       ),
       preview.length>0&&h('div',null,
         h('div',{style:{fontSize:12,fontWeight:600,color:'var(--text2)',marginBottom:8,textTransform:'uppercase',letterSpacing:'.05em'}},
-          `Preview — ${toAdd.length} will be added`+(preview.length-toAdd.length>0?`, ${preview.length-toAdd.length} skipped`:'')
+          'Preview — '+toAdd.length+' will be added'+(preview.length-toAdd.length>0?', '+( preview.length-toAdd.length)+' skipped':'')
         ),
         h('div',{style:{display:'flex',flexWrap:'wrap',gap:5,maxHeight:160,overflowY:'auto',padding:'10px',background:'var(--surface2)',borderRadius:'var(--radius)',border:'1px solid var(--border)'}},
           preview.map(p=>h('span',{key:p.name,style:{
             padding:'3px 10px',borderRadius:20,fontSize:12,fontWeight:600,
             background:p.exists?'#fee2e2':'#dcfce7',
             color:p.exists?'#b91c1c':'#15803d',
-            border:`1px solid ${p.exists?'#fca5a5':'#86efac'}`
+            border:'1px solid '+(p.exists?'#fca5a5':'#86efac')
           }},p.name,p.exists?' ✓':' +'))
         ),
         h('div',{style:{fontSize:11,color:'var(--text3)',marginTop:6}},
@@ -584,8 +722,8 @@ const SetupPage=({data,setData})=>{
       )
     ),
     h('div',{className:'tabs'},
-      ['townhouses','villatypes','activities'].map(t=>h('div',{key:t,className:`tab${activeTab===t?' active':''}`,onClick:()=>setActiveTab(t)},
-        t==='townhouses'?'Townhouses':t==='villatypes'?'Villa Types':'Activities'
+      ['townhouses','villatypes','activities','projectinfo'].map(t=>h('div',{key:t,className:'tab'+(activeTab===t?' active':''),onClick:()=>setActiveTab(t)},
+        t==='townhouses'?'Townhouses':t==='villatypes'?'Villa Types':t==='activities'?'Activities':'Project Info'
       ))
     ),
     h('div',{className:'content'},
@@ -702,7 +840,7 @@ const SetupPage=({data,setData})=>{
               h('span',{style:{
                 width:12,height:12,borderRadius:'50%',
                 background:vt.color,flexShrink:0,
-                boxShadow:`0 0 0 3px ${vt.color}22`
+                boxShadow:'0 0 0 3px '+vt.color+'22'
               }}),
               h('span',{style:{fontWeight:600,fontSize:14,color:'var(--text)'}},vt.name),
               vt.description&&h('span',{style:{fontSize:12,color:'var(--text3)',marginLeft:4}},vt.description)
@@ -713,7 +851,7 @@ const SetupPage=({data,setData})=>{
                 return total>0&&h('span',{style:{
                   fontSize:11,color:vt.color,fontWeight:600,
                   background:vt.color+'15',padding:'2px 8px',borderRadius:20,
-                  border:`1px solid ${vt.color}33`
+                  border:'1px solid '+vt.color+'33'
                 }},total,' villas');
               })(),
               h('button',{className:'btn btn-ghost btn-sm',onClick:()=>{setEditVT(vt);setShowVTModal(true);}},h(Icon,{name:'edit',size:12}),'Edit'),
@@ -749,9 +887,73 @@ const SetupPage=({data,setData})=>{
                 ))
               )
             )
-        ))
+        )
+      ),
+
+      /* ===== PROJECT INFO TAB ===== */
+      activeTab==='projectinfo'&&h('div',{style:{maxWidth:600}},
+        h('div',{className:'card'},
+          h('div',{className:'card-title'},'Project & Company Details'),
+          h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}},
+            h('div',null,
+              h('label',null,'Project Name'),
+              h('input',{
+                value:(data.projectInfo||{}).projectName||'',
+                onChange:e=>setData(d=>({...d,projectInfo:{...(d.projectInfo||{}),projectName:e.target.value}})),
+                placeholder:'e.g. TAORMINA VILLAGE-01',
+                autoComplete:'off'
+              })
+            ),
+            h('div',null,
+              h('label',null,'Company Name'),
+              h('input',{
+                value:(data.projectInfo||{}).companyName||'',
+                onChange:e=>setData(d=>({...d,projectInfo:{...(d.projectInfo||{}),companyName:e.target.value}})),
+                placeholder:'e.g. MODUN GULF BUILDING CONTRACTING LLC',
+                autoComplete:'off'
+              })
+            ),
+            h('div',null,
+              h('label',null,'Brand / Report Footer'),
+              h('input',{
+                value:(data.projectInfo||{}).brandName||'',
+                onChange:e=>setData(d=>({...d,projectInfo:{...(d.projectInfo||{}),brandName:e.target.value}})),
+                placeholder:'e.g. Sdmbrk Collections',
+                autoComplete:'off'
+              })
+            ),
+            h('div',null,
+              h('label',null,'Location / Site'),
+              h('input',{
+                value:(data.projectInfo||{}).location||'',
+                onChange:e=>setData(d=>({...d,projectInfo:{...(d.projectInfo||{}),location:e.target.value}})),
+                placeholder:'e.g. Dubai, UAE',
+                autoComplete:'off'
+              })
+            )
+          ),
+          h('div',{style:{
+            padding:'14px 16px',background:'#1e2d45',
+            borderRadius:'var(--radius)',border:'2px solid #f5c842'
+          }},
+            h('div',{style:{fontSize:10,color:'#7a99bb',marginBottom:8,textTransform:'uppercase',letterSpacing:'.06em',fontWeight:600}},'Live Preview — appears in PDF & IPT headers'),
+            h('div',{style:{color:'#f5c842',fontWeight:700,fontSize:12,marginBottom:4}},'MEP — TARGET COST BREAKDOWN AS PER IPT'),
+            h('div',{style:{color:'#fff',fontWeight:600,fontSize:13}},
+              (data.projectInfo||{}).projectName||h('span',{style:{color:'#7a99bb',fontStyle:'italic'}},'Project Name')
+            ),
+            h('div',{style:{color:'#c8d8ee',fontSize:12,marginTop:2}},
+              (data.projectInfo||{}).companyName||h('span',{style:{color:'#7a99bb',fontStyle:'italic'}},'Company Name')
+            ),
+            h('div',{style:{color:'#7a99bb',fontSize:11,marginTop:6,borderTop:'1px solid rgba(255,255,255,.1)',paddingTop:6}},
+              (data.projectInfo||{}).brandName||h('span',{style:{fontStyle:'italic'}},'Brand Name'),
+              '  |  ',
+              (data.projectInfo||{}).location||h('span',{style:{fontStyle:'italic'}},'Location')
+            )
+          )
+        )
       )
     )
+  )
   );
 };
 
@@ -824,15 +1026,15 @@ const CostEntryPage=({data,setData,selMonth,selYear})=>{
       saveEntry({matCost:parseFloat(matCost)||0,instCost:parseFloat(instCost)||0,matOrderedPct:parseFloat(matPct)||0,instPct:parseFloat(instPct)||0,matStatus,instStatus,remarks,matBal,instBal});
     };
 
-    return h(Modal,{title:`${act.name} — ${th?.name}`,onClose:()=>{setShowModal(false);setEditEntry(null)},
+    return h(Modal,{title:act.name+' — '+(th?.name||''),onClose:()=>{setShowModal(false);setEditEntry(null)},
       footer:[h('button',{className:'btn btn-ghost',onClick:()=>{setShowModal(false);setEditEntry(null)}},'Cancel'),h('button',{className:'btn btn-amber',onClick:save},'Save Entry')]},
       h('div',{className:'alert alert-amber',style:{marginBottom:14}},
-        `Previous cumulative: Material ${prevMat}% ordered, Installation ${prevInst}% done. Max this month: Material ${maxMat}%, Install ${maxInst}%`
+        'Previous cumulative: Material '+prevMat+'% ordered, Installation '+prevInst+'% done. Max this month: Material '+maxMat+'%, Install '+maxInst+'%'
       ),
       h('div',{style:{fontWeight:600,color:'var(--text2)',fontSize:11,textTransform:'uppercase',letterSpacing:'.06em',marginBottom:12}},'Material'),
       h('div',{className:'form-row form-grid-2'},
         h('div',null,h('label',null,'Target Cost (AED)'),h('input',{type:'number',value:matCost,onChange:e=>setMatCost(e.target.value),min:0,placeholder:'0'})),
-        h('div',null,h('label',null,`Ordered % (max ${maxMat}%)`),h('input',{type:'number',value:matPct,onChange:e=>setMatPct(Math.min(maxMat,Math.max(0,parseFloat(e.target.value)||0))),min:0,max:maxMat}))
+        h('div',null,h('label',null,'Ordered % (max '+maxMat+'%)'),h('input',{type:'number',value:matPct,onChange:e=>setMatPct(Math.min(maxMat,Math.max(0,parseFloat(e.target.value)||0))),min:0,max:maxMat}))
       ),
       h('div',{className:'form-row form-grid-2'},
         h('div',null,h('label',null,'Delivery Status'),h('select',{value:matStatus,onChange:e=>setMatStatus(e.target.value)},['Pending','Partial','Delivered','Not Started'].map(s=>h('option',{key:s,value:s},s)))),
@@ -842,7 +1044,7 @@ const CostEntryPage=({data,setData,selMonth,selYear})=>{
       h('div',{style:{fontWeight:600,color:'var(--text2)',fontSize:11,textTransform:'uppercase',letterSpacing:'.06em',marginBottom:12}},'Installation'),
       h('div',{className:'form-row form-grid-2'},
         h('div',null,h('label',null,'Installation Cost (AED)'),h('input',{type:'number',value:instCost,onChange:e=>setInstCost(e.target.value),min:0,placeholder:'0'})),
-        h('div',null,h('label',null,`Done % (max ${maxInst}%)`),h('input',{type:'number',value:instPct,onChange:e=>setInstPct(Math.min(maxInst,Math.max(0,parseFloat(e.target.value)||0))),min:0,max:maxInst}))
+        h('div',null,h('label',null,'Done % (max '+maxInst+'%)'),h('input',{type:'number',value:instPct,onChange:e=>setInstPct(Math.min(maxInst,Math.max(0,parseFloat(e.target.value)||0))),min:0,max:maxInst}))
       ),
       h('div',{className:'form-row form-grid-2'},
         h('div',null,h('label',null,'Installation Status'),h('select',{value:instStatus,onChange:e=>setInstStatus(e.target.value)},['Pending','In Progress','Completed','Not Started'].map(s=>h('option',{key:s,value:s},s)))),
@@ -855,7 +1057,7 @@ const CostEntryPage=({data,setData,selMonth,selYear})=>{
   return h('div',null,
     showModal&&editEntry&&h(EntryModal,null),
     h('div',{className:'page-header'},
-      h('div',null,h('div',{className:'page-title'},'Cost Entry'),h('div',{className:'page-sub'},`${MONTHS[selMonth]} ${selYear} — Enter material & installation costs`))
+      h('div',null,h('div',{className:'page-title'},'Cost Entry'),h('div',{className:'page-sub'},MONTHS[selMonth]+' '+selYear+' — Enter material & installation costs'))
     ),
     h('div',{className:'content'},
       h('div',{style:{display:'flex',gap:12,marginBottom:18,flexWrap:'wrap'}},
@@ -870,7 +1072,7 @@ const CostEntryPage=({data,setData,selMonth,selYear})=>{
       ),
       th&&h('div',{style:{marginBottom:12}},
         h('div',{style:{display:'flex',gap:6,flexWrap:'wrap'}},
-          th.villaTypes.map(v=>h('span',{key:v.id,className:'chip'},`${v.type}: ${v.count} villas`))
+          th.villaTypes.map(v=>h('span',{key:v.id,className:'chip'},v.type+': '+v.count+' villas'))
         )
       ),
       h('div',{className:'table-wrap'},
@@ -948,7 +1150,7 @@ const DashboardPage=({data,selMonth,selYear})=>{
 
   return h('div',null,
     h('div',{className:'page-header'},
-      h('div',null,h('div',{className:'page-title'},'Dashboard'),h('div',{className:'page-sub'},`${MONTHS[selMonth]} ${selYear} — Cost overview`))
+      h('div',null,h('div',{className:'page-title',style:{fontSize:24,fontWeight:700}},(data.projectInfo?.projectName||'TAORMINA VILLAGE-01')),h('div',{className:'page-sub'},'MEP In-Progress Tracking Dashboard'))
     ),
     h('div',{className:'content'},
       h('div',{className:'stats-row'},
@@ -971,7 +1173,7 @@ const DashboardPage=({data,selMonth,selYear})=>{
               ...CATEGORIES.map(cat=>{
                 const s=summaries[cat];
                 return h('tr',{key:cat},
-                  h('td',null,h('span',{className:`badge badge-${catColors[cat]}`},cat)),
+                  h('td',null,h('span',{className:'badge badge-'+catColors[cat]},cat)),
                   h('td',{className:'num'},fmt(s.matCost)),
                   h('td',{className:'num',style:{color:'var(--amber)'}},fmt(s.matAvail)),
                   h('td',{className:'num',style:{color:'var(--red)'}},fmt(s.matCost-s.matAvail)),
@@ -1044,8 +1246,8 @@ const ReportPage=({data,selMonth,selYear})=>{
       doc.setTextColor(143,163,192);doc.setFontSize(9);doc.setFont('helvetica','normal');
       doc.text(`Period: ${MONTHS[selMonth]} ${selYear}  |  Generated: ${new Date().toLocaleDateString('en-AE')}`,14,18);
       doc.setTextColor(90,114,153);doc.setFont('helvetica','bold');
-      doc.text('MODUN GULF BUILDING CONTRACTING LLC',pageW-14,18,{align:'right'});
-      doc.text('Sdmbrk Collections',pageW-14,12,{align:'right'});
+      doc.text((data.projectInfo?.companyName)||'MODUN GULF BUILDING CONTRACTING LLC',pageW-14,18,{align:'right'});
+      doc.text((data.projectInfo?.brandName)||'Sdmbrk Collections',pageW-14,12,{align:'right'});
     };
 
     const catColor={HVAC:[20,184,166],Electrical:[59,130,246],Plumbing:[245,166,35]};
@@ -1089,7 +1291,7 @@ const ReportPage=({data,selMonth,selYear})=>{
 
       rows.push(['','','','TOTAL',
         `AED ${totMat.toLocaleString()}`,'','',`AED ${totMatAvail.toLocaleString()}`,
-        `AED ${totInst.toLocaleString()}`,'','',`AED ${totInstAvail.toLocaleString()}`,'']);
+        'AED '+totInst.toLocaleString(),'','','AED '+totInstAvail.toLocaleString(),'']);
 
       doc.autoTable({
         head:headers,body:rows,startY:34,
@@ -1131,7 +1333,7 @@ const ReportPage=({data,selMonth,selYear})=>{
       margin:{left:14,right:14}
     });
 
-    doc.save(`MEP_Cost_${MONTHS[selMonth]}_${selYear}.pdf`);
+    doc.save('MEP_Cost_'+MONTHS[selMonth]+'_'+selYear+'.pdf');
   };
 
   const entries_=data.entries||{};
@@ -1143,7 +1345,7 @@ const ReportPage=({data,selMonth,selYear})=>{
 
   return h('div',null,
     h('div',{className:'page-header'},
-      h('div',null,h('div',{className:'page-title'},'Monthly Report'),h('div',{className:'page-sub'},`${MONTHS[selMonth]} ${selYear}`)),
+      h('div',null,h('div',{className:'page-title'},'Monthly Report'),h('div',{className:'page-sub'},MONTHS[selMonth]+' '+selYear)),
       h('div',{className:'header-actions'},
         h('button',{className:'btn btn-amber',onClick:generatePDF},h(Icon,{name:'download',size:14}),'Export PDF')
       )
@@ -1175,7 +1377,7 @@ const ReportPage=({data,selMonth,selYear})=>{
                     if(s==='Delivered'||s==='Completed')return h('span',{className:'badge badge-green'},s);
                     return h('span',{className:'badge badge-blue'},s);
                   };
-                  return h('tr',{key:`${th.id}-${act.id}`},
+                  return h('tr',{key:th.id+'-'+act.id},
                     h('td',null,h('span',{style:{color:`var(--${col})`,fontWeight:600}},th.name)),
                     h('td',null,act.name),
                     h('td',{className:'num'},fmt(e.matCost||0)),
@@ -1376,8 +1578,8 @@ const DryCostPage=({data,setData})=>{
       doc.setTextColor(245,200,66);doc.setFontSize(8.5);doc.setFont('helvetica','bold');
       doc.text(`DRY COST — ${vt}`,ML,7);
       doc.setTextColor(200,216,238);doc.setFontSize(6);doc.setFont('helvetica','normal');
-      doc.text('MODUN GULF BUILDING CONTRACTING LLC',pw-MR,5.5,{align:'right'});
-      doc.text('Sdmbrk Collections  |  '+date,pw-MR,9,{align:'right'});
+      doc.text((data.projectInfo?.companyName)||'MODUN GULF BUILDING CONTRACTING LLC',pw-MR,5.5,{align:'right'});
+      doc.text(((data.projectInfo?.brandName)||'Sdmbrk Collections')+'  |  '+date,pw-MR,9,{align:'right'});
 
       // ── Column header strip ──
       doc.setFillColor(45,62,85);
@@ -1453,7 +1655,7 @@ const DryCostPage=({data,setData})=>{
       doc.setDrawColor(180,180,180);doc.setLineWidth(0.15);
       doc.line(ML,ph-FTR_H+1,pw-MR,ph-FTR_H+1);
       doc.setTextColor(140,140,140);doc.setFontSize(5.5);doc.setFont('helvetica','normal');
-      doc.text('Sdmbrk Collections — MODUN GULF BUILDING CONTRACTING LLC — Confidential',ML,ph-3);
+      doc.text(((data.projectInfo?.brandName)||'Sdmbrk Collections')+' — '+((data.projectInfo?.companyName)||'MODUN GULF BUILDING CONTRACTING LLC')+' — Confidential',ML,ph-3);
       doc.text(`${vi+1} / ${allVillaTypes.length}`,pw-MR,ph-3,{align:'right'});
     });
 
@@ -1471,7 +1673,7 @@ const DryCostPage=({data,setData})=>{
     const toggleEdit=()=>setEditModes(m=>({...m,[cat]:!m[cat]}));
     const cols=isEditing?'32px 1fr 140px 140px 90px':'32px 1fr 140px 140px';
 
-    return h('div',{style:{marginBottom:20,borderRadius:'var(--radius2)',overflow:'hidden',border:`1.5px solid ${borderColor}`,boxShadow:'0 1px 4px rgba(0,0,0,.07)'}},
+    return h('div',{style:{marginBottom:20,borderRadius:'var(--radius2)',overflow:'hidden',border:'1.5px solid '+borderColor,boxShadow:'0 1px 4px rgba(0,0,0,.07)'}},
       // Discipline header
       h('div',{style:{background:borderColor,padding:'8px 16px',display:'flex',alignItems:'center',justifyContent:'space-between'}},
         h('div',{style:{display:'flex',alignItems:'center',gap:10}},
@@ -1496,7 +1698,7 @@ const DryCostPage=({data,setData})=>{
         )
       ),
       // Column headers
-      h('div',{style:{display:'grid',gridTemplateColumns:cols,background:bgLight,padding:'6px 12px',borderBottom:`1px solid ${borderColor}22`}},
+      h('div',{style:{display:'grid',gridTemplateColumns:cols,background:bgLight,padding:'6px 12px',borderBottom:'1px solid '+borderColor+'22'}},
         h('div',{style:{fontSize:10,color:'var(--text3)',fontWeight:600}},'#'),
         h('div',{style:{fontSize:10,color:'var(--text3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'.05em'}},'Activity'),
         h('div',{style:{fontSize:10,color:'var(--green2)',fontWeight:600,textAlign:'right',textTransform:'uppercase',letterSpacing:'.05em'}},'Material Cost'),
@@ -1552,7 +1754,7 @@ const DryCostPage=({data,setData})=>{
       h('div',{style:{
         display:'grid',gridTemplateColumns:cols,
         padding:'8px 12px',background:bgLight,
-        borderTop:`2px solid ${borderColor}55`,
+        borderTop:'2px solid '+borderColor+'55',
         alignItems:'center'
       }},
         h('div',null),
@@ -1637,8 +1839,8 @@ const DryCostPage=({data,setData})=>{
         h('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,1fr) 1.1fr',gap:12}},
           // One card per discipline
           ...CATEGORIES.map(cat=>h('div',{key:cat,style:{
-            background:'#fff',border:`1.5px solid ${catColors530[cat]}33`,
-            borderTop:`3px solid ${catColors530[cat]}`,
+            background:'#fff',border:'1.5px solid '+catColors530[cat]+'33',
+            borderTop:'3px solid '+catColors530[cat],
             borderRadius:'var(--radius2)',padding:'14px 16px',
             boxShadow:'0 1px 4px rgba(0,0,0,.06)'
           }},
@@ -1871,7 +2073,7 @@ const DatabasePage=({data,setData})=>{
       footer:[
         h('button',{className:'btn btn-ghost',onClick:()=>setShowBulkModal(false)},'Cancel'),
         h('button',{className:'btn btn-amber',onClick:doBulkAdd,disabled:toAdd.length===0},
-          h(Icon,{name:'plus',size:14}),`Add ${toAdd.length} Townhouse${toAdd.length!==1?'s':''}`)
+          h(Icon,{name:'plus',size:14}),'Add '+toAdd.length+' Townhouse'+(toAdd.length!==1?'s':''))
       ]},
       h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:14}},
         h('div',null,
@@ -1900,7 +2102,7 @@ const DatabasePage=({data,setData})=>{
       ),
       preview.length>0&&h('div',null,
         h('div',{style:{fontSize:12,fontWeight:600,color:'var(--text2)',marginBottom:8,textTransform:'uppercase',letterSpacing:'.05em'}},
-          `Preview — ${toAdd.length} will be added`+(preview.length-toAdd.length>0?`, ${preview.length-toAdd.length} skipped`:'')
+          'Preview — '+toAdd.length+' will be added'+(preview.length-toAdd.length>0?', '+( preview.length-toAdd.length)+' skipped':'')
         ),
         h('div',{style:{
           display:'flex',flexWrap:'wrap',gap:5,maxHeight:160,overflowY:'auto',
@@ -1910,7 +2112,7 @@ const DatabasePage=({data,setData})=>{
             padding:'3px 9px',borderRadius:20,fontSize:12,fontWeight:600,
             background:p.exists?'#fee2e2':'#dcfce7',
             color:p.exists?'#b91c1c':'#15803d',
-            border:`1px solid ${p.exists?'#fca5a5':'#86efac'}`
+            border:'1px solid '+(p.exists?'#fca5a5':'#86efac')
           }},p.name,p.exists?' ✓':' +'))
         ),
         h('div',{style:{fontSize:11,color:'var(--text3)',marginTop:6}},
@@ -2010,12 +2212,12 @@ const DatabasePage=({data,setData})=>{
     h('div',{className:'page-header'},
       h('div',null,
         h('div',{className:'page-title'},'Project Database'),
-        h('div',{className:'page-sub'},'TAORMINA VILLAGE-01 — Villa & Townhouse master data')
+        h('div',{className:'page-sub'},(data.projectInfo?.projectName||'Project'),' — Villa & Townhouse master data')
       )
     ),
     h('div',{className:'tabs'},
       [['townhouses','Townhouses'],['villatypes','Villa Types']].map(([k,l])=>
-        h('div',{key:k,className:`tab${activeTab===k?' active':''}`,onClick:()=>setActiveTab(k)},l)
+        h('div',{key:k,className:'tab'+(activeTab===k?' active':''),onClick:()=>setActiveTab(k)},l)
       )
     ),
     h('div',{className:'content'},
@@ -2028,7 +2230,7 @@ const DatabasePage=({data,setData})=>{
           h('button',{className:'btn btn-amber',onClick:()=>{setNewTHName('');setNewTHCustom('');setNewTHVals({});setShowAddTH(true);}},h(Icon,{name:'plus',size:14}),'Add Townhouse'),
           h('button',{className:'btn btn-ghost',onClick:()=>setShowBulkModal(true)},h(Icon,{name:'plus',size:14}),'Bulk Add'),
           h('span',{style:{marginLeft:'auto',fontSize:12,color:'var(--text3)'}},
-            `${data.townhouses.length} townhouses · ${totalVillas} total villas`
+            data.townhouses.length+' townhouses · '+totalVillas+' total villas'
           )
         ),
 
@@ -2041,7 +2243,7 @@ const DatabasePage=({data,setData})=>{
                 h('th',{colSpan:3+villaTypeDB.length,style:{
                   background:'#1e2d45',color:'#f5c842',fontSize:14,fontWeight:700,
                   textAlign:'center',padding:'10px',letterSpacing:'.05em',border:'1px solid #333'
-                }},'TAORMINA VILLAGE-01 (',h('span',{style:{color:'#fff'}},totalVillas,' VILLAS'),')')
+                }},(data.projectInfo?.projectName||'TAORMINA VILLAGE-01'),' (',h('span',{style:{color:'#fff'}},totalVillas,' VILLAS'),')')
               ),
               // Column headers
               h('tr',null,
@@ -2173,7 +2375,7 @@ const DatabasePage=({data,setData})=>{
               h('span',{style:{
                 width:12,height:12,borderRadius:'50%',
                 background:vt.color,flexShrink:0,
-                boxShadow:`0 0 0 3px ${vt.color}22`
+                boxShadow:'0 0 0 3px '+vt.color+'22'
               }}),
               h('span',{style:{fontWeight:600,fontSize:14,color:'var(--text)'}},vt.name),
               vt.description&&h('span',{style:{fontSize:12,color:'var(--text3)',marginLeft:4}},vt.description)
@@ -2182,7 +2384,7 @@ const DatabasePage=({data,setData})=>{
               h('span',{style:{
                 fontSize:11,color:vt.color,fontWeight:600,
                 background:vt.color+'15',padding:'2px 8px',borderRadius:20,
-                border:`1px solid ${vt.color}33`
+                border:'1px solid '+vt.color+'33'
               }},
                 (()=>{
                   const total=data.townhouses.reduce((s,th)=>s+(th.villaTypes.find(v=>v.type===vt.name)?.count||0),0);
@@ -2201,10 +2403,617 @@ const DatabasePage=({data,setData})=>{
 
 
 
+/* ── Inline-editable project banner ── */
+const ProjectBanner=({data,setData})=>{
+  const[editing,setEditing]=useState(false);
+  const[proj,setProj]=useState(data.projectInfo?.projectName||'');
+  const[comp,setComp]=useState(data.projectInfo?.companyName||'');
+  const save=()=>{
+    setData(d=>({...d,projectInfo:{...(d.projectInfo||{}),projectName:proj.trim()||'TAORMINA VILLAGE-01',companyName:comp.trim()||'MODUN GULF BUILDING CONTRACTING LLC'}}));
+    setEditing(false);
+  };
+  const cancel=()=>{
+    setProj(data.projectInfo?.projectName||'');
+    setComp(data.projectInfo?.companyName||'');
+    setEditing(false);
+  };
+  if(editing)return h('div',{style:{
+    background:'#f5c842',borderRadius:'var(--radius)',marginBottom:16,padding:'10px 14px',
+    display:'flex',flexWrap:'wrap',gap:8,alignItems:'center'
+  }},
+    h('input',{value:proj,onChange:e=>setProj(e.target.value),placeholder:'Project Name',autoFocus:true,
+      style:{flex:'2 1 160px',fontWeight:700,fontSize:13,padding:'6px 10px',border:'2px solid #b45309',borderRadius:'var(--radius)',background:'#fff',color:'#1a2233'}}),
+    h('input',{value:comp,onChange:e=>setComp(e.target.value),placeholder:'Company Name',
+      style:{flex:'3 1 200px',fontWeight:700,fontSize:13,padding:'6px 10px',border:'2px solid #b45309',borderRadius:'var(--radius)',background:'#fff',color:'#1a2233'}}),
+    h('div',{style:{display:'flex',gap:6,flexShrink:0}},
+      h('button',{onClick:save,style:{background:'#1a2233',color:'#f5c842',border:'none',borderRadius:'var(--radius)',padding:'7px 16px',fontWeight:700,fontSize:12,cursor:'pointer'}},'✓ Save'),
+      h('button',{onClick:cancel,style:{background:'rgba(0,0,0,.12)',color:'#1a2233',border:'none',borderRadius:'var(--radius)',padding:'7px 12px',fontWeight:600,fontSize:12,cursor:'pointer'}},'✕')
+    )
+  );
+  return h('div',{style:{
+    background:'#f5c842',color:'#1a2233',fontWeight:700,fontSize:14,
+    textAlign:'center',padding:'8px 40px',borderRadius:'var(--radius)',
+    marginBottom:16,letterSpacing:'.03em',position:'relative'
+  }},
+    (data.projectInfo?.projectName)||'TAORMINA VILLAGE-01',
+    ' — ',
+    (data.projectInfo?.companyName)||'MODUN GULF BUILDING CONTRACTING LLC',
+    h('button',{onClick:()=>setEditing(true),title:'Edit project name & company',style:{
+      position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',
+      background:'rgba(0,0,0,.12)',border:'none',borderRadius:4,
+      padding:'3px 8px',cursor:'pointer',fontSize:11,fontWeight:600,color:'#1a2233',
+      display:'flex',alignItems:'center',gap:4
+    }},h(Icon,{name:'edit',size:12}),'Edit')
+  );
+};
+
+/* ============ MONTHLY IPT PAGE ============ */
+const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
+  const curKey=`${selYear}-${String(selMonth+1).padStart(2,'0')}`;
+  const ipt=data.ipt||{};
+  const curIPT=ipt[curKey]||{disciplines:{}};
+
+  const villaTypeDB=data.villaTypeDB||VILLA_TYPE_PRESETS.map((n,i)=>({id:`vt${i+1}`,name:n,description:'',color:'#2563eb'}));
+  const dryCosts=data.dryCosts||{};
+  const sortedTHs=[...data.townhouses].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+
+  // Weighted IPT cost for one activity across all villa types in a TH, for a given %
+  // cost = sum_over_vt( drycost[vt][act][field] * qty[vt] ) * pct/100
+  const calcIPTCost=(th,actId,field,pct)=>{
+    if(!pct)return 0;
+    let weighted=0;
+    th.villaTypes.forEach(vt=>{
+      const qty=parseInt(vt.count)||0;
+      if(!qty)return;
+      const dc=(dryCosts[vt.type]||{})[actId]||{};
+      weighted+=(parseFloat(dc[field])||0)*qty;
+    });
+    return weighted*(pct/100);
+  };
+
+  // Get cumulative % used across all months for a TH+act+field
+  const getUsedPct=(thId,actId,field)=>{
+    let used=0;
+    Object.values(ipt).forEach(entry=>{
+      const disc=entry.disciplines||{};
+      Object.values(disc).forEach(catData=>{
+        (catData.rows||[]).forEach(row=>{
+          if(row.thId===thId&&row.actId===actId){
+            used+=parseFloat(row[field+'Pct'])||0;
+          }
+        });
+      });
+    });
+    return used;
+  };
+
+  // State for the IPT table — organized as disciplines > rows
+  // curIPT.disciplines = { cat: { rows: [{thId,actId,matPct,instPct,remarks}] } }
+  const[editMode,setEditMode]=useState(false);
+  const[localDisc,setLocalDisc]=useState(()=>{
+    const d={};
+    CATEGORIES.forEach(cat=>{
+      d[cat]={rows:(curIPT.disciplines?.[cat]?.rows||[]).map(r=>({...r}))};
+    });
+    return d;
+  });
+  const[selCat,setSelCat]=useState(CATEGORIES[0]);
+  const[addActId,setAddActId]=useState('');
+  const[addThId,setAddThId]=useState('');
+  const[selDisc,setSelDisc]=useState('all');
+
+  const getSortedActs=(cat)=>[...data.activities.filter(a=>a.category===cat)].sort((a,b)=>(a.order||0)-(b.order||0));
+
+  const addRow=()=>{
+    if(!addActId||!addThId)return;
+    const existing=(localDisc[selCat].rows||[]).find(r=>r.thId===addThId&&r.actId===addActId);
+    if(existing){alert('This TH + Activity combination already exists.');return;}
+    setLocalDisc(d=>({...d,[selCat]:{rows:[...(d[selCat].rows||[]),{id:uid(),thId:addThId,actId:addActId,matPct:0,instPct:0,remarks:''}]}}));
+    setAddActId('');
+  };
+
+  const removeRow=(cat,idx)=>{
+    setLocalDisc(d=>({...d,[cat]:{rows:d[cat].rows.filter((_,i)=>i!==idx)}}));
+  };
+
+  const updateRow=(cat,idx,field,val)=>{
+    setLocalDisc(d=>{
+      const rows=[...d[cat].rows];
+      rows[idx]={...rows[idx],[field]:val};
+      return{...d,[cat]:{rows}};
+    });
+  };
+
+  const saveIPT=()=>{
+    setData(d=>{
+      const newIpt={...(d.ipt||{})};
+      newIpt[curKey]={disciplines:JSON.parse(JSON.stringify(localDisc))};
+      return{...d,ipt:newIpt};
+    });
+    setEditMode(false);
+  };
+
+  const cancelEdit=()=>{
+    const d={};
+    CATEGORIES.forEach(cat=>{
+      d[cat]={rows:(curIPT.disciplines?.[cat]?.rows||[]).map(r=>({...r}))};
+    });
+    setLocalDisc(d);
+    setEditMode(false);
+  };
+
+  // Compute totals
+  const computeTotals=(cat)=>{
+    let mat=0,inst=0;
+    (localDisc[cat]?.rows||[]).forEach(row=>{
+      const th=data.townhouses.find(t=>t.id===row.thId);
+      if(!th)return;
+      mat+=calcIPTCost(th,row.actId,'mat',parseFloat(row.matPct)||0);
+      inst+=calcIPTCost(th,row.actId,'inst',parseFloat(row.instPct)||0);
+    });
+    return{mat,inst};
+  };
+
+  const CAT_COLOR={Electrical:'#2563eb',Plumbing:'#d97706',HVAC:'#0d9488'};
+  const CAT_BG={Electrical:'#dbeafe',Plumbing:'#fef3c7',HVAC:'#ccfbf1'};
+  const CAT_LIGHT={Electrical:'#eff6ff',Plumbing:'#fffbeb',HVAC:'#f0fdfa'};
+
+  const exportIPTPDF=()=>{
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+    const pw=doc.internal.pageSize.getWidth(); // 297
+    const ph=doc.internal.pageSize.getHeight(); // 210
+    const ML=10,MR=10,MT=32,MB=12;
+    const CW=pw-ML-MR;
+
+    const projName=(data.projectInfo||{}).projectName||'TAORMINA VILLAGE-01';
+    const compName=(data.projectInfo||{}).companyName||'MODUN GULF BUILDING CONTRACTING LLC';
+    const brandName=(data.projectInfo||{}).brandName||'Sdmbrk Collections';
+    const monthLabel=MONTHS[selMonth]+' '+selYear;
+    const dateStr=new Date().toLocaleDateString('en-AE');
+    const catColorsRGB={Electrical:[37,99,235],Plumbing:[217,119,6],HVAC:[13,148,136]};
+
+    // Column widths (landscape A4 = 277mm usable)
+    const COL={act:52,th:18,villas:22,mat:32,inst:32,matPct:16,instPct:16,usedMat:18,remarks:CW-52-18-22-32-32-16-16-18};
+
+    let pageNum=0;
+
+    const drawPageHeader=()=>{
+      pageNum++;
+      // Title banner
+      doc.setFillColor(30,45,69);
+      doc.rect(0,0,pw,18,'F');
+      doc.setTextColor(245,200,66);doc.setFontSize(10);doc.setFont('helvetica','bold');
+      doc.text('MEP — TARGET COST BREAKDOWN AS PER IPT',ML,7);
+      doc.setTextColor(200,216,238);doc.setFontSize(7);doc.setFont('helvetica','normal');
+      doc.text('1st '+monthLabel+' to '+lastDayOfMonth(selMonth,selYear)+'th '+monthLabel,ML,13);
+      doc.setTextColor(245,200,66);doc.setFontSize(8);doc.setFont('helvetica','bold');
+      doc.text(projName,pw/2,7,{align:'center'});
+      doc.setTextColor(200,216,238);doc.setFontSize(6.5);doc.setFont('helvetica','normal');
+      doc.text(compName,pw/2,13,{align:'center'});
+      doc.setTextColor(180,200,220);doc.setFontSize(6);
+      doc.text(brandName+' | '+dateStr,pw-MR,7,{align:'right'});
+      doc.text('Page '+pageNum,pw-MR,13,{align:'right'});
+    };
+
+    const drawColHeaders=(y,catRGB,catName)=>{
+      const headers=[catName,'TH','Villas','Material Cost (AED)','Install Cost (AED)','Mat %','Inst %','Used Mat%','Remarks'];
+      const widths=[COL.act,COL.th,COL.villas,COL.mat,COL.inst,COL.matPct,COL.instPct,COL.usedMat,COL.remarks];
+      const aligns=['left','center','center','right','right','center','center','center','left'];
+      let x=ML;
+      headers.forEach((hdr,i)=>{
+        doc.setFillColor(catRGB[0],catRGB[1],catRGB[2]);
+        doc.rect(x,y,widths[i],6,'F');
+        doc.setTextColor(255,255,255);doc.setFontSize(6.5);doc.setFont('helvetica','bold');
+        doc.text(hdr,aligns[i]==='right'?x+widths[i]-1.5:aligns[i]==='center'?x+widths[i]/2:x+1.5,y+4.2,{align:aligns[i]==='right'?'right':aligns[i]==='center'?'center':'left'});
+        x+=widths[i];
+      });
+      return y+6;
+    };
+
+    const fmtN=(n)=>n>0?n.toLocaleString('en-AE',{minimumFractionDigits:0,maximumFractionDigits:0}):'—';
+
+    drawPageHeader();
+    let y=MT;
+
+    // Summary row at top
+    const grandTotPDF=(()=>{let m=0,i=0;CATEGORIES.forEach(c=>{const t=computeTotals(c);m+=t.mat;i+=t.inst;});return{mat:m,inst:i};})();
+    doc.setFillColor(245,200,66);
+    doc.rect(0,y,pw,6,'F');
+    doc.setTextColor(30,45,69);doc.setFontSize(7);doc.setFont('helvetica','bold');
+    doc.text('GRAND TOTAL — ALL DISCIPLINES',ML,y+4.2);
+    doc.text('Material: AED '+fmtN(grandTotPDF.mat),ML+CW*0.45,y+4.2);
+    doc.text('Installation: AED '+fmtN(grandTotPDF.inst),ML+CW*0.65,y+4.2);
+    doc.text('TOTAL: AED '+fmtN(grandTotPDF.mat+grandTotPDF.inst),pw-MR,y+4.2,{align:'right'});
+    y+=8;
+
+    CATEGORIES.forEach((cat,ci)=>{
+      const rows=localDisc[cat]?.rows||[];
+      if(rows.length===0)return;
+      const acts=getSortedActs(cat);
+      const grouped={};
+      rows.forEach(row=>{if(!grouped[row.actId])grouped[row.actId]=[];grouped[row.actId].push(row);});
+      const catRGB=catColorsRGB[cat];
+      const totals=computeTotals(cat);
+      const ROW_H=5.8;
+
+      // Check space for discipline header + col headers + at least 2 rows
+      if(y+14+2*ROW_H>ph-MB){
+        doc.addPage();drawPageHeader();y=MT;
+      }
+
+      // Discipline title bar
+      doc.setFillColor(...catRGB);
+      doc.rect(0,y,pw,7,'F');
+      doc.setTextColor(255,255,255);doc.setFontSize(8);doc.setFont('helvetica','bold');
+      doc.text(cat.toUpperCase(),ML,y+5);
+      doc.text('Material: AED '+fmtN(totals.mat)+'   Installation: AED '+fmtN(totals.inst)+'   Total: AED '+fmtN(totals.mat+totals.inst),pw-MR,y+5,{align:'right'});
+      y+=7;
+
+      // Col headers
+      y=drawColHeaders(y,catRGB,cat);
+
+      // Activity rows (grouped by activity)
+      acts.filter(act=>grouped[act.id]).forEach(act=>{
+        const actRows=grouped[act.id];
+        actRows.forEach((row,ri)=>{
+          if(y+ROW_H>ph-MB){doc.addPage();drawPageHeader();y=MT;y=drawColHeaders(y,catRGB,'('+cat+' cont.)');}
+          const th=data.townhouses.find(t=>t.id===row.thId);
+          const matCost=th?calcIPTCost(th,act.id,'mat',parseFloat(row.matPct)||0):0;
+          const instCost=th?calcIPTCost(th,act.id,'inst',parseFloat(row.instPct)||0):0;
+          const usedMat=getUsedPct(row.thId,act.id,'mat');
+          const totalVillas=th?th.villaTypes.reduce((s,v)=>s+(parseInt(v.count)||0),0):0;
+          const villaStr=th?th.villaTypes.filter(v=>parseInt(v.count)>0).map(v=>v.count+'×'+v.type).join(', '):'—';
+          const rowBg=ri%2===0?[255,255,255]:[248,250,252];
+          doc.setFillColor(...rowBg);
+          doc.rect(0,y,pw,ROW_H,'F');
+          // left accent stripe
+          doc.setFillColor(...catRGB.map(v=>Math.min(255,v+100)));
+          doc.rect(0,y,1.2,ROW_H,'F');
+          doc.setTextColor(26,34,51);doc.setFontSize(6.2);
+
+          let x=ML+1.5;
+          // Activity (only first row of group)
+          doc.setFont('helvetica',ri===0?'bold':'normal');
+          doc.setTextColor(26,34,51);
+          if(ri===0)doc.text(doc.splitTextToSize(act.name,COL.act-3)[0],x,y+ROW_H-1.5);
+          x+=COL.act-1.5;
+
+          doc.setFont('helvetica','bold');doc.setTextColor(...catRGB);
+          doc.text(th?th.name:'—',x+COL.th/2,y+ROW_H-1.5,{align:'center'});x+=COL.th;
+
+          doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+          doc.text(String(totalVillas),x+COL.villas/2,y+ROW_H-1.5,{align:'center'});
+          if(totalVillas>0){doc.setFontSize(5);doc.text(doc.splitTextToSize(villaStr,COL.villas-2)[0],x+1,y+ROW_H-0.3);}
+          doc.setFontSize(6.2);x+=COL.villas;
+
+          doc.setFont('helvetica','bold');doc.setTextColor(22,101,52);
+          doc.text(matCost>0?fmtN(matCost):'—',x+COL.mat-1.5,y+ROW_H-1.5,{align:'right'});x+=COL.mat;
+
+          doc.setTextColor(30,64,175);
+          doc.text(instCost>0?fmtN(instCost):'—',x+COL.inst-1.5,y+ROW_H-1.5,{align:'right'});x+=COL.inst;
+
+          doc.setTextColor(180,83,9);doc.setFont('helvetica','bold');
+          doc.text(row.matPct>0?row.matPct+'%':'—',x+COL.matPct/2,y+ROW_H-1.5,{align:'center'});x+=COL.matPct;
+
+          doc.setTextColor(30,64,175);
+          doc.text(row.instPct>0?row.instPct+'%':'—',x+COL.instPct/2,y+ROW_H-1.5,{align:'center'});x+=COL.instPct;
+
+          // Used mat% with mini bar
+          const usedClamped=Math.min(100,usedMat);
+          doc.setTextColor(usedMat>=100?220:usedMat>70?180:40,usedMat>=100?20:usedMat>70?90:130,20);
+          doc.setFont('helvetica','normal');
+          doc.text(usedMat.toFixed(0)+'%',x+COL.usedMat/2,y+ROW_H-2.5,{align:'center'});
+          doc.setFillColor(220,220,220);doc.rect(x+1,y+ROW_H-1.6,COL.usedMat-2,1.2,'F');
+          const barColor=usedMat>=100?[220,38,38]:usedMat>70?[245,158,11]:[34,197,94];
+          doc.setFillColor(...barColor);doc.rect(x+1,y+ROW_H-1.6,(COL.usedMat-2)*usedClamped/100,1.2,'F');
+          x+=COL.usedMat;
+
+          doc.setTextColor(80,80,80);doc.setFont('helvetica','normal');
+          if(row.remarks)doc.text(doc.splitTextToSize(row.remarks,COL.remarks-2)[0],x+1,y+ROW_H-1.5);
+
+          // Row border
+          doc.setDrawColor(210,210,210);doc.setLineWidth(0.1);
+          doc.line(0,y+ROW_H,pw,y+ROW_H);
+          y+=ROW_H;
+        });
+      });
+
+      // Totals row
+      if(y+6>ph-MB){doc.addPage();drawPageHeader();y=MT;}
+      doc.setFillColor(253,224,71);
+      doc.rect(0,y,pw,6,'F');
+      doc.setTextColor(30,45,69);doc.setFontSize(7);doc.setFont('helvetica','bold');
+      const tx=ML+COL.act+COL.th+COL.villas;
+      doc.text('TOTAL',ML,y+4.2);
+      doc.text(fmtN(totals.mat),tx+COL.mat-1.5,y+4.2,{align:'right'});
+      doc.text(fmtN(totals.inst),tx+COL.mat+COL.inst-1.5,y+4.2,{align:'right'});
+      doc.text('AED '+fmtN(totals.mat+totals.inst),pw-MR,y+4.2,{align:'right'});
+      y+=8;
+    });
+
+    // Footer on last page
+    doc.setDrawColor(180,180,180);doc.setLineWidth(0.15);
+    doc.line(ML,ph-6,pw-MR,ph-6);
+    doc.setTextColor(140,140,140);doc.setFontSize(5.5);doc.setFont('helvetica','normal');
+    doc.text(brandName+' — '+compName+' — Confidential',ML,ph-3);
+    doc.text('Generated: '+dateStr,pw-MR,ph-3,{align:'right'});
+
+    doc.save('IPT_'+MONTHS[selMonth]+'_'+selYear+'.pdf');
+  };
+
+  // Group rows by activity for display (like the image — merged activity cells)
+  const renderDisciplineTable=(cat)=>{
+    const rows=localDisc[cat]?.rows||[];
+    const acts=getSortedActs(cat);
+    // Group: actId -> rows
+    const grouped={};
+    rows.forEach((row,ri)=>{
+      if(!grouped[row.actId])grouped[row.actId]=[];
+      grouped[row.actId].push({...row,_ri:ri});
+    });
+    const cc=CAT_COLOR[cat];
+    const cbg=CAT_BG[cat];
+    const cl=CAT_LIGHT[cat];
+    const totals=computeTotals(cat);
+
+    return h('div',{style:{marginBottom:28}},
+      // Discipline header
+      h('div',{style:{
+        background:cc,color:'#fff',fontWeight:700,fontSize:15,
+        textAlign:'center',padding:'8px 16px',letterSpacing:'.04em',
+        borderRadius:'var(--radius) var(--radius) 0 0'
+      }},cat.toUpperCase()),
+
+      h('div',{style:{overflowX:'auto',border:'2px solid '+cc,borderTop:'none',borderRadius:'0 0 var(--radius) var(--radius)'}},
+        h('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:12}},
+          // Sub-header rows (match image layout)
+          h('thead',null,
+            h('tr',null,
+              h('th',{style:{background:cbg,padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:140}},cat),
+              h('th',{style:{background:cbg,padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:70,textAlign:'center'}},'TH'),
+              h('th',{style:{background:cbg,padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:80,textAlign:'center'}},'Villas'),
+              h('th',{style:{background:'#dcfce7',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:110,textAlign:'right'}},'Material Cost'),
+              h('th',{style:{background:'#dbeafe',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:110,textAlign:'right'}},'Install Cost'),
+              h('th',{style:{background:'#fef9c3',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:70,textAlign:'center'}},'Mat %'),
+              h('th',{style:{background:'#e0f2fe',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:70,textAlign:'center'}},'Inst %'),
+              h('th',{style:{background:'#f0fdf4',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:90,textAlign:'center'}},'Used Mat'),
+              h('th',{style:{background:'#fdf4ff',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:100,textAlign:'left'}},'Remarks'),
+              editMode&&h('th',{style:{background:'#fee2e2',padding:'7px 6px',border:'1px solid #ccc',width:36}})
+            )
+          ),
+          h('tbody',null,
+            // Render grouped by activity
+            ...acts.filter(act=>grouped[act.id]&&grouped[act.id].length>0).flatMap(act=>{
+              const actRows=grouped[act.id];
+              return actRows.map((row,ri)=>{
+                const th=data.townhouses.find(t=>t.id===row.thId);
+                const matCost=th?calcIPTCost(th,act.id,'mat',parseFloat(row.matPct)||0):0;
+                const instCost=th?calcIPTCost(th,act.id,'inst',parseFloat(row.instPct)||0):0;
+                const usedMat=getUsedPct(row.thId,act.id,'mat');
+                const usedInst=getUsedPct(row.thId,act.id,'inst');
+                const balMat=Math.max(0,100-usedMat);
+                // Villa info for this TH
+                const villaInfo=th?th.villaTypes.filter(v=>parseInt(v.count)>0).map(v=>`${v.count} ${v.type}`).join(', '):'—';
+                const totalVillas=th?th.villaTypes.reduce((s,v)=>s+(parseInt(v.count)||0),0):0;
+                const rowBg=ri%2===0?'#fff':cl;
+                return h('tr',{key:row.id||ri,style:{background:rowBg}},
+                  // Activity name — only first row of group shows it (merged style)
+                  ri===0
+                    ?h('td',{rowSpan:actRows.length,style:{
+                        padding:'8px 10px',border:'1px solid #ddd',
+                        fontWeight:600,fontSize:12,color:'#1a2233',
+                        background:cl,verticalAlign:'middle',textAlign:'center',
+                        borderLeft:'3px solid '+cc
+                      }},act.name)
+                    :null,
+                  h('td',{style:{padding:'6px 10px',border:'1px solid #ddd',textAlign:'center',fontWeight:700,color:cc}},th?th.name:'—'),
+                  h('td',{style:{padding:'6px 8px',border:'1px solid #ddd',textAlign:'center',fontSize:11,color:'#555'}},
+                    totalVillas>0?h('div',null,
+                      h('div',{style:{fontWeight:700,fontSize:12}},totalVillas),
+                      h('div',{style:{fontSize:9,color:'#888',marginTop:1}},villaInfo)
+                    ):'—'
+                  ),
+                  h('td',{style:{padding:'6px 10px',border:'1px solid #ddd',textAlign:'right',fontFamily:'monospace',fontWeight:600,color:'#166534',background:'#f0fdf4'}},
+                    matCost>0?fmt(matCost):'—'
+                  ),
+                  h('td',{style:{padding:'6px 10px',border:'1px solid #ddd',textAlign:'right',fontFamily:'monospace',fontWeight:600,color:'#1e40af',background:'#eff6ff'}},
+                    instCost>0?fmt(instCost):'—'
+                  ),
+                  // Mat %
+                  h('td',{style:{padding:'4px 6px',border:'1px solid #ddd',textAlign:'center',background:'#fefce8'}},
+                    editMode
+                      ?h('input',{type:'number',min:0,max:100,step:1,value:row.matPct||'',placeholder:'0',
+                          onChange:e=>updateRow(cat,row._ri,'matPct',Math.min(100,Math.max(0,parseFloat(e.target.value)||0))),
+                          style:{width:54,textAlign:'center',border:'1px solid #d97706',borderRadius:3,padding:'3px 4px',fontSize:12,fontWeight:700,background:'#fffbeb'}})
+                      :h('span',{style:{fontWeight:700,fontFamily:'monospace',color:row.matPct>0?'#b45309':'#aaa'}},
+                          row.matPct>0?row.matPct+'%':'—')
+                  ),
+                  // Inst %
+                  h('td',{style:{padding:'4px 6px',border:'1px solid #ddd',textAlign:'center',background:'#eff6ff'}},
+                    editMode
+                      ?h('input',{type:'number',min:0,max:100,step:1,value:row.instPct||'',placeholder:'0',
+                          onChange:e=>updateRow(cat,row._ri,'instPct',Math.min(100,Math.max(0,parseFloat(e.target.value)||0))),
+                          style:{width:54,textAlign:'center',border:'1px solid #2563eb',borderRadius:3,padding:'3px 4px',fontSize:12,fontWeight:700,background:'#dbeafe'}})
+                      :h('span',{style:{fontWeight:700,fontFamily:'monospace',color:row.instPct>0?'#1d4ed8':'#aaa'}},
+                          row.instPct>0?row.instPct+'%':'—')
+                  ),
+                  // Used mat % with bar
+                  h('td',{style:{padding:'6px 8px',border:'1px solid #ddd',textAlign:'center'}},
+                    h('div',{style:{fontSize:10,fontWeight:600,color:usedMat>=100?'#dc2626':usedMat>70?'#d97706':'#16a34a'}},usedMat.toFixed(0),'%'),
+                    h('div',{style:{height:5,background:'#e5e7eb',borderRadius:3,marginTop:3,overflow:'hidden'}},
+                      h('div',{style:{height:'100%',width:Math.min(100,usedMat)+'%',background:usedMat>=100?'#dc2626':usedMat>70?'#f59e0b':'#22c55e',borderRadius:3}})
+                    ),
+                    h('div',{style:{fontSize:9,color:'#888',marginTop:2}},'Bal: ',h('b',{style:{color:balMat<=0?'#dc2626':'#555'}},balMat.toFixed(0),'%'))
+                  ),
+                  // Remarks
+                  h('td',{style:{padding:'4px 6px',border:'1px solid #ddd'}},
+                    editMode
+                      ?h('input',{type:'text',value:row.remarks||'',placeholder:'Notes...',
+                          onChange:e=>updateRow(cat,row._ri,'remarks',e.target.value),
+                          style:{width:'100%',border:'1px solid #d1d5db',borderRadius:3,padding:'3px 6px',fontSize:11}})
+                      :h('span',{style:{fontSize:11,color:'#555'}},row.remarks||'')
+                  ),
+                  editMode&&h('td',{style:{padding:'4px',border:'1px solid #ddd',textAlign:'center'}},
+                    h('button',{onClick:()=>removeRow(cat,row._ri),style:{border:'none',background:'none',cursor:'pointer',color:'#dc2626',fontSize:14,fontWeight:700}},'✕')
+                  )
+                );
+              });
+            }),
+            // Empty state
+            rows.length===0&&h('tr',null,
+              h('td',{colSpan:editMode?10:9,style:{padding:'20px',textAlign:'center',color:'#9ca3af',fontSize:13,fontStyle:'italic'}},
+                editMode?'Use the form below to add activities':'No activities added yet — click Edit to start')
+            ),
+            // Totals row
+            rows.length>0&&h('tr',{style:{background:'#fde047'}},
+              h('td',{colSpan:3,style:{padding:'8px 12px',border:'2px solid #333',fontWeight:700,fontSize:13,textAlign:'right'}},'TOTAL'),
+              h('td',{style:{padding:'8px 10px',border:'2px solid #333',textAlign:'right',fontFamily:'monospace',fontWeight:700,color:'#166534',fontSize:13}},
+                totals.mat>0?fmt(totals.mat):'—'
+              ),
+              h('td',{style:{padding:'8px 10px',border:'2px solid #333',textAlign:'right',fontFamily:'monospace',fontWeight:700,color:'#1e40af',fontSize:13}},
+                totals.inst>0?fmt(totals.inst):'—'
+              ),
+              h('td',{colSpan:editMode?5:4,style:{padding:'8px 10px',border:'2px solid #333',textAlign:'right',fontFamily:'monospace',fontWeight:700,fontSize:13}},
+                fmt(totals.mat+totals.inst)
+              )
+            )
+          )
+        )
+      ),
+
+      // Add row form — only in edit mode
+      editMode&&h('div',{style:{
+        marginTop:8,padding:'12px 14px',background:'#f8fafc',
+        border:'1px dashed #94a3b8',borderRadius:'var(--radius)',display:'flex',gap:10,alignItems:'flex-end',flexWrap:'wrap'
+      }},
+        h('div',{style:{flex:2,minWidth:160}},
+          h('label',{style:{fontSize:11,fontWeight:600,color:'#64748b',display:'block',marginBottom:4}},'Activity'),
+          h('select',{value:addActId,onChange:e=>setAddActId(e.target.value),style:{width:'100%'}},
+            h('option',{value:''},'-- Select Activity --'),
+            getSortedActs(cat).map(a=>h('option',{key:a.id,value:a.id},a.name))
+          )
+        ),
+        h('div',{style:{flex:1,minWidth:130}},
+          h('label',{style:{fontSize:11,fontWeight:600,color:'#64748b',display:'block',marginBottom:4}},'Townhouse'),
+          h('select',{value:addThId,onChange:e=>setAddThId(e.target.value),style:{width:'100%'}},
+            h('option',{value:''},'-- Select TH --'),
+            sortedTHs.map(th=>{
+              const total=th.villaTypes.reduce((s,v)=>s+(parseInt(v.count)||0),0);
+              return h('option',{key:th.id,value:th.id},th.name+(total>0?' ('+total+' villas)':' — empty'));
+            })
+          )
+        ),
+        h('button',{className:'btn btn-amber',onClick:addRow,style:{flexShrink:0}},h(Icon,{name:'plus',size:13}),'Add Row')
+      )
+    );
+  };
+
+  // Grand totals across all disciplines
+  const grandTotals=(()=>{
+    let mat=0,inst=0;
+    CATEGORIES.forEach(cat=>{const t=computeTotals(cat);mat+=t.mat;inst+=t.inst;});
+    return{mat,inst};
+  })();
+
+  const dispCats=selDisc==='all'?CATEGORIES:[selDisc];
+
+  return h('div',null,
+    // Page header
+    h('div',{className:'page-header'},
+      h('div',null,
+        h('div',{className:'page-title'},'MEP IPT — ',MONTHS[selMonth],' ',selYear),
+        h('div',{className:'page-sub'},'In-Progress Tracking — Material & Installation cost breakdown by activity and TH block')
+      ),
+      h('div',{className:'header-actions'},
+        h('button',{className:'btn btn-ghost',onClick:exportIPTPDF},h(Icon,{name:'download',size:14}),'Export PDF'),
+        editMode
+          ?h('div',{style:{display:'flex',gap:8}},
+              h('button',{className:'btn btn-ghost',onClick:cancelEdit},'Cancel'),
+              h('button',{className:'btn btn-green',onClick:saveIPT},h(Icon,{name:'check',size:14}),'Save IPT')
+            )
+          :h('button',{className:'btn btn-amber',onClick:()=>setEditMode(true)},h(Icon,{name:'edit',size:14}),'Edit IPT')
+      )
+    ),
+    h('div',{className:'content'},
+
+      // Title banner (matches image)
+      h('div',{style:{
+        background:'#1e2d45',color:'#f5c842',fontWeight:800,fontSize:15,
+        textAlign:'center',padding:'10px',letterSpacing:'.05em',
+        borderRadius:'var(--radius)',marginBottom:4,border:'2px solid #f5c842'
+      }},
+        h('div',null,'MEP — TARGET COST BREAKDOWN AS PER IPT'),
+        h('div',{style:{fontSize:13,fontWeight:600,marginTop:4,letterSpacing:'.02em'}},
+          '1st '+MONTHS[selMonth]+' to '+lastDayOfMonth(selMonth,selYear)+'th '+MONTHS[selMonth]+' '+selYear
+        )
+      ),
+      h(ProjectBanner,{data,setData}),
+
+      // Summary cards
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,1fr) 1.2fr',gap:12,marginBottom:20}},
+        ...CATEGORIES.map(cat=>{
+          const t=computeTotals(cat);
+          const cc=CAT_COLOR[cat];
+          return h('div',{key:cat,style:{background:'#fff',borderTop:'3px solid '+cc,border:'1px solid '+cc+'33',borderRadius:'var(--radius2)',padding:'12px 16px'}},
+            h('div',{style:{fontSize:10,fontWeight:700,color:cc,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:8}},cat),
+            h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}},
+              h('div',{style:{background:'#f0fdf4',borderRadius:'var(--radius)',padding:'7px 10px'}},
+                h('div',{style:{fontSize:9,color:'#888',marginBottom:2}},'MATERIAL'),
+                h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:12,color:'#166534'}},t.mat>0?fmt(t.mat):'—')
+              ),
+              h('div',{style:{background:'#eff6ff',borderRadius:'var(--radius)',padding:'7px 10px'}},
+                h('div',{style:{fontSize:9,color:'#888',marginBottom:2}},'INSTALLATION'),
+                h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:12,color:'#1e40af'}},t.inst>0?fmt(t.inst):'—')
+              )
+            )
+          );
+        }),
+        h('div',{style:{background:'linear-gradient(135deg,#1e2d45,#2d4a6e)',borderRadius:'var(--radius2)',padding:'12px 16px'}},
+          h('div',{style:{fontSize:10,fontWeight:700,color:'#f5c842',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}},'Grand Total'),
+          h('div',{style:{fontFamily:'monospace',fontWeight:800,fontSize:18,color:'#f5c842',marginBottom:6}},grandTotals.mat+grandTotals.inst>0?fmt(grandTotals.mat+grandTotals.inst):'—'),
+          h('div',{style:{display:'flex',gap:12}},
+            h('div',null,h('div',{style:{fontSize:9,color:'#7a99bb'}},'Material'),h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#4ade80'}},grandTotals.mat>0?fmt(grandTotals.mat):'—')),
+            h('div',null,h('div',{style:{fontSize:9,color:'#7a99bb'}},'Installation'),h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#60a5fa'}},grandTotals.inst>0?fmt(grandTotals.inst):'—'))
+          )
+        )
+      ),
+
+      // Discipline filter tabs
+      h('div',{style:{display:'flex',gap:6,marginBottom:16,flexWrap:'wrap'}},
+        [{id:'all',label:'All Disciplines'},...CATEGORIES.map(c=>({id:c,label:c}))].map(({id,label})=>
+          h('button',{key:id,onClick:()=>setSelDisc(id),style:{
+            padding:'6px 16px',border:'2px solid '+(id==='all'?'#1e2d45':CAT_COLOR[id]||'#1e2d45'),
+            borderRadius:20,background:selDisc===id?(id==='all'?'#1e2d45':CAT_COLOR[id]):'#fff',
+            color:selDisc===id?'#fff':(id==='all'?'#1e2d45':CAT_COLOR[id]),
+            fontWeight:600,fontSize:12,cursor:'pointer',transition:'all .15s'
+          }},label)
+        )
+      ),
+
+      // Add row: discipline selector (only in edit mode)
+      editMode&&h('div',{style:{marginBottom:12,display:'flex',alignItems:'center',gap:10}},
+        h('label',{style:{fontSize:12,fontWeight:600,color:'var(--text2)'}},'Adding to:'),
+        CATEGORIES.map(cat=>h('button',{key:cat,onClick:()=>setSelCat(cat),style:{
+          padding:'4px 14px',border:`2px solid ${CAT_COLOR[cat]}`,borderRadius:20,
+          background:selCat===cat?CAT_COLOR[cat]:'#fff',
+          color:selCat===cat?'#fff':CAT_COLOR[cat],
+          fontWeight:600,fontSize:12,cursor:'pointer'
+        }},cat))
+      ),
+
+      // Discipline tables
+      ...dispCats.map(cat=>renderDisciplineTable(cat))
+    )
+  );
+};
+
+
 const App=()=>{
   const[page,setPage]=useState('dashboard');
   const[selMonth,setSelMonth]=useState(today.getMonth());
   const[selYear,setSelYear]=useState(CY);
+  const[sidebarOpen,setSidebarOpen]=useState(false);
   const[data,setData]=useState(()=>{
     const saved=loadStore();
     if(saved)return saved;
@@ -2223,30 +3032,86 @@ const App=()=>{
 
   const navItems=[
     {id:'dashboard',label:'Dashboard',icon:'dashboard'},
+    {id:'ipt',label:'Monthly IPT',icon:'calendar'},
     {id:'drycost',label:'Dry Cost',icon:'layers'},
     {id:'setup',label:'Setup',icon:'settings'},
   ];
 
-  return h('div',{className:'app'},
-    h('div',{className:'sidebar'},
-      h('div',{className:'logo'},h('div',{className:'logo-title'},'MEP IPT Tracker'),h('div',{className:'logo-sub'},'In-Progress Tracking')),
-      h('div',{className:'nav'},
-        h('div',{className:'nav-section'},'Menu'),
-        navItems.map(n=>h('div',{key:n.id,className:`nav-item${page===n.id?' active':''}`,onClick:()=>setPage(n.id)},h(Icon,{name:n.icon,size:16}),n.label))
-      ),
-      h('div',{className:'sidebar-footer'},'Sdmbrk Collections')
+  const navigate=(id)=>{setPage(id);setSidebarOpen(false);};
+
+  const Sidebar=()=>h('div',{className:'sidebar'+(sidebarOpen?' open':'')},
+    h('div',{className:'logo'},
+      h('div',{className:'logo-title'},'MEP IPT Tracker'),
+      h('div',{className:'logo-sub'},'In-Progress Tracking')
     ),
+    h('div',{className:'nav'},
+      h('div',{className:'nav-section'},'Menu'),
+      navItems.map(n=>h('div',{key:n.id,
+        className:'nav-item'+(page===n.id?' active':''),
+        onClick:()=>navigate(n.id)
+      },h(Icon,{name:n.icon,size:16}),n.label))
+    ),
+    h('div',{className:'sidebar-footer'},data.projectInfo?.brandName||'Sdmbrk Collections')
+  );
+
+  return h('div',{className:'app'},
+    // Mobile sidebar overlay
+    h('div',{
+      className:'sidebar-overlay'+(sidebarOpen?' open':''),
+      onClick:()=>setSidebarOpen(false)
+    }),
+
+    h(Sidebar,null),
+
     h('div',{className:'main'},
-      (page!=='drycost'&&page!=='setup')&&h('div',{className:'month-bar'},
+      // Mobile top bar (hidden on desktop via CSS)
+      h('div',{className:'mobile-topbar'},
+        h('button',{
+          className:'hamburger'+(sidebarOpen?' open':''),
+          onClick:()=>setSidebarOpen(o=>!o),
+          'aria-label':'Menu'
+        },
+          h('span',null),h('span',null),h('span',null)
+        ),
+        h('div',{style:{flex:1}},
+          h('div',{className:'mobile-topbar-title'},'MEP IPT Tracker'),
+          h('div',{className:'mobile-topbar-sub'},navItems.find(n=>n.id===page)?.label||'')
+        ),
+        // Year selector on mobile topbar
+        page==='ipt'&&h('select',{
+          value:selYear,
+          onChange:e=>setSelYear(parseInt(e.target.value)),
+          style:{width:72,fontSize:11,padding:'3px 4px',flexShrink:0,background:'rgba(255,255,255,.12)',border:'1px solid rgba(255,255,255,.2)',color:'#f5c842',borderRadius:4}
+        },
+          [CY-1,CY,CY+1].map(y=>h('option',{key:y,value:y,style:{background:'#1e2d45'}},y))
+        )
+      ),
+
+      // Month pill bar (dashboard + ipt only)
+      (page==='ipt')&&h('div',{className:'month-bar'},
         h('span',{className:'month-label'},'Month:'),
-        MONTHS.map((m,i)=>h('div',{key:m,className:`month-pill${selMonth===i?' active':''}`,onClick:()=>setSelMonth(i)},m)),
-        h('select',{value:selYear,onChange:e=>setSelYear(parseInt(e.target.value)),style:{width:90,marginLeft:8}},
+        MONTHS.map((m,i)=>h('div',{key:m,className:'month-pill'+(selMonth===i?' active':''),onClick:()=>setSelMonth(i)},m)),
+        h('select',{value:selYear,onChange:e=>setSelYear(parseInt(e.target.value)),style:{width:80,marginLeft:4,flexShrink:0}},
           [CY-1,CY,CY+1].map(y=>h('option',{key:y,value:y},y))
         )
       ),
+
       page==='dashboard'&&h(DashboardPage,{data,selMonth,selYear}),
+      page==='ipt'&&h(MonthlyIPTPage,{data,setData:setDataAndSave,selMonth,selYear}),
       page==='drycost'&&h(DryCostPage,{data,setData:setDataAndSave}),
-      page==='setup'&&h(SetupPage,{data,setData:setDataAndSave})
+      page==='setup'&&h(SetupPage,{data,setData:setDataAndSave}),
+
+      // Mobile bottom navigation bar
+      h('nav',{className:'mobile-bottom-nav'},
+        navItems.map(n=>h('div',{
+          key:n.id,
+          className:'mobile-bottom-item'+(page===n.id?' active':''),
+          onClick:()=>setPage(n.id)
+        },
+          h(Icon,{name:n.icon,size:22}),
+          h('span',null,n.label)
+        ))
+      )
     )
   );
 };
