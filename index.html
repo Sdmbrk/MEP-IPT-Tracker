@@ -1226,10 +1226,6 @@ const ReportPage=({data,selMonth,selYear})=>{
 // only calls onSave when the user leaves the field
 const CostInput=({savedVal,onSave,bg,color})=>{
   const[local,setLocal]=React.useState(savedVal!==''&&savedVal!==0?String(savedVal):'');
-  // Sync if saved value changes from outside (e.g. initial load)
-  React.useEffect(()=>{
-    setLocal(savedVal!==''&&savedVal!==0?String(savedVal):'');
-  },[savedVal]);
   return h('input',{
     type:'text',inputMode:'decimal',
     value:local,
@@ -1575,22 +1571,25 @@ const DryCostPage=({data,setData})=>{
 
   // Weighted project totals: unit_cost × quantity_of_that_villa_type across all THs
   // vtQty: { villaTypeName: totalCount across all THs }
-  const vtQty=useMemo(()=>{
+  const vtQty=(()=>{
     const q={};
-    data.townhouses.forEach(th=>th.villaTypes.forEach(v=>{q[v.type]=(q[v.type]||0)+v.count;}));
+    data.townhouses.forEach(th=>th.villaTypes.forEach(v=>{
+      const n=parseInt(v.count)||0;
+      q[v.type]=(q[v.type]||0)+n;
+    }));
     return q;
-  },[data.townhouses]);
+  })();
 
   const totalVillas530=Object.values(vtQty).reduce((s,n)=>s+n,0);
+  const hasQty=totalVillas530>0;
 
-  // Per discipline weighted totals
-  const discTotals=useMemo(()=>{
+  // Per discipline weighted totals — (unit_cost_per_villa_type × qty_of_that_type) summed
+  const discTotals=(()=>{
     const result={};
     CATEGORIES.forEach(cat=>{
       let mat=0,inst=0;
       allVillaTypes.forEach(vt=>{
-        const qty=vtQty[vt]||0;
-        if(qty===0)return;
+        const qty=hasQty?(vtQty[vt]||0):1;
         const ct=getCatTotal(vt,cat);
         mat+=ct.mat*qty;
         inst+=ct.inst*qty;
@@ -1598,7 +1597,7 @@ const DryCostPage=({data,setData})=>{
       result[cat]={mat,inst};
     });
     return result;
-  },[data.dryCosts,data.activities,vtQty,allVillaTypes]);
+  })();
 
   const projMat=CATEGORIES.reduce((s,c)=>s+(discTotals[c]?.mat||0),0);
   const projInst=CATEGORIES.reduce((s,c)=>s+(discTotals[c]?.inst||0),0);
@@ -1626,9 +1625,13 @@ const DryCostPage=({data,setData})=>{
         // Header row
         h('div',{style:{display:'flex',alignItems:'baseline',gap:12,marginBottom:12}},
           h('div',{style:{fontWeight:700,fontSize:13,color:'var(--text)'}},
-            'Project Total — ',h('span',{style:{color:'var(--amber)'}},totalVillas530,' Villas')
+            'Project Total — ',h('span',{style:{color:'var(--amber)'}},totalVillas530>0?totalVillas530+' Villas':'All Villa Types')
           ),
-          h('div',{style:{fontSize:11,color:'var(--text3)'}},'(unit cost × villa quantities across all TH blocks)')
+          h('div',{style:{fontSize:11,color:'var(--text3)'}},
+            totalVillas530>0
+              ?'(unit cost × villa quantities across all TH blocks)'
+              :'(showing unit cost sums — set villa quantities in Setup to see weighted totals)'
+          )
         ),
         // Discipline breakdown cards
         h('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,1fr) 1.1fr',gap:12}},
@@ -1640,7 +1643,7 @@ const DryCostPage=({data,setData})=>{
             boxShadow:'0 1px 4px rgba(0,0,0,.06)'
           }},
             h('div',{style:{fontSize:10,fontWeight:700,color:catColors530[cat],textTransform:'uppercase',letterSpacing:'.08em',marginBottom:8}},cat),
-            h('div',{style:{display:'flex',gap:8}},
+            h('div',{style:{display:'flex',gap:8,marginBottom:hasQty?8:0}},
               h('div',{style:{flex:1,background:catBg530[cat],borderRadius:'var(--radius)',padding:'8px 10px'}},
                 h('div',{style:{fontSize:9,color:'var(--text3)',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}},'Material'),
                 h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:13,color:'var(--green2)'}},
@@ -1653,6 +1656,18 @@ const DryCostPage=({data,setData})=>{
                   discTotals[cat]?.inst>0?fmt(discTotals[cat].inst):'—'
                 )
               )
+            ),
+            // Per villa type breakdown
+            hasQty&&h('div',{style:{borderTop:'1px solid var(--border)',paddingTop:6}},
+              allVillaTypes.map(vt=>{
+                const qty=vtQty[vt]||0;
+                if(!qty)return null;
+                const ct=getCatTotal(vt,cat);
+                return h('div',{key:vt,style:{display:'flex',justifyContent:'space-between',fontSize:10,color:'var(--text3)',padding:'2px 0',fontFamily:'monospace'}},
+                  h('span',{style:{color:'var(--text2)',fontWeight:500}},vt,' ×',qty),
+                  h('span',null,ct.mat>0?fmt(ct.mat*qty):'—')
+                );
+              })
             )
           )),
           // Grand total card
