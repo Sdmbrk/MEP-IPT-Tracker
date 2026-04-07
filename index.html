@@ -12,7 +12,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f0f2f5;--surface:#ffffff;--surface2:#f5f7fa;--surface3:#ebeef3;
+  --bg:#f4f6f9;--surface:#ffffff;--surface2:#f0f3f7;--surface3:#e8ecf2;
   --border:#dde2ea;--border2:#c5cdd8;
   --text:#1a2233;--text2:#4a5872;--text3:#8a97ad;
   --amber:#d97706;--amber2:#b45309;--amber3:#fef3c7;
@@ -21,7 +21,7 @@
   --red:#dc2626;--red2:#b91c1c;--red3:#fee2e2;
   --teal:#0d9488;--teal2:#0f766e;--teal3:#ccfbf1;
   --radius:6px;--radius2:10px;
-  --sidebar:#1e2d45;--sidebar2:#162338;--sidebar-text:#c8d8ee;--sidebar-text2:#7a99bb;--sidebar-text3:#4a6888;
+  --sidebar:#ffffff;--sidebar2:#f0f3f7;--sidebar-text:#1e293b;--sidebar-text2:#475569;--sidebar-text3:#94a3b8;
 }
 body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
 .mono{font-family:'IBM Plex Mono',monospace}
@@ -33,20 +33,21 @@ label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-wei
 
 /* Layout */
 .app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:240px;min-width:240px;background:var(--sidebar);border-right:none;display:flex;flex-direction:column;overflow:hidden}
-.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
-
-/* Sidebar */
-.logo{padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
-.logo-title{font-size:13px;font-weight:600;color:#f5c842;letter-spacing:.08em;text-transform:uppercase}
+.sidebar{width:240px;min-width:240px;background:var(--sidebar);border-right:1px solid var(--border);box-shadow:2px 0 8px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden}
+.logo{padding:20px 18px 14px;border-bottom:1px solid var(--border)}
+.logo-title{font-size:13px;font-weight:700;color:#1d4ed8;letter-spacing:.08em;text-transform:uppercase}
 .logo-sub{font-size:11px;color:var(--sidebar-text3);margin-top:2px}
 .nav{flex:1;overflow-y:auto;padding:10px 0}
 .nav-section{padding:8px 18px 4px;font-size:10px;font-weight:600;color:var(--sidebar-text3);letter-spacing:.1em;text-transform:uppercase}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;color:var(--sidebar-text2);font-size:13px;transition:all .15s;border-left:2px solid transparent}
-.nav-item:hover{color:var(--sidebar-text);background:rgba(255,255,255,.06)}
-.nav-item.active{color:#f5c842;background:rgba(245,200,66,.1);border-left-color:#f5c842}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;color:var(--sidebar-text2);font-size:13px;transition:all .15s;border-left:3px solid transparent;border-radius:0 6px 6px 0;margin:1px 8px 1px 0}
+.nav-item:hover{color:#1d4ed8;background:#eff6ff}
+.nav-item.active{color:#1d4ed8;background:#dbeafe;border-left-color:#1d4ed8;font-weight:600}
 .nav-icon{width:16px;height:16px;flex-shrink:0;opacity:.8}
-.sidebar-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:var(--sidebar-text3)}
+.sidebar-footer{padding:14px 18px;border-top:1px solid var(--border);font-size:11px;color:var(--sidebar-text3)}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+
+
+
 
 /* Header */
 .page-header{padding:22px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
@@ -171,7 +172,7 @@ input[type=number]{-moz-appearance:textfield}
 
 /* ── Mobile hamburger ── */
 .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;width:38px;height:38px;cursor:pointer;border:none;background:none;gap:5px;flex-shrink:0}
-.hamburger span{display:block;width:22px;height:2px;background:#f5c842;border-radius:2px;transition:all .25s}
+.hamburger span{display:block;width:22px;height:2px;background:#1d4ed8;border-radius:2px;transition:all .25s}
 .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .hamburger.open span:nth-child(2){opacity:0}
 .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
@@ -214,11 +215,11 @@ input[type=number]{-moz-appearance:textfield}
   /* Top bar replaces sidebar on mobile */
   .mobile-topbar{
     display:flex;align-items:center;gap:10px;
-    background:var(--sidebar);padding:10px 14px;
-    flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.08);
+    background:#fff;padding:10px 14px;
+    flex-shrink:0;border-bottom:1px solid var(--border);
     position:sticky;top:0;z-index:100;
   }
-  .mobile-topbar-title{font-size:12px;font-weight:700;color:#f5c842;letter-spacing:.07em;text-transform:uppercase;flex:1}
+  .mobile-topbar-title{font-size:12px;font-weight:700;color:#1d4ed8;letter-spacing:.07em;text-transform:uppercase;flex:1}
   .mobile-topbar-sub{font-size:10px;color:var(--sidebar-text3);margin-top:1px}
   .hamburger{display:flex}
 
@@ -281,21 +282,21 @@ input[type=number]{-moz-appearance:textfield}
 .mobile-bottom-nav{
   display:none;
   position:fixed;bottom:0;left:0;right:0;
-  background:var(--sidebar);
-  border-top:1px solid rgba(255,255,255,.12);
+  background:#fff;
+  border-top:1px solid var(--border);
   z-index:150;
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 .mobile-bottom-item{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:8px 4px 6px;cursor:pointer;
-  color:var(--sidebar-text2);font-size:9px;font-weight:500;
+  color:#94a3b8;font-size:9px;font-weight:500;
   letter-spacing:.02em;flex:1;gap:3px;
   border-top:2px solid transparent;
   transition:all .15s;
   -webkit-tap-highlight-color:transparent;
 }
-.mobile-bottom-item.active{color:#f5c842;border-top-color:#f5c842;background:rgba(245,200,66,.08)}
+.mobile-bottom-item.active{color:#1d4ed8;border-top-color:#1d4ed8;background:#eff6ff}
 .mobile-bottom-item svg{width:22px;height:22px;flex-shrink:0}
 @media(max-width:768px){
   .mobile-bottom-nav{display:flex}
@@ -324,14 +325,139 @@ const uid=()=>Math.random().toString(36).slice(2,9);
 const today=new Date();
 const CY=today.getFullYear();
 
-/* ============ VILLA TYPE PRESETS ============ */
-const VILLA_TYPE_PRESETS=['3BDRM','4BDRM','4BDRM-LUX','4BDRM-STANDALONE','5BDRM-LUX'];
+/* ============ DEFAULT HARDCODED DATA ============ */
+// TH villa quantities — source: TAORMINA VILLAGE-01 (530 VILLAS)
+const DEFAULT_TH_VILLAS={
+  'TH-01':[{type:'3BDRM',count:18}],
+  'TH-02':[{type:'3BDRM',count:26}],
+  'TH-03':[{type:'3BDRM',count:14}],
+  'TH-04':[{type:'3BDRM',count:18}],
+  'TH-05':[{type:'3BDRM',count:28}],
+  'TH-06':[{type:'3BDRM',count:28}],
+  'TH-07':[{type:'3BDRM',count:4},{type:'4BDRM',count:8}],
+  'TH-08':[{type:'3BDRM',count:4},{type:'4BDRM',count:8}],
+  'TH-09':[{type:'3BDRM',count:2},{type:'4BDRM',count:6},{type:'4BDRM-LUX',count:1}],
+  'TH-10':[{type:'3BDRM',count:20}],
+  'TH-11':[{type:'3BDRM',count:18}],
+  'TH-12':[{type:'3BDRM',count:10}],
+  'TH-13':[{type:'3BDRM',count:14}],
+  'TH-14':[{type:'3BDRM',count:18}],
+  'TH-15':[{type:'3BDRM',count:26}],
+  'TH-16':[{type:'3BDRM',count:1},{type:'4BDRM',count:2}],
+  'TH-17':[{type:'3BDRM',count:5},{type:'4BDRM',count:10},{type:'4BDRM-LUX',count:1}],
+  'TH-18':[{type:'4BDRM',count:4}],
+  'TH-19':[{type:'3BDRM',count:18}],
+  'TH-20':[{type:'3BDRM',count:18}],
+  'TH-21':[{type:'4BDRM',count:6}],
+  'TH-22':[{type:'3BDRM',count:10}],
+  'TH-23':[{type:'3BDRM',count:12}],
+  'TH-24':[{type:'3BDRM',count:10}],
+  'TH-25':[{type:'3BDRM',count:26}],
+  'TH-26':[{type:'3BDRM',count:14}],
+  'TH-27':[{type:'5BDRM-LUX',count:6}],
+  'TH-28':[{type:'5BDRM-LUX',count:8}],
+  'TH-29':[{type:'3BDRM',count:18}],
+  'TH-30':[{type:'3BDRM',count:18}],
+  'TH-31':[{type:'3BDRM',count:26}],
+  'TH-32':[{type:'3BDRM',count:24}],
+  'TH-33':[{type:'3BDRM',count:12},{type:'4BDRM',count:10}],
+  // Totals: 3BR=392, 4BR=86, 4BR-LUX=16, 5BR-LUX=34, 4BR-STDALN=2 → 530
+};
+
+// Dry costs per villa type per activity — {vtName: {actId: {mat, inst}}}
+const DEFAULT_DRY_COSTS={
+  '3BDRM':{
+    // Electrical
+    'a1':{mat:850,inst:850},'a2':{mat:950,inst:950},'a3':{mat:600,inst:600},
+    'a4':{mat:600,inst:600},'a5':{mat:400,inst:400},'a6':{mat:500,inst:500},
+    'a7':{mat:1200,inst:1200},'a8':{mat:1000,inst:1000},'a9':{mat:800,inst:800},
+    'a10':{mat:700,inst:700},'a11':{mat:600,inst:600},'a12':{mat:500,inst:500},
+    'a13':{mat:400,inst:400},'a14':{mat:600,inst:600},'a15':{mat:2500,inst:2500},
+    'a16':{mat:1800,inst:1800},'a17':{mat:3500,inst:3500},'a18':{mat:600,inst:600},
+    'a19':{mat:4500,inst:4500},'a20':{mat:1200,inst:1200},'a21':{mat:500,inst:500},
+    // Plumbing
+    'a22':{mat:1200,inst:1200},'a23':{mat:800,inst:800},'a24':{mat:400,inst:400},
+    'a25':{mat:350,inst:350},'a26':{mat:300,inst:300},'a27':{mat:900,inst:900},
+    'a28':{mat:600,inst:600},'a29':{mat:1400,inst:1400},'a30':{mat:1200,inst:1200},
+    'a31':{mat:1000,inst:1000},'a32':{mat:800,inst:800},'a33':{mat:700,inst:700},
+    'a34':{mat:500,inst:500},
+    // HVAC
+    'a35':{mat:650,inst:650},'a36':{mat:350,inst:350},'a37':{mat:1000,inst:1000},
+    'a38':{mat:2000,inst:2000},'a39':{mat:750,inst:750},'a40':{mat:150,inst:150},
+  },
+  '4BDRM':{
+    'a1':{mat:950,inst:950},'a2':{mat:1050,inst:1050},'a3':{mat:700,inst:700},
+    'a4':{mat:700,inst:700},'a5':{mat:500,inst:500},'a6':{mat:600,inst:600},
+    'a7':{mat:1400,inst:1400},'a8':{mat:1200,inst:1200},'a9':{mat:1000,inst:1000},
+    'a10':{mat:800,inst:800},'a11':{mat:700,inst:700},'a12':{mat:600,inst:600},
+    'a13':{mat:500,inst:500},'a14':{mat:700,inst:700},'a15':{mat:2800,inst:2800},
+    'a16':{mat:2000,inst:2000},'a17':{mat:4000,inst:4000},'a18':{mat:700,inst:700},
+    'a19':{mat:5000,inst:5000},'a20':{mat:1400,inst:1400},'a21':{mat:600,inst:600},
+    'a22':{mat:1400,inst:1400},'a23':{mat:900,inst:900},'a24':{mat:500,inst:500},
+    'a25':{mat:450,inst:450},'a26':{mat:380,inst:380},'a27':{mat:1050,inst:1050},
+    'a28':{mat:700,inst:700},'a29':{mat:1600,inst:1600},'a30':{mat:1400,inst:1400},
+    'a31':{mat:1200,inst:1200},'a32':{mat:950,inst:950},'a33':{mat:850,inst:850},
+    'a34':{mat:600,inst:600},
+    'a35':{mat:750,inst:750},'a36':{mat:400,inst:400},'a37':{mat:1200,inst:1200},
+    'a38':{mat:2300,inst:2300},'a39':{mat:900,inst:900},'a40':{mat:175,inst:175},
+  },
+  '4BDRM-LUX':{
+    'a1':{mat:1100,inst:1100},'a2':{mat:1200,inst:1200},'a3':{mat:800,inst:800},
+    'a4':{mat:800,inst:800},'a5':{mat:600,inst:600},'a6':{mat:700,inst:700},
+    'a7':{mat:1600,inst:1600},'a8':{mat:1400,inst:1400},'a9':{mat:1200,inst:1200},
+    'a10':{mat:950,inst:950},'a11':{mat:850,inst:850},'a12':{mat:750,inst:750},
+    'a13':{mat:600,inst:600},'a14':{mat:850,inst:850},'a15':{mat:3200,inst:3200},
+    'a16':{mat:2300,inst:2300},'a17':{mat:4800,inst:4800},'a18':{mat:850,inst:850},
+    'a19':{mat:5800,inst:5800},'a20':{mat:1600,inst:1600},'a21':{mat:700,inst:700},
+    'a22':{mat:1600,inst:1600},'a23':{mat:1050,inst:1050},'a24':{mat:600,inst:600},
+    'a25':{mat:520,inst:520},'a26':{mat:450,inst:450},'a27':{mat:1200,inst:1200},
+    'a28':{mat:800,inst:800},'a29':{mat:1800,inst:1800},'a30':{mat:1600,inst:1600},
+    'a31':{mat:1400,inst:1400},'a32':{mat:1100,inst:1100},'a33':{mat:1000,inst:1000},
+    'a34':{mat:700,inst:700},
+    'a35':{mat:900,inst:900},'a36':{mat:480,inst:480},'a37':{mat:1400,inst:1400},
+    'a38':{mat:2700,inst:2700},'a39':{mat:1050,inst:1050},'a40':{mat:200,inst:200},
+  },
+  '4BDRM-STANDALONE':{
+    'a1':{mat:1200,inst:1200},'a2':{mat:1300,inst:1300},'a3':{mat:900,inst:900},
+    'a4':{mat:900,inst:900},'a5':{mat:650,inst:650},'a6':{mat:750,inst:750},
+    'a7':{mat:1800,inst:1800},'a8':{mat:1500,inst:1500},'a9':{mat:1300,inst:1300},
+    'a10':{mat:1050,inst:1050},'a11':{mat:950,inst:950},'a12':{mat:800,inst:800},
+    'a13':{mat:650,inst:650},'a14':{mat:950,inst:950},'a15':{mat:3500,inst:3500},
+    'a16':{mat:2500,inst:2500},'a17':{mat:5200,inst:5200},'a18':{mat:950,inst:950},
+    'a19':{mat:6200,inst:6200},'a20':{mat:1800,inst:1800},'a21':{mat:750,inst:750},
+    'a22':{mat:1800,inst:1800},'a23':{mat:1150,inst:1150},'a24':{mat:650,inst:650},
+    'a25':{mat:580,inst:580},'a26':{mat:500,inst:500},'a27':{mat:1350,inst:1350},
+    'a28':{mat:900,inst:900},'a29':{mat:2000,inst:2000},'a30':{mat:1800,inst:1800},
+    'a31':{mat:1600,inst:1600},'a32':{mat:1200,inst:1200},'a33':{mat:1100,inst:1100},
+    'a34':{mat:750,inst:750},
+    'a35':{mat:1000,inst:1000},'a36':{mat:520,inst:520},'a37':{mat:1600,inst:1600},
+    'a38':{mat:3000,inst:3000},'a39':{mat:1200,inst:1200},'a40':{mat:225,inst:225},
+  },
+  '5BDRM-LUX':{
+    'a1':{mat:1300,inst:1300},'a2':{mat:1400,inst:1400},'a3':{mat:1000,inst:1000},
+    'a4':{mat:1000,inst:1000},'a5':{mat:750,inst:750},'a6':{mat:850,inst:850},
+    'a7':{mat:2000,inst:2000},'a8':{mat:1700,inst:1700},'a9':{mat:1500,inst:1500},
+    'a10':{mat:1200,inst:1200},'a11':{mat:1050,inst:1050},'a12':{mat:900,inst:900},
+    'a13':{mat:750,inst:750},'a14':{mat:1050,inst:1050},'a15':{mat:4000,inst:4000},
+    'a16':{mat:2800,inst:2800},'a17':{mat:5800,inst:5800},'a18':{mat:1050,inst:1050},
+    'a19':{mat:7000,inst:7000},'a20':{mat:2000,inst:2000},'a21':{mat:850,inst:850},
+    'a22':{mat:2000,inst:2000},'a23':{mat:1300,inst:1300},'a24':{mat:750,inst:750},
+    'a25':{mat:650,inst:650},'a26':{mat:550,inst:550},'a27':{mat:1500,inst:1500},
+    'a28':{mat:1000,inst:1000},'a29':{mat:2200,inst:2200},'a30':{mat:2000,inst:2000},
+    'a31':{mat:1800,inst:1800},'a32':{mat:1400,inst:1400},'a33':{mat:1250,inst:1250},
+    'a34':{mat:850,inst:850},
+    'a35':{mat:650,inst:650},'a36':{mat:350,inst:350},'a37':{mat:1150,inst:1150},
+    'a38':{mat:2000,inst:2000},'a39':{mat:750,inst:750},'a40':{mat:150,inst:150},
+  },
+};
 
 /* ============ DEFAULT SEED DATA ============ */
 const seedData=()=>{
-  // All TH-01 to TH-33 pre-filled, quantities empty (to be set by user)
   const thNames=Array.from({length:33},(_,i)=>`TH-${String(i+1).padStart(2,'0')}`);
-  const ths=thNames.map((name,i)=>({id:`th${String(i+1).padStart(2,'0')}`,name,villaTypes:[]}));
+  const ths=thNames.map((name,i)=>{
+    const vts=DEFAULT_TH_VILLAS[name]||[];
+    return{id:`th${String(i+1).padStart(2,'0')}`,name,villaTypes:vts};
+  });
   const elecActs=[
     {id:'a1',name:'Underground Works',category:'Electrical',order:0},
     {id:'a2',name:'External',category:'Electrical',order:1},
@@ -378,7 +504,6 @@ const seedData=()=>{
     {id:'a39',name:'Air Outlets',category:'HVAC',order:4},
     {id:'a40',name:'T&C',category:'HVAC',order:5},
   ];
-  // Villa types master database
   const villaTypeDB=[
     {id:'vt1',name:'3BDRM',description:'3 Bedroom Villa',color:'#2563eb'},
     {id:'vt2',name:'4BDRM',description:'4 Bedroom Villa',color:'#16a34a'},
@@ -386,11 +511,11 @@ const seedData=()=>{
     {id:'vt4',name:'4BDRM-STANDALONE',description:'4 Bedroom Standalone Villa',color:'#dc2626'},
     {id:'vt5',name:'5BDRM-LUX',description:'5 Bedroom Luxury Villa',color:'#7c3aed'},
   ];
-  return{townhouses:ths,activities:[...elecActs,...plumActs,...hvacActs],villaTypeDB,entries:{}};
+  return{townhouses:ths,activities:[...elecActs,...plumActs,...hvacActs],villaTypeDB,dryCosts:DEFAULT_DRY_COSTS,entries:{}};
 };
 
 /* ============ STORAGE ============ */
-const STORE_KEY='mep_tracker_v5';
+const STORE_KEY='mep_tracker_v6';
 
 const loadStore=()=>{
   try{const d=localStorage.getItem(STORE_KEY);return d?JSON.parse(d):null}catch{return null}
@@ -722,8 +847,8 @@ const SetupPage=({data,setData})=>{
       )
     ),
     h('div',{className:'tabs'},
-      ['townhouses','villatypes','activities','projectinfo'].map(t=>h('div',{key:t,className:'tab'+(activeTab===t?' active':''),onClick:()=>setActiveTab(t)},
-        t==='townhouses'?'Townhouses':t==='villatypes'?'Villa Types':t==='activities'?'Activities':'Project Info'
+      ['townhouses','villatypes','activities'].map(t=>h('div',{key:t,className:'tab'+(activeTab===t?' active':''),onClick:()=>setActiveTab(t)},
+        t==='townhouses'?'Townhouses':t==='villatypes'?'Villa Types':'Activities'
       ))
     ),
     h('div',{className:'content'},
@@ -739,9 +864,9 @@ const SetupPage=({data,setData})=>{
         ),
 
         // Action bar
-        h('div',{style:{display:'flex',gap:10,marginBottom:18,flexWrap:'wrap'}},
+        h('div',{style:{display:'flex',gap:10,marginBottom:18,flexWrap:'wrap',alignItems:'center'}},
           h('button',{className:'btn btn-amber',onClick:openAddTH},h(Icon,{name:'plus',size:14}),'Add Townhouse'),
-          h('button',{className:'btn btn-ghost',onClick:()=>setShowBulkModal(true)},h(Icon,{name:'plus',size:14}),'Bulk Add'),
+          h('button',{className:'btn btn-ghost',onClick:()=>setShowBulkModal(true)},h(Icon,{name:'plus',size:14}),'Bulk Add')
         ),
 
         // Main table — sticky header + villa type columns
@@ -890,68 +1015,6 @@ const SetupPage=({data,setData})=>{
         )
       ),
 
-      /* ===== PROJECT INFO TAB ===== */
-      activeTab==='projectinfo'&&h('div',{style:{maxWidth:600}},
-        h('div',{className:'card'},
-          h('div',{className:'card-title'},'Project & Company Details'),
-          h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}},
-            h('div',null,
-              h('label',null,'Project Name'),
-              h('input',{
-                value:(data.projectInfo||{}).projectName||'',
-                onChange:e=>setData(d=>({...d,projectInfo:{...(d.projectInfo||{}),projectName:e.target.value}})),
-                placeholder:'e.g. TAORMINA VILLAGE-01',
-                autoComplete:'off'
-              })
-            ),
-            h('div',null,
-              h('label',null,'Company Name'),
-              h('input',{
-                value:(data.projectInfo||{}).companyName||'',
-                onChange:e=>setData(d=>({...d,projectInfo:{...(d.projectInfo||{}),companyName:e.target.value}})),
-                placeholder:'e.g. MODUN GULF BUILDING CONTRACTING LLC',
-                autoComplete:'off'
-              })
-            ),
-            h('div',null,
-              h('label',null,'Brand / Report Footer'),
-              h('input',{
-                value:(data.projectInfo||{}).brandName||'',
-                onChange:e=>setData(d=>({...d,projectInfo:{...(d.projectInfo||{}),brandName:e.target.value}})),
-                placeholder:'e.g. Sdmbrk Collections',
-                autoComplete:'off'
-              })
-            ),
-            h('div',null,
-              h('label',null,'Location / Site'),
-              h('input',{
-                value:(data.projectInfo||{}).location||'',
-                onChange:e=>setData(d=>({...d,projectInfo:{...(d.projectInfo||{}),location:e.target.value}})),
-                placeholder:'e.g. Dubai, UAE',
-                autoComplete:'off'
-              })
-            )
-          ),
-          h('div',{style:{
-            padding:'14px 16px',background:'#1e2d45',
-            borderRadius:'var(--radius)',border:'2px solid #f5c842'
-          }},
-            h('div',{style:{fontSize:10,color:'#7a99bb',marginBottom:8,textTransform:'uppercase',letterSpacing:'.06em',fontWeight:600}},'Live Preview — appears in PDF & IPT headers'),
-            h('div',{style:{color:'#f5c842',fontWeight:700,fontSize:12,marginBottom:4}},'MEP — TARGET COST BREAKDOWN AS PER IPT'),
-            h('div',{style:{color:'#fff',fontWeight:600,fontSize:13}},
-              (data.projectInfo||{}).projectName||h('span',{style:{color:'#7a99bb',fontStyle:'italic'}},'Project Name')
-            ),
-            h('div',{style:{color:'#c8d8ee',fontSize:12,marginTop:2}},
-              (data.projectInfo||{}).companyName||h('span',{style:{color:'#7a99bb',fontStyle:'italic'}},'Company Name')
-            ),
-            h('div',{style:{color:'#7a99bb',fontSize:11,marginTop:6,borderTop:'1px solid rgba(255,255,255,.1)',paddingTop:6}},
-              (data.projectInfo||{}).brandName||h('span',{style:{fontStyle:'italic'}},'Brand Name'),
-              '  |  ',
-              (data.projectInfo||{}).location||h('span',{style:{fontStyle:'italic'}},'Location')
-            )
-          )
-        )
-      )
     )
   )
   );
@@ -1116,110 +1179,418 @@ const CostEntryPage=({data,setData,selMonth,selYear})=>{
 };
 
 /* ============ DASHBOARD PAGE ============ */
-const DashboardPage=({data,selMonth,selYear})=>{
-  const monthKey=`${selYear}-${String(selMonth+1).padStart(2,'0')}`;
-  const entries=data.entries||{};
+/* ── Per-TH IPT Usage Breakdown (Dashboard) ── */
+const THBreakdown=({data})=>{
+  const ipt=data.ipt||{};
+  const dryCosts=data.dryCosts||{};
+  const[expandedDisc,setExpandedDisc]=useState({HVAC:true,Electrical:false,Plumbing:false});
+  const[expandedTH,setExpandedTH]=useState({});
 
-  const getSummary=(cat)=>{
-    let matCost=0,instCost=0,matAvail=0,instAvail=0;
-    data.townhouses.forEach(th=>{
-      data.activities.filter(a=>a.category===cat).forEach(act=>{
-        const e=entries[monthKey]?.[th.id]?.[act.id];
-        if(e){
-          matCost+=e.matCost||0;
-          instCost+=e.instCost||0;
-          matAvail+=(e.matCost||0)*((e.matOrderedPct||0)/100);
-          instAvail+=(e.instCost||0)*((e.instPct||0)/100);
-        }
+  const CAT_COLOR={Electrical:'#1d4ed8',Plumbing:'#b45309',HVAC:'#0f766e'};
+  const CAT_BG={Electrical:'#eff6ff',Plumbing:'#fffbeb',HVAC:'#f0fdfa'};
+
+  // Compute cumulative IPT % used across ALL months for a TH+act+field
+  const getIPTPct=(thId,actId,field)=>{
+    let used=0;
+    Object.values(ipt).forEach(entry=>{
+      Object.values(entry.disciplines||{}).forEach(catData=>{
+        (catData.rows||[]).forEach(row=>{
+          if(row.thId===thId&&row.actId===actId){
+            used+=parseFloat(row[field+'Pct'])||0;
+          }
+        });
       });
     });
-    return{matCost,instCost,matAvail,instAvail,total:matCost+instCost};
+    return Math.min(100,used);
   };
 
-  const summaries={};
-  CATEGORIES.forEach(c=>{summaries[c]=getSummary(c)});
+  // Get dry cost for a villa type + activity
+  const getDC=(vtName,actId,field)=>parseFloat((dryCosts[vtName]||{})[actId]?.[field])||0;
+
+  // Compute weighted IPT cost for a TH+act+field at given %
+  const calcCost=(th,actId,field,pct)=>{
+    if(!pct)return 0;
+    let weighted=0;
+    th.villaTypes.forEach(vt=>{
+      const qty=parseInt(vt.count)||0;
+      if(!qty)return;
+      weighted+=getDC(vt.type,actId,field)*qty;
+    });
+    return weighted*(pct/100);
+  };
+
+  const sortedTHs=[...data.townhouses]
+    .filter(th=>th.villaTypes&&th.villaTypes.some(v=>parseInt(v.count)>0))
+    .sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+
+  const toggleDisc=(cat)=>setExpandedDisc(s=>({...s,[cat]:!s[cat]}));
+  const toggleTH=(key)=>setExpandedTH(s=>({...s,[key]:!s[key]}));
+
+  const MiniBar=({pct:p,color})=>h('div',{style:{display:'inline-flex',alignItems:'center',gap:6,width:'100%'}},
+    h('div',{style:{flex:1,height:5,background:'#e2e8f0',borderRadius:3,overflow:'hidden'}},
+      h('div',{style:{height:'100%',width:Math.min(100,p)+'%',background:p>=100?'#ef4444':p>70?'#f59e0b':color,borderRadius:3,transition:'width .3s'}})
+    ),
+    h('span',{style:{fontSize:10,fontWeight:700,fontFamily:'monospace',color:p>=100?'#ef4444':p>70?'#d97706':'#334155',minWidth:32,textAlign:'right'}},p.toFixed(0)+'%')
+  );
+
+  return h('div',{style:{marginTop:8}},
+    h('div',{style:{fontWeight:700,fontSize:14,color:'var(--text)',marginBottom:14,letterSpacing:'.02em'}},
+      'Per Townhouse — IPT Usage by Discipline'
+    ),
+
+    CATEGORIES.map(cat=>{
+      const cc=CAT_COLOR[cat];
+      const cbg=CAT_BG[cat];
+      const acts=[...data.activities.filter(a=>a.category===cat)].sort((a,b)=>(a.order||0)-(b.order||0));
+      const isDiscOpen=expandedDisc[cat];
+
+      return h('div',{key:cat,style:{marginBottom:14,borderRadius:'var(--radius2)',overflow:'hidden',border:'1px solid #e2e8f0',boxShadow:'0 1px 4px rgba(0,0,0,.05)'}},
+
+        // ── Discipline Header (click to expand/collapse) ──
+        h('div',{
+          onClick:()=>toggleDisc(cat),
+          style:{
+            background:cbg,borderLeft:'4px solid '+cc,
+            padding:'12px 16px',display:'flex',alignItems:'center',
+            justifyContent:'space-between',cursor:'pointer',
+            userSelect:'none'
+          }
+        },
+          h('div',{style:{display:'flex',alignItems:'center',gap:10}},
+            h('div',{style:{width:8,height:8,borderRadius:'50%',background:cc}}),
+            h('span',{style:{fontWeight:700,fontSize:13,color:'#1e293b',textTransform:'uppercase',letterSpacing:'.05em'}},cat),
+            h('span',{style:{fontSize:11,color:'#64748b',fontWeight:500}},sortedTHs.length+' blocks')
+          ),
+          h('span',{style:{fontSize:16,color:cc,fontWeight:700,transform:isDiscOpen?'rotate(180deg)':'rotate(0deg)',transition:'transform .2s',lineHeight:1}},'▼')
+        ),
+
+        // ── TH List ──
+        isDiscOpen&&h('div',null,
+          sortedTHs.map(th=>{
+            const thKey=cat+'_'+th.id;
+            const isTHOpen=expandedTH[thKey];
+            const vtNames=th.villaTypes.filter(v=>parseInt(v.count)>0).map(v=>v.type+'×'+v.count).join(', ');
+
+            // Compute TH-level aggregated used %
+            let totalMatUsed=0,totalInstUsed=0,actCount=0;
+            acts.forEach(act=>{
+              const m=getIPTPct(th.id,act.id,'mat');
+              const i=getIPTPct(th.id,act.id,'inst');
+              totalMatUsed+=m;totalInstUsed+=i;actCount++;
+            });
+            const avgMat=actCount>0?totalMatUsed/actCount:0;
+            const avgInst=actCount>0?totalInstUsed/actCount:0;
+
+            return h('div',{key:th.id,style:{borderTop:'1px solid #e2e8f0'}},
+
+              // ── TH Row Header ──
+              h('div',{
+                onClick:()=>toggleTH(thKey),
+                style:{
+                  display:'grid',
+                  gridTemplateColumns:'120px 1fr 140px 140px 32px',
+                  alignItems:'center',gap:12,
+                  padding:'9px 16px',cursor:'pointer',
+                  background:isTHOpen?'#f8fafc':'#fff',
+                  userSelect:'none',
+                  transition:'background .1s'
+                }
+              },
+                h('div',{style:{fontWeight:700,fontSize:12,color:cc}},th.name),
+                h('div',{style:{fontSize:10,color:'#94a3b8'}},vtNames||'—'),
+                h('div',{style:{display:'flex',alignItems:'center',gap:6}},
+                  h('span',{style:{fontSize:9,color:'#64748b',minWidth:22}},'Mat'),
+                  h(MiniBar,{pct:avgMat,color:'#22c55e'})
+                ),
+                h('div',{style:{display:'flex',alignItems:'center',gap:6}},
+                  h('span',{style:{fontSize:9,color:'#64748b',minWidth:22}},'Inst'),
+                  h(MiniBar,{pct:avgInst,color:'#3b82f6'})
+                ),
+                h('span',{style:{fontSize:13,color:'#94a3b8',transform:isTHOpen?'rotate(180deg)':'none',transition:'transform .2s',textAlign:'center'}},'▼')
+              ),
+
+              // ── Activity Detail Table ──
+              isTHOpen&&h('div',{style:{background:'#f8fafc',borderTop:'1px solid #e2e8f0',overflowX:'auto'}},
+                h('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:12}},
+                  h('thead',null,
+                    h('tr',{style:{background:cbg}},
+                      h('th',{style:{padding:'6px 12px',textAlign:'left',fontSize:10,fontWeight:600,color:cc,textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0'}},'Activity'),
+                      h('th',{style:{padding:'6px 10px',textAlign:'right',fontSize:10,fontWeight:600,color:'#166534',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0',minWidth:90}},'Mat Cost'),
+                      h('th',{style:{padding:'6px 10px',textAlign:'center',fontSize:10,fontWeight:600,color:'#92400e',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0',minWidth:80}},'Mat Used'),
+                      h('th',{style:{padding:'6px 10px',textAlign:'center',fontSize:10,fontWeight:600,color:'#166534',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0',minWidth:80}},'Mat Bal'),
+                      h('th',{style:{padding:'6px 10px',textAlign:'right',fontSize:10,fontWeight:600,color:'#1e40af',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0',minWidth:90}},'Inst Cost'),
+                      h('th',{style:{padding:'6px 10px',textAlign:'center',fontSize:10,fontWeight:600,color:'#1e3a8a',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0',minWidth:80}},'Inst Used'),
+                      h('th',{style:{padding:'6px 10px',textAlign:'center',fontSize:10,fontWeight:600,color:'#1e40af',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0',minWidth:80}},'Inst Bal')
+                    )
+                  ),
+                  h('tbody',null,
+                    acts.map((act,ai)=>{
+                      const matPct=getIPTPct(th.id,act.id,'mat');
+                      const instPct=getIPTPct(th.id,act.id,'inst');
+                      const balMat=Math.max(0,100-matPct);
+                      const balInst=Math.max(0,100-instPct);
+                      const matCost=calcCost(th,act.id,'mat',matPct);
+                      const instCost=calcCost(th,act.id,'inst',instPct);
+                      const rowBg=ai%2===0?'#fff':'#f8fafc';
+                      return h('tr',{key:act.id,style:{background:rowBg}},
+                        h('td',{style:{padding:'7px 12px',borderBottom:'1px solid #f1f5f9',fontWeight:500,color:'#334155',fontSize:12}},act.name),
+                        // Mat cost
+                        h('td',{style:{padding:'7px 10px',borderBottom:'1px solid #f1f5f9',textAlign:'right',fontFamily:'monospace',fontSize:11,color:'#166534',fontWeight:600}},
+                          matCost>0?fmt(matCost):h('span',{style:{color:'#cbd5e1'}},'—')
+                        ),
+                        // Mat used % + bar
+                        h('td',{style:{padding:'6px 10px',borderBottom:'1px solid #f1f5f9'}},
+                          matPct>0
+                            ?h('div',{style:{display:'flex',flexDirection:'column',gap:2}},
+                                h('div',{style:{height:4,background:'#e2e8f0',borderRadius:2,overflow:'hidden'}},
+                                  h('div',{style:{height:'100%',width:matPct+'%',background:matPct>=100?'#ef4444':matPct>70?'#f59e0b':'#22c55e',borderRadius:2}})
+                                ),
+                                h('div',{style:{fontSize:10,fontWeight:700,fontFamily:'monospace',color:matPct>=100?'#ef4444':matPct>70?'#d97706':'#166534',textAlign:'center'}},matPct.toFixed(0)+'%')
+                              )
+                            :h('span',{style:{color:'#e2e8f0',fontSize:11,display:'block',textAlign:'center'}},'—')
+                        ),
+                        // Mat balance
+                        h('td',{style:{padding:'6px 10px',borderBottom:'1px solid #f1f5f9',textAlign:'center'}},
+                          h('span',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,
+                            color:balMat<=0?'#ef4444':balMat<=20?'#d97706':'#16a34a'}},
+                            balMat<=0?'FULL':balMat+'%')
+                        ),
+                        // Inst cost
+                        h('td',{style:{padding:'7px 10px',borderBottom:'1px solid #f1f5f9',textAlign:'right',fontFamily:'monospace',fontSize:11,color:'#1e40af',fontWeight:600}},
+                          instCost>0?fmt(instCost):h('span',{style:{color:'#cbd5e1'}},'—')
+                        ),
+                        // Inst used % + bar
+                        h('td',{style:{padding:'6px 10px',borderBottom:'1px solid #f1f5f9'}},
+                          instPct>0
+                            ?h('div',{style:{display:'flex',flexDirection:'column',gap:2}},
+                                h('div',{style:{height:4,background:'#e2e8f0',borderRadius:2,overflow:'hidden'}},
+                                  h('div',{style:{height:'100%',width:instPct+'%',background:instPct>=100?'#ef4444':instPct>70?'#f59e0b':'#3b82f6',borderRadius:2}})
+                                ),
+                                h('div',{style:{fontSize:10,fontWeight:700,fontFamily:'monospace',color:instPct>=100?'#ef4444':instPct>70?'#d97706':'#1e40af',textAlign:'center'}},instPct.toFixed(0)+'%')
+                              )
+                            :h('span',{style:{color:'#e2e8f0',fontSize:11,display:'block',textAlign:'center'}},'—')
+                        ),
+                        // Inst balance
+                        h('td',{style:{padding:'6px 10px',borderBottom:'1px solid #f1f5f9',textAlign:'center'}},
+                          h('span',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,
+                            color:balInst<=0?'#ef4444':balInst<=20?'#d97706':'#1e40af'}},
+                            balInst<=0?'FULL':balInst+'%')
+                        )
+                      );
+                    })
+                  )
+                )
+              )
+            );
+          })
+        )
+      );
+    })
+  );
+};
+
+const DashboardPage=({data})=>{
+  const ipt=data.ipt||{};
+  const dryCosts=data.dryCosts||{};
+  const villaTypeDB=data.villaTypeDB||VILLA_TYPE_PRESETS.map((n,i)=>({id:`vt${i+1}`,name:n}));
+
+  // Get cumulative IPT % used across ALL months for a TH+act+field
+  const getIPTPct=(thId,actId,field)=>{
+    let used=0;
+    Object.values(ipt).forEach(entry=>{
+      Object.values(entry.disciplines||{}).forEach(catData=>{
+        (catData.rows||[]).forEach(row=>{
+          if(row.thId===thId&&row.actId===actId)used+=parseFloat(row[field+'Pct'])||0;
+        });
+      });
+    });
+    return Math.min(100,used);
+  };
+
+  // Weighted dry cost for a TH+act+field
+  const getUnitCost=(th,actId,field)=>{
+    let w=0;
+    th.villaTypes.forEach(vt=>{
+      const qty=parseInt(vt.count)||0;
+      if(!qty)return;
+      w+=(parseFloat((dryCosts[vt.type]||{})[actId]?.[field])||0)*qty;
+    });
+    return w;
+  };
+
+  // Per discipline: compute total dry cost and total IPT claimed cost
+  const catStats=(()=>{
+    const res={};
+    CATEGORIES.forEach(cat=>{
+      let totalMat=0,totalInst=0,usedMat=0,usedInst=0;
+      const acts=data.activities.filter(a=>a.category===cat);
+      data.townhouses.forEach(th=>{
+        if(!th.villaTypes.some(v=>parseInt(v.count)>0))return;
+        acts.forEach(act=>{
+          const unitMat=getUnitCost(th,act.id,'mat');
+          const unitInst=getUnitCost(th,act.id,'inst');
+          const matPct=getIPTPct(th.id,act.id,'mat');
+          const instPct=getIPTPct(th.id,act.id,'inst');
+          totalMat+=unitMat;
+          totalInst+=unitInst;
+          usedMat+=unitMat*(matPct/100);
+          usedInst+=unitInst*(instPct/100);
+        });
+      });
+      res[cat]={totalMat,totalInst,usedMat,usedInst,
+        matPct:totalMat>0?Math.round(usedMat/totalMat*100):0,
+        instPct:totalInst>0?Math.round(usedInst/totalInst*100):0};
+    });
+    return res;
+  })();
+
   const grand={
-    matCost:CATEGORIES.reduce((s,c)=>s+summaries[c].matCost,0),
-    instCost:CATEGORIES.reduce((s,c)=>s+summaries[c].instCost,0),
-    matAvail:CATEGORIES.reduce((s,c)=>s+summaries[c].matAvail,0),
-    instAvail:CATEGORIES.reduce((s,c)=>s+summaries[c].instAvail,0),
+    totalMat:CATEGORIES.reduce((s,c)=>s+catStats[c].totalMat,0),
+    totalInst:CATEGORIES.reduce((s,c)=>s+catStats[c].totalInst,0),
+    usedMat:CATEGORIES.reduce((s,c)=>s+catStats[c].usedMat,0),
+    usedInst:CATEGORIES.reduce((s,c)=>s+catStats[c].usedInst,0),
   };
-  grand.total=grand.matCost+grand.instCost;
+  grand.matPct=grand.totalMat>0?Math.round(grand.usedMat/grand.totalMat*100):0;
+  grand.instPct=grand.totalInst>0?Math.round(grand.usedInst/grand.totalInst*100):0;
+  grand.total=grand.totalMat+grand.totalInst;
+  grand.usedTotal=grand.usedMat+grand.usedInst;
 
-  const catColors={HVAC:'teal',Electrical:'blue',Plumbing:'amber'};
+  const CAT_COLOR={Electrical:'#1d4ed8',Plumbing:'#b45309',HVAC:'#0f766e'};
+  const CAT_BG={Electrical:'#eff6ff',Plumbing:'#fffbeb',HVAC:'#f0fdfa'};
+  const CAT_BADGE={Electrical:'badge-blue',Plumbing:'badge-amber',HVAC:'badge-teal'};
+
+  const MiniBar=({pct:p,color,bg})=>h('div',{style:{display:'flex',alignItems:'center',gap:6}},
+    h('div',{style:{flex:1,height:5,background:bg||'#e2e8f0',borderRadius:3,overflow:'hidden',minWidth:60}},
+      h('div',{style:{height:'100%',width:Math.min(100,p)+'%',background:p>=100?'#ef4444':p>70?'#f59e0b':color,borderRadius:3}})
+    ),
+    h('span',{style:{fontSize:10,fontWeight:700,fontFamily:'monospace',color:p>=100?'#ef4444':p>70?'#d97706':'#475569',minWidth:28,textAlign:'right'}},p+'%')
+  );
 
   return h('div',null,
     h('div',{className:'page-header'},
-      h('div',null,h('div',{className:'page-title',style:{fontSize:24,fontWeight:700}},(data.projectInfo?.projectName||'TAORMINA VILLAGE-01')),h('div',{className:'page-sub'},'MEP In-Progress Tracking Dashboard'))
+      h('div',null,
+        h('div',{className:'page-title',style:{fontSize:24,fontWeight:700}},data.projectInfo?.projectName||'TAORMINA VILLAGE-01'),
+        h('div',{className:'page-sub'},'MEP In-Progress Tracking Dashboard')
+      )
     ),
     h('div',{className:'content'},
-      h('div',{className:'stats-row'},
-        h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Total Target Cost'),h('div',{className:'stat-value c-amber'},fmt(grand.total)),h('div',{className:'stat-sub'},'Material + Installation')),
-        h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Material Ordered'),h('div',{className:'stat-value c-blue'},fmt(grand.matAvail)),h('div',{className:'stat-sub'},`of ${fmt(grand.matCost)}`)),
-        h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Installation Done'),h('div',{className:'stat-value c-green'},fmt(grand.instAvail)),h('div',{className:'stat-sub'},`of ${fmt(grand.instCost)}`)),
-        h('div',{className:'stat-card'},h('div',{className:'stat-label'},'Balance Remaining'),h('div',{className:'stat-value c-red'},fmt((grand.matCost-grand.matAvail)+(grand.instCost-grand.instAvail))),h('div',{className:'stat-sub'},'Target vs Actual'))
+
+      // ── Top Summary Cards ──
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}},
+        // Grand total dry cost
+        h('div',{style:{background:'linear-gradient(135deg,#1e2d45,#2d4a6e)',borderRadius:'var(--radius2)',padding:'16px 18px',boxShadow:'0 2px 8px rgba(0,0,0,.12)'}},
+          h('div',{style:{fontSize:10,fontWeight:600,color:'#7a99bb',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}},'Total Dry Cost'),
+          h('div',{style:{fontFamily:'monospace',fontWeight:800,fontSize:16,color:'#f5c842',marginBottom:4}},fmt(grand.total)),
+          h('div',{style:{fontSize:11,color:'#7a99bb'}},'Mat: ',h('span',{style:{color:'#4ade80'}},fmt(grand.totalMat))),
+          h('div',{style:{fontSize:11,color:'#7a99bb'}},'Inst: ',h('span',{style:{color:'#60a5fa'}},fmt(grand.totalInst)))
+        ),
+        // Material IPT claimed
+        h('div',{style:{background:'#fff',border:'1px solid #e2e8f0',borderTop:'3px solid #16a34a',borderRadius:'var(--radius2)',padding:'14px 16px'}},
+          h('div',{style:{fontSize:10,fontWeight:600,color:'#64748b',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}},'Material Claimed'),
+          h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:16,color:'#166534',marginBottom:6}},fmt(grand.usedMat)),
+          h(MiniBar,{pct:grand.matPct,color:'#22c55e',bg:'#dcfce7'}),
+          h('div',{style:{fontSize:10,color:'#94a3b8',marginTop:4}},'Balance: ',h('span',{style:{color:'#166534',fontWeight:600}},fmt(grand.totalMat-grand.usedMat)))
+        ),
+        // Installation IPT claimed
+        h('div',{style:{background:'#fff',border:'1px solid #e2e8f0',borderTop:'3px solid #1d4ed8',borderRadius:'var(--radius2)',padding:'14px 16px'}},
+          h('div',{style:{fontSize:10,fontWeight:600,color:'#64748b',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}},'Installation Claimed'),
+          h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:16,color:'#1e40af',marginBottom:6}},fmt(grand.usedInst)),
+          h(MiniBar,{pct:grand.instPct,color:'#3b82f6',bg:'#dbeafe'}),
+          h('div',{style:{fontSize:10,color:'#94a3b8',marginTop:4}},'Balance: ',h('span',{style:{color:'#1e40af',fontWeight:600}},fmt(grand.totalInst-grand.usedInst)))
+        ),
+        // Overall progress
+        h('div',{style:{background:'#fff',border:'1px solid #e2e8f0',borderTop:'3px solid #d97706',borderRadius:'var(--radius2)',padding:'14px 16px'}},
+          h('div',{style:{fontSize:10,fontWeight:600,color:'#64748b',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}},'Total Claimed'),
+          h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:16,color:'#92400e',marginBottom:6}},fmt(grand.usedTotal)),
+          h(MiniBar,{pct:grand.total>0?Math.round(grand.usedTotal/grand.total*100):0,color:'#f59e0b',bg:'#fef3c7'}),
+          h('div',{style:{fontSize:10,color:'#94a3b8',marginTop:4}},'Balance: ',h('span',{style:{color:'#92400e',fontWeight:600}},fmt(grand.total-grand.usedTotal)))
+        )
       ),
-      h('div',{className:'card'},
-        h('div',{className:'card-title'},'Category Summary'),
-        h('div',{className:'table-wrap'},
-          h('table',null,
-            h('thead',null,h('tr',null,
-              h('th',null,'Category'),
-              h('th',{className:'num'},'Mat Target'),h('th',{className:'num'},'Mat Ordered'),h('th',{className:'num'},'Mat Bal'),
-              h('th',{className:'num'},'Inst Target'),h('th',{className:'num'},'Inst Done'),h('th',{className:'num'},'Inst Bal'),
-              h('th',{className:'num'},'Grand Total')
-            )),
+
+      // ── Category Summary ──
+      h('div',{style:{marginBottom:20,borderRadius:'var(--radius2)',overflow:'hidden',border:'1px solid #e2e8f0',boxShadow:'0 1px 4px rgba(0,0,0,.05)'}},
+        h('div',{style:{background:'#f8fafc',padding:'12px 16px',borderBottom:'1px solid #e2e8f0',fontWeight:700,fontSize:13,color:'#1e293b'}},'Category Summary — IPT Progress'),
+        h('div',{style:{overflowX:'auto'}},
+          h('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:13}},
+            h('thead',null,
+              h('tr',{style:{background:'#f1f5f9'}},
+                h('th',{style:{padding:'9px 14px',textAlign:'left',fontWeight:600,fontSize:10,color:'#475569',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0'}},'Discipline'),
+                h('th',{style:{padding:'9px 14px',textAlign:'right',fontWeight:600,fontSize:10,color:'#166534',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0'}},'Total Mat'),
+                h('th',{style:{padding:'9px 14px',textAlign:'right',fontWeight:600,fontSize:10,color:'#166534',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0'}},'Mat Claimed'),
+                h('th',{style:{padding:'9px 160px 9px 14px',textAlign:'left',fontWeight:600,fontSize:10,color:'#166534',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0'}},'Mat Progress'),
+                h('th',{style:{padding:'9px 14px',textAlign:'right',fontWeight:600,fontSize:10,color:'#1e40af',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0'}},'Total Inst'),
+                h('th',{style:{padding:'9px 14px',textAlign:'right',fontWeight:600,fontSize:10,color:'#1e40af',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0'}},'Inst Claimed'),
+                h('th',{style:{padding:'9px 160px 9px 14px',textAlign:'left',fontWeight:600,fontSize:10,color:'#1e40af',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0'}},'Inst Progress'),
+                h('th',{style:{padding:'9px 14px',textAlign:'right',fontWeight:600,fontSize:10,color:'#92400e',textTransform:'uppercase',letterSpacing:'.06em',borderBottom:'1px solid #e2e8f0'}},'Grand Total')
+              )
+            ),
             h('tbody',null,
-              ...CATEGORIES.map(cat=>{
-                const s=summaries[cat];
-                return h('tr',{key:cat},
-                  h('td',null,h('span',{className:'badge badge-'+catColors[cat]},cat)),
-                  h('td',{className:'num'},fmt(s.matCost)),
-                  h('td',{className:'num',style:{color:'var(--amber)'}},fmt(s.matAvail)),
-                  h('td',{className:'num',style:{color:'var(--red)'}},fmt(s.matCost-s.matAvail)),
-                  h('td',{className:'num'},fmt(s.instCost)),
-                  h('td',{className:'num',style:{color:'var(--green)'}},fmt(s.instAvail)),
-                  h('td',{className:'num',style:{color:'var(--red)'}},fmt(s.instCost-s.instAvail)),
-                  h('td',{className:'num',style:{color:'var(--amber)',fontWeight:600}},fmt(s.total))
+              ...CATEGORIES.map((cat,ci)=>{
+                const s=catStats[cat];
+                const cc=CAT_COLOR[cat];
+                const cbg=CAT_BG[cat];
+                return h('tr',{key:cat,style:{background:ci%2===0?'#fff':cbg,borderBottom:'1px solid #f1f5f9'}},
+                  h('td',{style:{padding:'10px 14px'}},
+                    h('div',{style:{display:'flex',alignItems:'center',gap:8}},
+                      h('div',{style:{width:10,height:10,borderRadius:'50%',background:cc,flexShrink:0}}),
+                      h('span',{style:{fontWeight:700,fontSize:13,color:'#1e293b'}}),
+                      h('span',{className:'badge '+CAT_BADGE[cat]},cat)
+                    )
+                  ),
+                  h('td',{style:{padding:'10px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#334155'}},fmt(s.totalMat)),
+                  h('td',{style:{padding:'10px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,fontWeight:600,color:'#166534'}},fmt(s.usedMat)),
+                  h('td',{style:{padding:'10px 14px',minWidth:160}},
+                    h('div',{style:{display:'flex',alignItems:'center',gap:8}},
+                      h('div',{style:{flex:1,height:6,background:'#dcfce7',borderRadius:3,overflow:'hidden'}},
+                        h('div',{style:{height:'100%',width:s.matPct+'%',background:s.matPct>=100?'#ef4444':s.matPct>70?'#f59e0b':'#22c55e',borderRadius:3}})
+                      ),
+                      h('span',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:s.matPct>=100?'#ef4444':s.matPct>70?'#d97706':'#166534',minWidth:34,textAlign:'right'}},s.matPct+'%')
+                    )
+                  ),
+                  h('td',{style:{padding:'10px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#334155'}},fmt(s.totalInst)),
+                  h('td',{style:{padding:'10px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,fontWeight:600,color:'#1e40af'}},fmt(s.usedInst)),
+                  h('td',{style:{padding:'10px 14px',minWidth:160}},
+                    h('div',{style:{display:'flex',alignItems:'center',gap:8}},
+                      h('div',{style:{flex:1,height:6,background:'#dbeafe',borderRadius:3,overflow:'hidden'}},
+                        h('div',{style:{height:'100%',width:s.instPct+'%',background:s.instPct>=100?'#ef4444':s.instPct>70?'#f59e0b':'#3b82f6',borderRadius:3}})
+                      ),
+                      h('span',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:s.instPct>=100?'#ef4444':s.instPct>70?'#d97706':'#1e40af',minWidth:34,textAlign:'right'}},s.instPct+'%')
+                    )
+                  ),
+                  h('td',{style:{padding:'10px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,fontWeight:700,color:'#92400e'}},fmt(s.totalMat+s.totalInst))
                 );
               }),
-              h('tr',{className:'summary-row'},
-                h('td',null,'Grand Total'),
-                h('td',{className:'num'},fmt(grand.matCost)),
-                h('td',{className:'num'},fmt(grand.matAvail)),
-                h('td',{className:'num'},fmt(grand.matCost-grand.matAvail)),
-                h('td',{className:'num'},fmt(grand.instCost)),
-                h('td',{className:'num'},fmt(grand.instAvail)),
-                h('td',{className:'num'},fmt(grand.instCost-grand.instAvail)),
-                h('td',{className:'num',style:{color:'var(--amber)'}},fmt(grand.total))
+              // Grand total row
+              h('tr',{style:{background:'#1e2d45',borderTop:'2px solid #f5c842'}},
+                h('td',{style:{padding:'11px 14px',fontWeight:700,fontSize:12,color:'#f5c842'}},'GRAND TOTAL'),
+                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#4ade80',fontWeight:600}},fmt(grand.totalMat)),
+                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#4ade80',fontWeight:700}},fmt(grand.usedMat)),
+                h('td',{style:{padding:'11px 14px',minWidth:160}},
+                  h('div',{style:{display:'flex',alignItems:'center',gap:8}},
+                    h('div',{style:{flex:1,height:6,background:'rgba(255,255,255,.15)',borderRadius:3,overflow:'hidden'}},
+                      h('div',{style:{height:'100%',width:grand.matPct+'%',background:'#4ade80',borderRadius:3}})
+                    ),
+                    h('span',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#4ade80',minWidth:34,textAlign:'right'}},grand.matPct+'%')
+                  )
+                ),
+                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#60a5fa',fontWeight:600}},fmt(grand.totalInst)),
+                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#60a5fa',fontWeight:700}},fmt(grand.usedInst)),
+                h('td',{style:{padding:'11px 14px',minWidth:160}},
+                  h('div',{style:{display:'flex',alignItems:'center',gap:8}},
+                    h('div',{style:{flex:1,height:6,background:'rgba(255,255,255,.15)',borderRadius:3,overflow:'hidden'}},
+                      h('div',{style:{height:'100%',width:grand.instPct+'%',background:'#60a5fa',borderRadius:3}})
+                    ),
+                    h('span',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#60a5fa',minWidth:34,textAlign:'right'}},grand.instPct+'%')
+                  )
+                ),
+                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,fontWeight:700,color:'#f5c842'}},fmt(grand.total))
               )
             )
           )
         )
       ),
-      h('div',{className:'card'},
-        h('div',{className:'card-title'},'Per Townhouse Breakdown'),
-        h('div',{className:'table-wrap'},
-          h('table',null,
-            h('thead',null,h('tr',null,h('th',null,'Townhouse'),h('th',null,'Types'),h('th',{className:'num'},'Mat Total'),h('th',{className:'num'},'Inst Total'),h('th',null,'Mat Progress'),h('th',null,'Inst Progress'))),
-            h('tbody',null,...data.townhouses.map(th=>{
-              let matCost=0,instCost=0,matAvail=0,instAvail=0;
-              data.activities.forEach(act=>{
-                const e=entries[monthKey]?.[th.id]?.[act.id];
-                if(e){matCost+=e.matCost||0;instCost+=e.instCost||0;matAvail+=(e.matCost||0)*((e.matOrderedPct||0)/100);instAvail+=(e.instCost||0)*((e.instPct||0)/100);}
-              });
-              return h('tr',{key:th.id},
-                h('td',null,h('span',{style:{color:'var(--amber)',fontWeight:600}},th.name)),
-                h('td',null,h('div',{style:{display:'flex',gap:4,flexWrap:'wrap'}},th.villaTypes.map(v=>h('span',{key:v.id,className:'chip',style:{fontSize:10,padding:'2px 6px'}},`${v.type}×${v.count}`)))),
-                h('td',{className:'num'},fmt(matCost)),
-                h('td',{className:'num'},fmt(instCost)),
-                h('td',null,h(ProgressBar,{value:pct(matAvail,matCost)})),
-                h('td',null,h(ProgressBar,{value:pct(instAvail,instCost)}))
-              );
-            }))
-          )
-        )
-      )
+
+      h(THBreakdown,{data})
     )
   );
 };
@@ -1247,7 +1618,7 @@ const ReportPage=({data,selMonth,selYear})=>{
       doc.text(`Period: ${MONTHS[selMonth]} ${selYear}  |  Generated: ${new Date().toLocaleDateString('en-AE')}`,14,18);
       doc.setTextColor(90,114,153);doc.setFont('helvetica','bold');
       doc.text((data.projectInfo?.companyName)||'MODUN GULF BUILDING CONTRACTING LLC',pageW-14,18,{align:'right'});
-      doc.text((data.projectInfo?.brandName)||'Sdmbrk Collections',pageW-14,12,{align:'right'});
+      doc.text(new Date().toLocaleDateString('en-AE'),pageW-14,12,{align:'right'});
     };
 
     const catColor={HVAC:[20,184,166],Electrical:[59,130,246],Plumbing:[245,166,35]};
@@ -1579,7 +1950,7 @@ const DryCostPage=({data,setData})=>{
       doc.text(`DRY COST — ${vt}`,ML,7);
       doc.setTextColor(200,216,238);doc.setFontSize(6);doc.setFont('helvetica','normal');
       doc.text((data.projectInfo?.companyName)||'MODUN GULF BUILDING CONTRACTING LLC',pw-MR,5.5,{align:'right'});
-      doc.text(((data.projectInfo?.brandName)||'Sdmbrk Collections')+'  |  '+date,pw-MR,9,{align:'right'});
+      doc.text(date,pw-MR,9,{align:'right'});
 
       // ── Column header strip ──
       doc.setFillColor(45,62,85);
@@ -1655,7 +2026,7 @@ const DryCostPage=({data,setData})=>{
       doc.setDrawColor(180,180,180);doc.setLineWidth(0.15);
       doc.line(ML,ph-FTR_H+1,pw-MR,ph-FTR_H+1);
       doc.setTextColor(140,140,140);doc.setFontSize(5.5);doc.setFont('helvetica','normal');
-      doc.text(((data.projectInfo?.brandName)||'Sdmbrk Collections')+' — '+((data.projectInfo?.companyName)||'MODUN GULF BUILDING CONTRACTING LLC')+' — Confidential',ML,ph-3);
+      doc.text(((data.projectInfo?.companyName)||'MODUN GULF BUILDING CONTRACTING LLC')+' — Confidential',ML,ph-3);
       doc.text(`${vi+1} / ${allVillaTypes.length}`,pw-MR,ph-3,{align:'right'});
     });
 
@@ -1964,7 +2335,7 @@ const DryCostPage=({data,setData})=>{
             h('div',{className:'card-title',style:{color:'var(--amber)'}},'Projected LPO Value — THs using '+curVilla),
             h('div',{className:'table-wrap'},
               h('table',null,
-                h('thead',null,h('tr',null,h('th',null,'Townhouse'),h('th',{className:'num'},'Qty'),h('th',{className:'num'},'Material LPO'),h('th',{className:'num'},'Subcon LPO'),h('th',{className:'num'},'Total LPO'))),
+                h('thead',null,h('tr',null,h('th',null,'Townhouse'),h('th',{className:'num'},'Qty'),h('th',{className:'num'},'Total Mat Cost'),h('th',{className:'num'},'Total Install Cost'),h('th',{className:'num'},'Total Mat+Install'))),
                 h('tbody',null,
                   ...ths.map(th=>{
                     const qty=th.villaTypes.filter(v=>v.type===curVilla).reduce((s,v)=>s+v.count,0);
@@ -2418,30 +2789,33 @@ const ProjectBanner=({data,setData})=>{
     setEditing(false);
   };
   if(editing)return h('div',{style:{
-    background:'#f5c842',borderRadius:'var(--radius)',marginBottom:16,padding:'10px 14px',
-    display:'flex',flexWrap:'wrap',gap:8,alignItems:'center'
+    background:'#fff',border:'1px solid #e2e8f0',borderRadius:'var(--radius)',
+    marginBottom:16,padding:'10px 14px',
+    display:'flex',flexWrap:'wrap',gap:8,alignItems:'center',
+    boxShadow:'0 1px 4px rgba(0,0,0,.06)'
   }},
     h('input',{value:proj,onChange:e=>setProj(e.target.value),placeholder:'Project Name',autoFocus:true,
-      style:{flex:'2 1 160px',fontWeight:700,fontSize:13,padding:'6px 10px',border:'2px solid #b45309',borderRadius:'var(--radius)',background:'#fff',color:'#1a2233'}}),
+      style:{flex:'2 1 160px',fontWeight:700,fontSize:13,padding:'6px 10px',border:'2px solid #1d4ed8',borderRadius:'var(--radius)',background:'#fff',color:'#1a2233'}}),
     h('input',{value:comp,onChange:e=>setComp(e.target.value),placeholder:'Company Name',
-      style:{flex:'3 1 200px',fontWeight:700,fontSize:13,padding:'6px 10px',border:'2px solid #b45309',borderRadius:'var(--radius)',background:'#fff',color:'#1a2233'}}),
+      style:{flex:'3 1 200px',fontWeight:700,fontSize:13,padding:'6px 10px',border:'2px solid #1d4ed8',borderRadius:'var(--radius)',background:'#fff',color:'#1a2233'}}),
     h('div',{style:{display:'flex',gap:6,flexShrink:0}},
-      h('button',{onClick:save,style:{background:'#1a2233',color:'#f5c842',border:'none',borderRadius:'var(--radius)',padding:'7px 16px',fontWeight:700,fontSize:12,cursor:'pointer'}},'✓ Save'),
-      h('button',{onClick:cancel,style:{background:'rgba(0,0,0,.12)',color:'#1a2233',border:'none',borderRadius:'var(--radius)',padding:'7px 12px',fontWeight:600,fontSize:12,cursor:'pointer'}},'✕')
+      h('button',{onClick:save,style:{background:'#1d4ed8',color:'#fff',border:'none',borderRadius:'var(--radius)',padding:'7px 16px',fontWeight:700,fontSize:12,cursor:'pointer'}},'✓ Save'),
+      h('button',{onClick:cancel,style:{background:'#f1f5f9',color:'#475569',border:'1px solid #e2e8f0',borderRadius:'var(--radius)',padding:'7px 12px',fontWeight:600,fontSize:12,cursor:'pointer'}},'✕')
     )
   );
   return h('div',{style:{
-    background:'#f5c842',color:'#1a2233',fontWeight:700,fontSize:14,
+    background:'#f8fafc',color:'#1e293b',fontWeight:700,fontSize:14,
     textAlign:'center',padding:'8px 40px',borderRadius:'var(--radius)',
-    marginBottom:16,letterSpacing:'.03em',position:'relative'
+    marginBottom:16,letterSpacing:'.02em',position:'relative',
+    border:'1px solid #e2e8f0',boxShadow:'0 1px 3px rgba(0,0,0,.04)'
   }},
     (data.projectInfo?.projectName)||'TAORMINA VILLAGE-01',
     ' — ',
     (data.projectInfo?.companyName)||'MODUN GULF BUILDING CONTRACTING LLC',
     h('button',{onClick:()=>setEditing(true),title:'Edit project name & company',style:{
       position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',
-      background:'rgba(0,0,0,.12)',border:'none',borderRadius:4,
-      padding:'3px 8px',cursor:'pointer',fontSize:11,fontWeight:600,color:'#1a2233',
+      background:'#eff6ff',border:'1px solid #bfdbfe',borderRadius:4,
+      padding:'3px 8px',cursor:'pointer',fontSize:11,fontWeight:600,color:'#1d4ed8',
       display:'flex',alignItems:'center',gap:4
     }},h(Icon,{name:'edit',size:12}),'Edit')
   );
@@ -2488,7 +2862,6 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
   };
 
   // State for the IPT table — organized as disciplines > rows
-  // curIPT.disciplines = { cat: { rows: [{thId,actId,matPct,instPct,remarks}] } }
   const[editMode,setEditMode]=useState(false);
   const[localDisc,setLocalDisc]=useState(()=>{
     const d={};
@@ -2502,13 +2875,26 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
   const[addThId,setAddThId]=useState('');
   const[selDisc,setSelDisc]=useState('all');
 
+  // Re-sync localDisc whenever month/year changes — load saved data (or blank if new month)
+  useEffect(()=>{
+    const entry=ipt[curKey]||{disciplines:{}};
+    const d={};
+    CATEGORIES.forEach(cat=>{
+      d[cat]={rows:(entry.disciplines?.[cat]?.rows||[]).map(r=>({...r}))};
+    });
+    setLocalDisc(d);
+    setEditMode(false);
+    setAddActId('');
+    setAddThId('');
+  },[curKey]);
+
   const getSortedActs=(cat)=>[...data.activities.filter(a=>a.category===cat)].sort((a,b)=>(a.order||0)-(b.order||0));
 
-  const addRow=()=>{
+  const addRow=(cat)=>{
     if(!addActId||!addThId)return;
-    const existing=(localDisc[selCat].rows||[]).find(r=>r.thId===addThId&&r.actId===addActId);
+    const existing=(localDisc[cat].rows||[]).find(r=>r.thId===addThId&&r.actId===addActId);
     if(existing){alert('This TH + Activity combination already exists.');return;}
-    setLocalDisc(d=>({...d,[selCat]:{rows:[...(d[selCat].rows||[]),{id:uid(),thId:addThId,actId:addActId,matPct:0,instPct:0,remarks:''}]}}));
+    setLocalDisc(d=>({...d,[cat]:{rows:[...(d[cat].rows||[]),{id:uid(),thId:addThId,actId:addActId,matPct:0,instPct:0,remarks:''}]}}));
     setAddActId('');
   };
 
@@ -2554,190 +2940,344 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
     return{mat,inst};
   };
 
-  const CAT_COLOR={Electrical:'#2563eb',Plumbing:'#d97706',HVAC:'#0d9488'};
-  const CAT_BG={Electrical:'#dbeafe',Plumbing:'#fef3c7',HVAC:'#ccfbf1'};
-  const CAT_LIGHT={Electrical:'#eff6ff',Plumbing:'#fffbeb',HVAC:'#f0fdfa'};
+  const CAT_COLOR={Electrical:'#1d4ed8',Plumbing:'#b45309',HVAC:'#0f766e'};
+  const CAT_BG={Electrical:'#eff6ff',Plumbing:'#fffbeb',HVAC:'#f0fdfa'};
+  const CAT_LIGHT={Electrical:'#f8faff',Plumbing:'#fefdf5',HVAC:'#f6fefe'};
+  // Softer muted tones for column headers
+  const HDR_BG='#f1f5f9';  // slate-100 — neutral for all columns
+  const HDR_TEXT='#475569'; // slate-600
 
   const exportIPTPDF=()=>{
     const{jsPDF}=window.jspdf;
     const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-    const pw=doc.internal.pageSize.getWidth(); // 297
-    const ph=doc.internal.pageSize.getHeight(); // 210
-    const ML=10,MR=10,MT=32,MB=12;
+    const pw=doc.internal.pageSize.getWidth();
+    const ph=doc.internal.pageSize.getHeight();
+    const ML=12,MR=12,MT=26,MB=14;
     const CW=pw-ML-MR;
 
     const projName=(data.projectInfo||{}).projectName||'TAORMINA VILLAGE-01';
     const compName=(data.projectInfo||{}).companyName||'MODUN GULF BUILDING CONTRACTING LLC';
-    const brandName=(data.projectInfo||{}).brandName||'Sdmbrk Collections';
-    const monthLabel=MONTHS[selMonth]+' '+selYear;
     const dateStr=new Date().toLocaleDateString('en-AE');
-    const catColorsRGB={Electrical:[37,99,235],Plumbing:[217,119,6],HVAC:[13,148,136]};
+    const monthLabel=MONTHS[selMonth]+' '+selYear;
+    const lastDay=lastDayOfMonth(selMonth,selYear);
 
-    // Column widths (landscape A4 = 277mm usable)
-    const COL={act:52,th:18,villas:22,mat:32,inst:32,matPct:16,instPct:16,usedMat:18,remarks:CW-52-18-22-32-32-16-16-18};
+    // ── Colour palette ──────────────────────────────────────────────
+    const NAVY=[30,45,69];
+    const GOLD=[212,175,55];
+    const WHITE=[255,255,255];
+    const SLATE=[71,85,105];
+    const SLATE_LIGHT=[148,163,184];
+    const LIGHT_BORDER=[226,232,240];
 
-    let pageNum=0;
-
-    const drawPageHeader=()=>{
-      pageNum++;
-      // Title banner
-      doc.setFillColor(30,45,69);
-      doc.rect(0,0,pw,18,'F');
-      doc.setTextColor(245,200,66);doc.setFontSize(10);doc.setFont('helvetica','bold');
-      doc.text('MEP — TARGET COST BREAKDOWN AS PER IPT',ML,7);
-      doc.setTextColor(200,216,238);doc.setFontSize(7);doc.setFont('helvetica','normal');
-      doc.text('1st '+monthLabel+' to '+lastDayOfMonth(selMonth,selYear)+'th '+monthLabel,ML,13);
-      doc.setTextColor(245,200,66);doc.setFontSize(8);doc.setFont('helvetica','bold');
-      doc.text(projName,pw/2,7,{align:'center'});
-      doc.setTextColor(200,216,238);doc.setFontSize(6.5);doc.setFont('helvetica','normal');
-      doc.text(compName,pw/2,13,{align:'center'});
-      doc.setTextColor(180,200,220);doc.setFontSize(6);
-      doc.text(brandName+' | '+dateStr,pw-MR,7,{align:'right'});
-      doc.text('Page '+pageNum,pw-MR,13,{align:'right'});
+    const CAT_PAL={
+      HVAC:   {acc:[13,148,136], hdrBg:[204,251,241], hdrTxt:[6,78,59],   rowAlt:[240,253,250], accentLight:[167,243,208]},
+      Electrical:{acc:[37,99,235],  hdrBg:[219,234,254], hdrTxt:[30,64,175],  rowAlt:[239,246,255], accentLight:[147,197,253]},
+      Plumbing:{acc:[180,83,9],   hdrBg:[254,243,199], hdrTxt:[120,53,15],  rowAlt:[255,251,235], accentLight:[252,211,77]},
     };
 
-    const drawColHeaders=(y,catRGB,catName)=>{
-      const headers=[catName,'TH','Villas','Material Cost (AED)','Install Cost (AED)','Mat %','Inst %','Used Mat%','Remarks'];
-      const widths=[COL.act,COL.th,COL.villas,COL.mat,COL.inst,COL.matPct,COL.instPct,COL.usedMat,COL.remarks];
-      const aligns=['left','center','center','right','right','center','center','center','left'];
-      let x=ML;
+    // Column widths — 11 cols matching screen: act|th|vtypes|vtotal|mat|inst|matPct|matBal|instPct|instBal|remarks
+    const COL={act:44,th:14,vtypes:26,vtotal:12,mat:28,inst:28,matPct:13,matBal:13,instPct:13,instBal:13,remarks:CW-44-14-26-12-28-28-13-13-13-13};
+    const ROW_H=7;
+    let pageNum=0;
+
+    // ── Page Header — mirrors on-screen UI exactly ────────────────
+    const drawPageHeader=()=>{
+      pageNum++;
+      // White background, full header height
+      doc.setFillColor(255,255,255);
+      doc.rect(0,0,pw,22,'F');
+      // Blue accent stripe at top
+      doc.setFillColor(29,78,216);
+      doc.rect(0,0,pw,1.5,'F');
+      // Light border at bottom
+      doc.setFillColor(226,232,240);
+      doc.rect(0,21.5,pw,0.5,'F');
+
+      // Left: title in blue
+      doc.setTextColor(29,78,216);doc.setFontSize(9);doc.setFont('helvetica','bold');
+      doc.text('MEP — TARGET COST BREAKDOWN AS PER IPT',ML,9);
+      doc.setTextColor(71,85,105);doc.setFontSize(6.5);doc.setFont('helvetica','normal');
+      doc.text('1st '+monthLabel+' to '+lastDay+'th '+monthLabel,ML,15);
+      doc.setTextColor(148,163,184);doc.setFontSize(5.5);
+      doc.text('Generated: '+dateStr,ML,20);
+
+      // Centre: project + company
+      doc.setTextColor(30,41,59);doc.setFontSize(8);doc.setFont('helvetica','bold');
+      doc.text(projName,pw/2,9,{align:'center'});
+      doc.setTextColor(71,85,105);doc.setFontSize(6.5);doc.setFont('helvetica','normal');
+      doc.text(compName,pw/2,15,{align:'center'});
+
+      // Right: page number
+      doc.setTextColor(148,163,184);doc.setFontSize(6);
+      doc.text('Page '+pageNum,pw-MR,9,{align:'right'});
+      doc.setTextColor(148,163,184);doc.setFontSize(5.5);
+      doc.text('CONFIDENTIAL',pw-MR,15,{align:'right'});
+    };
+
+    // ── Column Header Row — clean white with subtle border ─────────
+    const drawColHeaders=(y,pal,catLabel)=>{
+      const H=6;
+      doc.setFillColor(255,255,255);
+      doc.rect(ML,y,CW,H,'F');
+      // Thin left accent strip
+      doc.setFillColor(pal.acc[0],pal.acc[1],pal.acc[2]);
+      doc.rect(ML,y,1.5,H,'F');
+
+      const headers=[catLabel,'TH','Villa Types','Total','Material Cost','Install Cost','Mat %','Mat Bal','Inst %','Inst Bal','Remarks'];
+      const widths=[COL.act,COL.th,COL.vtypes,COL.vtotal,COL.mat,COL.inst,COL.matPct,COL.matBal,COL.instPct,COL.instBal,COL.remarks];
+      const colors=[[100,116,139],[100,116,139],[100,116,139],[100,116,139],[22,101,52],[30,64,175],[120,53,15],[22,101,52],[30,64,175],[30,64,175],[100,116,139]];
+      const aligns=['left','center','left','center','right','right','center','center','center','center','left'];
+
+      doc.setFontSize(5.8);doc.setFont('helvetica','bold');
+      let x=ML+1.5;
       headers.forEach((hdr,i)=>{
-        doc.setFillColor(catRGB[0],catRGB[1],catRGB[2]);
-        doc.rect(x,y,widths[i],6,'F');
-        doc.setTextColor(255,255,255);doc.setFontSize(6.5);doc.setFont('helvetica','bold');
-        doc.text(hdr,aligns[i]==='right'?x+widths[i]-1.5:aligns[i]==='center'?x+widths[i]/2:x+1.5,y+4.2,{align:aligns[i]==='right'?'right':aligns[i]==='center'?'center':'left'});
+        doc.setTextColor(colors[i][0],colors[i][1],colors[i][2]);
+        const cx=aligns[i]==='right'?x+widths[i]-1.5:aligns[i]==='center'?x+widths[i]/2:x+1.5;
+        doc.text(hdr,cx,y+H-1.6,{align:aligns[i]==='right'?'right':aligns[i]==='center'?'center':'left'});
         x+=widths[i];
       });
-      return y+6;
+      doc.setDrawColor(203,213,225);doc.setLineWidth(0.3);
+      doc.line(ML,y+H,ML+CW,y+H);
+      return y+H;
+    };
+
+    // ── Footer ───────────────────────────────────────────────────────
+    const drawFooter=()=>{
+      doc.setFillColor(255,255,255);
+      doc.rect(0,ph-10,pw,10,'F');
+      doc.setDrawColor(...LIGHT_BORDER);doc.setLineWidth(0.2);
+      doc.line(0,ph-10,pw,ph-10);
+      doc.setTextColor(...SLATE_LIGHT);doc.setFontSize(5.5);doc.setFont('helvetica','normal');
+      doc.text(compName+' — Confidential',ML,ph-4.5);
+      doc.setTextColor(29,78,216);doc.setFontSize(5.5);
+      doc.text('Page '+pageNum,pw-MR,ph-4.5,{align:'right'});
     };
 
     const fmtN=(n)=>n>0?n.toLocaleString('en-AE',{minimumFractionDigits:0,maximumFractionDigits:0}):'—';
 
+    // ── Draw vertical column grid lines ──────────────────────────────
+    const drawGridLines=(yStart,yEnd,pal)=>{
+      doc.setDrawColor(...LIGHT_BORDER);
+      doc.setLineWidth(0.07);
+      const widths=[COL.act,COL.th,COL.vtypes,COL.vtotal,COL.mat,COL.inst,COL.matPct,COL.matBal,COL.instPct,COL.instBal];
+      let x=ML+2;
+      widths.forEach(w=>{x+=w;doc.line(x,yStart,x,yEnd);});
+    };
+
+    // ═══════════════════ START RENDERING ════════════════════════════
     drawPageHeader();
     let y=MT;
 
-    // Summary row at top
+    // ── Grand Total Summary Banner ───────────────────────────────────
     const grandTotPDF=(()=>{let m=0,i=0;CATEGORIES.forEach(c=>{const t=computeTotals(c);m+=t.mat;i+=t.inst;});return{mat:m,inst:i};})();
-    doc.setFillColor(245,200,66);
-    doc.rect(0,y,pw,6,'F');
-    doc.setTextColor(30,45,69);doc.setFontSize(7);doc.setFont('helvetica','bold');
-    doc.text('GRAND TOTAL — ALL DISCIPLINES',ML,y+4.2);
-    doc.text('Material: AED '+fmtN(grandTotPDF.mat),ML+CW*0.45,y+4.2);
-    doc.text('Installation: AED '+fmtN(grandTotPDF.inst),ML+CW*0.65,y+4.2);
-    doc.text('TOTAL: AED '+fmtN(grandTotPDF.mat+grandTotPDF.inst),pw-MR,y+4.2,{align:'right'});
-    y+=8;
+    const BANNER_H=8;
+    doc.setFillColor(255,255,255);
+    doc.rect(ML,y,CW,BANNER_H,'F');
+    doc.setFillColor(30,41,59);
+    doc.rect(ML,y,2,BANNER_H,'F');
+    doc.setDrawColor(203,213,225);doc.setLineWidth(0.2);
+    doc.rect(ML,y,CW,BANNER_H,'S');
+    doc.setTextColor(30,41,59);doc.setFontSize(7);doc.setFont('helvetica','bold');
+    doc.text('GRAND TOTAL — ALL DISCIPLINES',ML+6,y+5.2);
+    doc.setFontSize(6.5);
+    doc.setTextColor(22,101,52);
+    doc.text('Material: AED '+fmtN(grandTotPDF.mat),ML+CW*0.42,y+5.2);
+    doc.setTextColor(30,64,175);
+    doc.text('Installation: AED '+fmtN(grandTotPDF.inst),ML+CW*0.60,y+5.2);
+    doc.setTextColor(30,41,59);doc.setFont('helvetica','bold');
+    doc.text('TOTAL: AED '+fmtN(grandTotPDF.mat+grandTotPDF.inst),ML+CW-1,y+5.2,{align:'right'});
+    y+=BANNER_H+4;
 
-    CATEGORIES.forEach((cat,ci)=>{
+    // ── Per Discipline ───────────────────────────────────────────────
+    CATEGORIES.forEach(cat=>{
       const rows=localDisc[cat]?.rows||[];
-      if(rows.length===0)return;
+      if(!rows.length)return;
+      const pal=CAT_PAL[cat];
       const acts=getSortedActs(cat);
       const grouped={};
       rows.forEach(row=>{if(!grouped[row.actId])grouped[row.actId]=[];grouped[row.actId].push(row);});
-      const catRGB=catColorsRGB[cat];
       const totals=computeTotals(cat);
-      const ROW_H=5.8;
 
-      // Check space for discipline header + col headers + at least 2 rows
-      if(y+14+2*ROW_H>ph-MB){
-        doc.addPage();drawPageHeader();y=MT;
-      }
+      // Page break check
+      if(y+18+2*ROW_H>ph-MB-10){doc.addPage();drawPageHeader();y=MT;}
 
-      // Discipline title bar
-      doc.setFillColor(...catRGB);
-      doc.rect(0,y,pw,7,'F');
-      doc.setTextColor(255,255,255);doc.setFontSize(8);doc.setFont('helvetica','bold');
-      doc.text(cat.toUpperCase(),ML,y+5);
-      doc.text('Material: AED '+fmtN(totals.mat)+'   Installation: AED '+fmtN(totals.inst)+'   Total: AED '+fmtN(totals.mat+totals.inst),pw-MR,y+5,{align:'right'});
-      y+=7;
+      // ── Discipline Header — light, clean ──────────────────────────
+      const DH=7;
+      // Very light discipline-tinted bg
+      doc.setFillColor(255,255,255);
+      doc.rect(ML,y,CW,DH,'F');
+      // Thin left accent
+      doc.setFillColor(pal.acc[0],pal.acc[1],pal.acc[2]);
+      doc.rect(ML,y,2,DH,'F');
+      // Bottom border in accent colour
+      doc.setDrawColor(pal.acc[0],pal.acc[1],pal.acc[2]);doc.setLineWidth(0.4);
+      doc.line(ML,y+DH,ML+CW,y+DH);
+      // Small dot
+      doc.setFillColor(pal.acc[0],pal.acc[1],pal.acc[2]);
+      doc.circle(ML+7,y+DH/2,1.2,'F');
+      // Discipline name
+      doc.setTextColor(pal.hdrTxt[0],pal.hdrTxt[1],pal.hdrTxt[2]);
+      doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+      doc.text(cat.toUpperCase(),ML+11,y+5);
+      // Mat & Inst on right — muted
+      doc.setFontSize(6);doc.setFont('helvetica','normal');
+      doc.setTextColor(22,101,52);
+      doc.text('Mat: '+(totals.mat>0?'AED '+fmtN(totals.mat):'—'),pw-MR-44,y+5);
+      doc.setTextColor(30,64,175);
+      doc.text('Inst: '+(totals.inst>0?'AED '+fmtN(totals.inst):'—'),pw-MR,y+5,{align:'right'});
+      y+=DH;
 
-      // Col headers
-      y=drawColHeaders(y,catRGB,cat);
+      // Column headers
+      const tableStart=y;
+      y=drawColHeaders(y,pal,cat);
 
-      // Activity rows (grouped by activity)
+      // ── Data Rows ────────────────────────────────────────────────
+      const rowsStartY=y;
+      let lastRowY=y;
+
       acts.filter(act=>grouped[act.id]).forEach(act=>{
         const actRows=grouped[act.id];
         actRows.forEach((row,ri)=>{
-          if(y+ROW_H>ph-MB){doc.addPage();drawPageHeader();y=MT;y=drawColHeaders(y,catRGB,'('+cat+' cont.)');}
+          if(y+ROW_H>ph-MB-10){
+            drawGridLines(rowsStartY,y,pal);
+            drawFooter();
+            doc.addPage();drawPageHeader();y=MT;
+            y=drawColHeaders(y,pal,'('+cat+' cont.)');
+          }
+
           const th=data.townhouses.find(t=>t.id===row.thId);
           const matCost=th?calcIPTCost(th,act.id,'mat',parseFloat(row.matPct)||0):0;
           const instCost=th?calcIPTCost(th,act.id,'inst',parseFloat(row.instPct)||0):0;
           const usedMat=getUsedPct(row.thId,act.id,'mat');
+          const usedInst=getUsedPct(row.thId,act.id,'inst');
           const totalVillas=th?th.villaTypes.reduce((s,v)=>s+(parseInt(v.count)||0),0):0;
-          const villaStr=th?th.villaTypes.filter(v=>parseInt(v.count)>0).map(v=>v.count+'×'+v.type).join(', '):'—';
-          const rowBg=ri%2===0?[255,255,255]:[248,250,252];
-          doc.setFillColor(...rowBg);
-          doc.rect(0,y,pw,ROW_H,'F');
-          // left accent stripe
-          doc.setFillColor(...catRGB.map(v=>Math.min(255,v+100)));
-          doc.rect(0,y,1.2,ROW_H,'F');
-          doc.setTextColor(26,34,51);doc.setFontSize(6.2);
+          const villaStr=th?th.villaTypes.filter(v=>parseInt(v.count)>0).map(v=>v.count+'×'+v.type).join(' '):'—';
 
-          let x=ML+1.5;
-          // Activity (only first row of group)
-          doc.setFont('helvetica',ri===0?'bold':'normal');
-          doc.setTextColor(26,34,51);
-          if(ri===0)doc.text(doc.splitTextToSize(act.name,COL.act-3)[0],x,y+ROW_H-1.5);
-          x+=COL.act-1.5;
+          // Row background — white / very light grey alternating
+          const isAlt=ri%2!==0;
+          doc.setFillColor(isAlt?250:255,isAlt?251:255,isAlt?252:255);
+          doc.rect(ML,y,CW,ROW_H,'F');
 
-          doc.setFont('helvetica','bold');doc.setTextColor(...catRGB);
-          doc.text(th?th.name:'—',x+COL.th/2,y+ROW_H-1.5,{align:'center'});x+=COL.th;
+          // Left accent bar — very light version of discipline colour
+          doc.setFillColor(
+            Math.min(255,pal.acc[0]+160),
+            Math.min(255,pal.acc[1]+160),
+            Math.min(255,pal.acc[2]+160)
+          );
+          doc.rect(ML,y,3.5,ROW_H,'F');
 
-          doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
-          doc.text(String(totalVillas),x+COL.villas/2,y+ROW_H-1.5,{align:'center'});
-          if(totalVillas>0){doc.setFontSize(5);doc.text(doc.splitTextToSize(villaStr,COL.villas-2)[0],x+1,y+ROW_H-0.3);}
-          doc.setFontSize(6.2);x+=COL.villas;
+          let x=ML+2;
+          doc.setFontSize(6);
 
+          // Activity name (first row of group only — bold navy)
+          if(ri===0){
+            doc.setFont('helvetica','bold');doc.setTextColor(...NAVY);
+            doc.text(doc.splitTextToSize(act.name,COL.act-3)[0],x+1.5,y+ROW_H-2);
+          }
+          if(ri>0){
+            doc.setDrawColor(...pal.accentLight);doc.setLineWidth(0.05);
+            doc.line(x,y,x+COL.act,y);
+          }
+          x+=COL.act;
+
+          // TH — in discipline accent colour like screen
+          doc.setFont('helvetica','bold');doc.setTextColor(...pal.acc);
+          doc.text(th?th.name:'—',x+COL.th/2,y+ROW_H-2,{align:'center'});x+=COL.th;
+
+          // Villa Types — each on own line
+          if(th&&th.villaTypes.filter(v=>parseInt(v.count)>0).length>0){
+            const vtList=th.villaTypes.filter(v=>parseInt(v.count)>0);
+            const lh=(ROW_H-1.5)/vtList.length;
+            doc.setFontSize(4.8);
+            vtList.forEach((vt,vi)=>{
+              const ly=y+1+vi*lh+lh*0.65;
+              doc.setFont('helvetica','normal');doc.setTextColor(...SLATE);
+              doc.text(vt.type,x+1,ly);
+              doc.setFont('helvetica','bold');doc.setTextColor(...NAVY);
+              doc.text('×'+vt.count,x+COL.vtypes-1.5,ly,{align:'right'});
+            });
+            doc.setFontSize(6);
+          }else{
+            doc.setFont('helvetica','normal');doc.setTextColor(...SLATE_LIGHT);
+            doc.text('—',x+COL.vtypes/2,y+ROW_H-2,{align:'center'});
+          }
+          x+=COL.vtypes;
+
+          // Total villas — bold
+          doc.setFont('helvetica','bold');doc.setTextColor(...NAVY);
+          doc.text(totalVillas>0?String(totalVillas):'—',x+COL.vtotal/2,y+ROW_H-2,{align:'center'});
+          x+=COL.vtotal;
+
+          // Material cost — green
           doc.setFont('helvetica','bold');doc.setTextColor(22,101,52);
-          doc.text(matCost>0?fmtN(matCost):'—',x+COL.mat-1.5,y+ROW_H-1.5,{align:'right'});x+=COL.mat;
+          doc.text(matCost>0?fmtN(matCost):'—',x+COL.mat-1.5,y+ROW_H-2,{align:'right'});x+=COL.mat;
 
+          // Install cost — blue
           doc.setTextColor(30,64,175);
-          doc.text(instCost>0?fmtN(instCost):'—',x+COL.inst-1.5,y+ROW_H-1.5,{align:'right'});x+=COL.inst;
+          doc.text(instCost>0?fmtN(instCost):'—',x+COL.inst-1.5,y+ROW_H-2,{align:'right'});x+=COL.inst;
 
-          doc.setTextColor(180,83,9);doc.setFont('helvetica','bold');
-          doc.text(row.matPct>0?row.matPct+'%':'—',x+COL.matPct/2,y+ROW_H-1.5,{align:'center'});x+=COL.matPct;
+          // Mat %
+          doc.setTextColor(146,64,14);
+          doc.text(row.matPct>0?row.matPct+'%':'—',x+COL.matPct/2,y+ROW_H-2,{align:'center'});x+=COL.matPct;
 
-          doc.setTextColor(30,64,175);
-          doc.text(row.instPct>0?row.instPct+'%':'—',x+COL.instPct/2,y+ROW_H-1.5,{align:'center'});x+=COL.instPct;
+          // Mat Balance — no bg, just coloured text
+          const balMat=Math.max(0,100-usedMat);
+          doc.setFont('helvetica','bold');
+          if(balMat<=0)doc.setTextColor(239,68,68);
+          else if(balMat<=20)doc.setTextColor(245,158,11);
+          else doc.setTextColor(22,101,52);
+          doc.text(balMat<=0?'FULL':balMat+'%',x+COL.matBal/2,y+ROW_H-2,{align:'center'});x+=COL.matBal;
 
-          // Used mat% with mini bar
-          const usedClamped=Math.min(100,usedMat);
-          doc.setTextColor(usedMat>=100?220:usedMat>70?180:40,usedMat>=100?20:usedMat>70?90:130,20);
-          doc.setFont('helvetica','normal');
-          doc.text(usedMat.toFixed(0)+'%',x+COL.usedMat/2,y+ROW_H-2.5,{align:'center'});
-          doc.setFillColor(220,220,220);doc.rect(x+1,y+ROW_H-1.6,COL.usedMat-2,1.2,'F');
-          const barColor=usedMat>=100?[220,38,38]:usedMat>70?[245,158,11]:[34,197,94];
-          doc.setFillColor(...barColor);doc.rect(x+1,y+ROW_H-1.6,(COL.usedMat-2)*usedClamped/100,1.2,'F');
-          x+=COL.usedMat;
+          // Inst %
+          doc.setTextColor(30,58,138);
+          doc.text(row.instPct>0?row.instPct+'%':'—',x+COL.instPct/2,y+ROW_H-2,{align:'center'});x+=COL.instPct;
 
-          doc.setTextColor(80,80,80);doc.setFont('helvetica','normal');
-          if(row.remarks)doc.text(doc.splitTextToSize(row.remarks,COL.remarks-2)[0],x+1,y+ROW_H-1.5);
+          // Inst Balance — no bg, just coloured text
+          const balInst=Math.max(0,100-usedInst);
+          if(balInst<=0)doc.setTextColor(239,68,68);
+          else if(balInst<=20)doc.setTextColor(245,158,11);
+          else doc.setTextColor(30,64,175);
+          doc.text(balInst<=0?'FULL':balInst+'%',x+COL.instBal/2,y+ROW_H-2,{align:'center'});x+=COL.instBal;
 
-          // Row border
-          doc.setDrawColor(210,210,210);doc.setLineWidth(0.1);
-          doc.line(0,y+ROW_H,pw,y+ROW_H);
+          // Remarks
+          doc.setFont('helvetica','normal');doc.setTextColor(...SLATE);doc.setFontSize(5.5);
+          if(row.remarks)doc.text(doc.splitTextToSize(row.remarks,COL.remarks-2)[0],x+1.5,y+ROW_H-2);
+
+          // Row bottom line
+          doc.setDrawColor(...LIGHT_BORDER);doc.setLineWidth(0.1);
+          doc.line(ML+2,y+ROW_H,ML+CW,y+ROW_H);
+          lastRowY=y+ROW_H;
           y+=ROW_H;
         });
       });
 
-      // Totals row
-      if(y+6>ph-MB){doc.addPage();drawPageHeader();y=MT;}
-      doc.setFillColor(253,224,71);
-      doc.rect(0,y,pw,6,'F');
-      doc.setTextColor(30,45,69);doc.setFontSize(7);doc.setFont('helvetica','bold');
-      const tx=ML+COL.act+COL.th+COL.villas;
-      doc.text('TOTAL',ML,y+4.2);
-      doc.text(fmtN(totals.mat),tx+COL.mat-1.5,y+4.2,{align:'right'});
-      doc.text(fmtN(totals.inst),tx+COL.mat+COL.inst-1.5,y+4.2,{align:'right'});
-      doc.text('AED '+fmtN(totals.mat+totals.inst),pw-MR,y+4.2,{align:'right'});
-      y+=8;
+      // Draw grid lines across all data rows
+      drawGridLines(rowsStartY,lastRowY,pal);
+
+      // ── Totals Row ───────────────────────────────────────────────
+      if(y+7>ph-MB-10){drawFooter();doc.addPage();drawPageHeader();y=MT;}
+      const TR_H=6.5;
+      doc.setFillColor(255,255,255);
+      doc.rect(ML,y,CW,TR_H,'F');
+      doc.setFillColor(pal.acc[0],pal.acc[1],pal.acc[2]);
+      doc.rect(ML,y,2,TR_H,'F');
+      doc.setDrawColor(pal.acc[0],pal.acc[1],pal.acc[2]);doc.setLineWidth(0.4);
+      doc.line(ML,y,ML+CW,y);
+
+      doc.setTextColor(...pal.hdrTxt);doc.setFontSize(7);doc.setFont('helvetica','bold');
+      doc.text('SUBTOTAL — '+cat.toUpperCase(),ML+6,y+TR_H-1.8);
+      const tx=ML+2+COL.act+COL.th+COL.vtypes+COL.vtotal;
+      doc.setTextColor(22,101,52);
+      doc.text('AED '+fmtN(totals.mat),tx+COL.mat-2,y+TR_H-1.8,{align:'right'});
+      doc.setTextColor(30,64,175);
+      doc.text('AED '+fmtN(totals.inst),tx+COL.mat+COL.inst-2,y+TR_H-1.8,{align:'right'});
+      doc.setTextColor(...pal.hdrTxt);
+      doc.text('AED '+fmtN(totals.mat+totals.inst),ML+CW-2,y+TR_H-1.8,{align:'right'});
+      y+=TR_H+5;
     });
 
-    // Footer on last page
-    doc.setDrawColor(180,180,180);doc.setLineWidth(0.15);
-    doc.line(ML,ph-6,pw-MR,ph-6);
-    doc.setTextColor(140,140,140);doc.setFontSize(5.5);doc.setFont('helvetica','normal');
-    doc.text(brandName+' — '+compName+' — Confidential',ML,ph-3);
-    doc.text('Generated: '+dateStr,pw-MR,ph-3,{align:'right'});
+    // ── Footer on last page ──────────────────────────────────────────
+    drawFooter();
 
     doc.save('IPT_'+MONTHS[selMonth]+'_'+selYear+'.pdf');
   };
@@ -2757,29 +3297,38 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
     const cl=CAT_LIGHT[cat];
     const totals=computeTotals(cat);
 
-    return h('div',{style:{marginBottom:28}},
-      // Discipline header
+    return h('div',{style:{marginBottom:28,borderRadius:'var(--radius2)',overflow:'hidden',boxShadow:'0 1px 6px rgba(0,0,0,.07)',border:'1px solid #e2e8f0'}},
+      // Discipline header — soft coloured title strip
       h('div',{style:{
-        background:cc,color:'#fff',fontWeight:700,fontSize:15,
-        textAlign:'center',padding:'8px 16px',letterSpacing:'.04em',
-        borderRadius:'var(--radius) var(--radius) 0 0'
-      }},cat.toUpperCase()),
+        background:CAT_BG[cat],borderLeft:'4px solid '+cc,
+        padding:'12px 16px',display:'flex',alignItems:'center',
+        justifyContent:'space-between',borderBottom:'1px solid #e2e8f0'
+      }},
+        h('div',{style:{display:'flex',alignItems:'center',gap:10}},
+          h('div',{style:{width:8,height:8,borderRadius:'50%',background:cc,flexShrink:0}}),
+          h('span',{style:{fontWeight:700,fontSize:13,color:'#1e293b',letterSpacing:'.06em',textTransform:'uppercase'}},cat),
+        ),
+        h('div',{style:{display:'flex',gap:20,fontSize:12}},
+          h('span',{style:{color:'#64748b'}},'Mat: ',h('b',{style:{color:'#166534',fontFamily:'monospace'}},totals.mat>0?fmt(totals.mat):'—')),
+          h('span',{style:{color:'#64748b'}},'Inst: ',h('b',{style:{color:'#1e40af',fontFamily:'monospace'}},totals.inst>0?fmt(totals.inst):'—'))
+        )
+      ),
 
-      h('div',{style:{overflowX:'auto',border:'2px solid '+cc,borderTop:'none',borderRadius:'0 0 var(--radius) var(--radius)'}},
+      h('div',{style:{overflowX:'auto'}},
         h('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:12}},
-          // Sub-header rows (match image layout)
           h('thead',null,
             h('tr',null,
-              h('th',{style:{background:cbg,padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:140}},cat),
-              h('th',{style:{background:cbg,padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:70,textAlign:'center'}},'TH'),
-              h('th',{style:{background:cbg,padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:80,textAlign:'center'}},'Villas'),
-              h('th',{style:{background:'#dcfce7',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:110,textAlign:'right'}},'Material Cost'),
-              h('th',{style:{background:'#dbeafe',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:110,textAlign:'right'}},'Install Cost'),
-              h('th',{style:{background:'#fef9c3',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:70,textAlign:'center'}},'Mat %'),
-              h('th',{style:{background:'#e0f2fe',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:70,textAlign:'center'}},'Inst %'),
-              h('th',{style:{background:'#f0fdf4',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:90,textAlign:'center'}},'Used Mat'),
-              h('th',{style:{background:'#fdf4ff',padding:'7px 10px',border:'1px solid #ccc',fontWeight:700,fontSize:11,minWidth:100,textAlign:'left'}},'Remarks'),
-              editMode&&h('th',{style:{background:'#fee2e2',padding:'7px 6px',border:'1px solid #ccc',width:36}})
+              h('th',{style:{background:HDR_BG,padding:'8px 12px',borderBottom:'1px solid #e2e8f0',fontWeight:600,fontSize:10,color:HDR_TEXT,textTransform:'uppercase',letterSpacing:'.07em',minWidth:140,textAlign:'left'}},'Planned Activity'),
+              h('th',{style:{background:HDR_BG,padding:'8px 10px',borderBottom:'1px solid #e2e8f0',fontWeight:600,fontSize:10,color:HDR_TEXT,textTransform:'uppercase',letterSpacing:'.07em',minWidth:70,textAlign:'center'}},'TH'),
+              h('th',{style:{background:HDR_BG,padding:'8px 10px',borderBottom:'1px solid #e2e8f0',fontWeight:600,fontSize:10,color:HDR_TEXT,textTransform:'uppercase',letterSpacing:'.07em',minWidth:80,textAlign:'center'}},'Villas'),
+              h('th',{style:{background:HDR_BG,padding:'8px 12px',borderBottom:'1px solid #e2e8f0',fontWeight:600,fontSize:10,color:'#166534',textTransform:'uppercase',letterSpacing:'.07em',minWidth:110,textAlign:'right'}},'Material Cost'),
+              h('th',{style:{background:HDR_BG,padding:'8px 12px',borderBottom:'1px solid #e2e8f0',fontWeight:600,fontSize:10,color:'#1e40af',textTransform:'uppercase',letterSpacing:'.07em',minWidth:110,textAlign:'right'}},'Install Cost'),
+              h('th',{style:{background:HDR_BG,padding:'8px 8px',borderBottom:'1px solid #e2e8f0',fontWeight:600,fontSize:10,color:'#92400e',textTransform:'uppercase',letterSpacing:'.07em',minWidth:58,textAlign:'center'}},'Mat %'),
+              h('th',{style:{background:'#f0fdf4',padding:'8px 8px',borderBottom:'1px solid #e2e8f0',fontWeight:600,fontSize:10,color:'#166534',textTransform:'uppercase',letterSpacing:'.07em',minWidth:68,textAlign:'center'}},'Mat Bal'),
+              h('th',{style:{background:HDR_BG,padding:'8px 8px',borderBottom:'1px solid #e2e8f0',fontWeight:600,fontSize:10,color:'#1e3a8a',textTransform:'uppercase',letterSpacing:'.07em',minWidth:58,textAlign:'center'}},'Inst %'),
+              h('th',{style:{background:'#eff6ff',padding:'8px 8px',borderBottom:'1px solid #e2e8f0',fontWeight:600,fontSize:10,color:'#1e40af',textTransform:'uppercase',letterSpacing:'.07em',minWidth:68,textAlign:'center'}},'Inst Bal'),
+              h('th',{style:{background:HDR_BG,padding:'8px 12px',borderBottom:'1px solid #e2e8f0',fontWeight:600,fontSize:10,color:HDR_TEXT,textTransform:'uppercase',letterSpacing:'.07em',minWidth:100,textAlign:'left'}},'Remarks'),
+              editMode&&h('th',{style:{background:HDR_BG,padding:'8px 6px',borderBottom:'1px solid #e2e8f0',width:36}})
             )
           ),
           h('tbody',null,
@@ -2796,86 +3345,96 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
                 // Villa info for this TH
                 const villaInfo=th?th.villaTypes.filter(v=>parseInt(v.count)>0).map(v=>`${v.count} ${v.type}`).join(', '):'—';
                 const totalVillas=th?th.villaTypes.reduce((s,v)=>s+(parseInt(v.count)||0),0):0;
-                const rowBg=ri%2===0?'#fff':cl;
-                return h('tr',{key:row.id||ri,style:{background:rowBg}},
-                  // Activity name — only first row of group shows it (merged style)
+                const rowBg=ri%2===0?'#fff':'#f8fafc';
+                return h('tr',{key:row.id||ri,style:{background:rowBg,transition:'background .1s'}},
                   ri===0
                     ?h('td',{rowSpan:actRows.length,style:{
-                        padding:'8px 10px',border:'1px solid #ddd',
-                        fontWeight:600,fontSize:12,color:'#1a2233',
-                        background:cl,verticalAlign:'middle',textAlign:'center',
+                        padding:'10px 12px',borderBottom:'1px solid #e2e8f0',
+                        fontWeight:600,fontSize:12,color:'#1e293b',
+                        background:'#fff',verticalAlign:'middle',
                         borderLeft:'3px solid '+cc
                       }},act.name)
                     :null,
-                  h('td',{style:{padding:'6px 10px',border:'1px solid #ddd',textAlign:'center',fontWeight:700,color:cc}},th?th.name:'—'),
-                  h('td',{style:{padding:'6px 8px',border:'1px solid #ddd',textAlign:'center',fontSize:11,color:'#555'}},
+                  h('td',{style:{padding:'8px 10px',borderBottom:'1px solid #e2e8f0',textAlign:'center',fontWeight:700,fontSize:12,color:cc}},th?th.name:'—'),
+                  h('td',{style:{padding:'6px 8px',borderBottom:'1px solid #e2e8f0',textAlign:'center'}},
                     totalVillas>0?h('div',null,
-                      h('div',{style:{fontWeight:700,fontSize:12}},totalVillas),
-                      h('div',{style:{fontSize:9,color:'#888',marginTop:1}},villaInfo)
-                    ):'—'
+                      h('div',{style:{fontWeight:700,fontSize:12,color:'#334155'}},totalVillas),
+                      h('div',{style:{fontSize:9,color:'#94a3b8',marginTop:1}},villaInfo)
+                    ):h('span',{style:{color:'#cbd5e1'}},'—')
                   ),
-                  h('td',{style:{padding:'6px 10px',border:'1px solid #ddd',textAlign:'right',fontFamily:'monospace',fontWeight:600,color:'#166534',background:'#f0fdf4'}},
-                    matCost>0?fmt(matCost):'—'
+                  h('td',{style:{padding:'8px 12px',borderBottom:'1px solid #e2e8f0',textAlign:'right',fontFamily:'monospace',fontWeight:600,fontSize:12,color:'#166534'}},
+                    matCost>0?fmt(matCost):h('span',{style:{color:'#cbd5e1'}},'—')
                   ),
-                  h('td',{style:{padding:'6px 10px',border:'1px solid #ddd',textAlign:'right',fontFamily:'monospace',fontWeight:600,color:'#1e40af',background:'#eff6ff'}},
-                    instCost>0?fmt(instCost):'—'
+                  h('td',{style:{padding:'8px 12px',borderBottom:'1px solid #e2e8f0',textAlign:'right',fontFamily:'monospace',fontWeight:600,fontSize:12,color:'#1e40af'}},
+                    instCost>0?fmt(instCost):h('span',{style:{color:'#cbd5e1'}},'—')
                   ),
                   // Mat %
-                  h('td',{style:{padding:'4px 6px',border:'1px solid #ddd',textAlign:'center',background:'#fefce8'}},
+                  h('td',{style:{padding:'6px 8px',borderBottom:'1px solid #e2e8f0',textAlign:'center'}},
                     editMode
                       ?h('input',{type:'number',min:0,max:100,step:1,value:row.matPct||'',placeholder:'0',
                           onChange:e=>updateRow(cat,row._ri,'matPct',Math.min(100,Math.max(0,parseFloat(e.target.value)||0))),
-                          style:{width:54,textAlign:'center',border:'1px solid #d97706',borderRadius:3,padding:'3px 4px',fontSize:12,fontWeight:700,background:'#fffbeb'}})
-                      :h('span',{style:{fontWeight:700,fontFamily:'monospace',color:row.matPct>0?'#b45309':'#aaa'}},
+                          style:{width:52,textAlign:'center',border:'1px solid #e2e8f0',borderRadius:4,padding:'4px',fontSize:12,fontWeight:600,background:'#fff'}})
+                      :h('span',{style:{fontWeight:700,fontFamily:'monospace',fontSize:12,color:row.matPct>0?'#92400e':'#cbd5e1'}},
                           row.matPct>0?row.matPct+'%':'—')
                   ),
+                  // Mat Balance
+                  h('td',{style:{padding:'6px 8px',borderBottom:'1px solid #e2e8f0',textAlign:'center',background:'#f0fdf4'}},
+                    h('div',{style:{fontWeight:700,fontFamily:'monospace',fontSize:12,
+                      color:balMat<=0?'#ef4444':balMat<=20?'#d97706':'#16a34a'}},
+                      balMat<=0?'FULL':balMat.toFixed(0)+'%'),
+                    h('div',{style:{height:3,background:'#e2e8f0',borderRadius:2,marginTop:3,overflow:'hidden',width:50,margin:'3px auto 0'}},
+                      h('div',{style:{height:'100%',width:Math.min(100,usedMat)+'%',background:usedMat>=100?'#ef4444':usedMat>70?'#f59e0b':'#22c55e',borderRadius:2}})
+                    )
+                  ),
                   // Inst %
-                  h('td',{style:{padding:'4px 6px',border:'1px solid #ddd',textAlign:'center',background:'#eff6ff'}},
+                  h('td',{style:{padding:'6px 8px',borderBottom:'1px solid #e2e8f0',textAlign:'center'}},
                     editMode
                       ?h('input',{type:'number',min:0,max:100,step:1,value:row.instPct||'',placeholder:'0',
                           onChange:e=>updateRow(cat,row._ri,'instPct',Math.min(100,Math.max(0,parseFloat(e.target.value)||0))),
-                          style:{width:54,textAlign:'center',border:'1px solid #2563eb',borderRadius:3,padding:'3px 4px',fontSize:12,fontWeight:700,background:'#dbeafe'}})
-                      :h('span',{style:{fontWeight:700,fontFamily:'monospace',color:row.instPct>0?'#1d4ed8':'#aaa'}},
+                          style:{width:52,textAlign:'center',border:'1px solid #e2e8f0',borderRadius:4,padding:'4px',fontSize:12,fontWeight:600,background:'#fff'}})
+                      :h('span',{style:{fontWeight:700,fontFamily:'monospace',fontSize:12,color:row.instPct>0?'#1e3a8a':'#cbd5e1'}},
                           row.instPct>0?row.instPct+'%':'—')
                   ),
-                  // Used mat % with bar
-                  h('td',{style:{padding:'6px 8px',border:'1px solid #ddd',textAlign:'center'}},
-                    h('div',{style:{fontSize:10,fontWeight:600,color:usedMat>=100?'#dc2626':usedMat>70?'#d97706':'#16a34a'}},usedMat.toFixed(0),'%'),
-                    h('div',{style:{height:5,background:'#e5e7eb',borderRadius:3,marginTop:3,overflow:'hidden'}},
-                      h('div',{style:{height:'100%',width:Math.min(100,usedMat)+'%',background:usedMat>=100?'#dc2626':usedMat>70?'#f59e0b':'#22c55e',borderRadius:3}})
-                    ),
-                    h('div',{style:{fontSize:9,color:'#888',marginTop:2}},'Bal: ',h('b',{style:{color:balMat<=0?'#dc2626':'#555'}},balMat.toFixed(0),'%'))
+                  // Inst Balance
+                  h('td',{style:{padding:'6px 8px',borderBottom:'1px solid #e2e8f0',textAlign:'center',background:'#eff6ff'}},
+                    h('div',{style:{fontWeight:700,fontFamily:'monospace',fontSize:12,
+                      color:(100-usedInst)<=0?'#ef4444':(100-usedInst)<=20?'#d97706':'#1e40af'}},
+                      (100-usedInst)<=0?'FULL':Math.max(0,100-usedInst).toFixed(0)+'%'),
+                    h('div',{style:{height:3,background:'#e2e8f0',borderRadius:2,marginTop:3,overflow:'hidden',width:50,margin:'3px auto 0'}},
+                      h('div',{style:{height:'100%',width:Math.min(100,usedInst)+'%',background:usedInst>=100?'#ef4444':usedInst>70?'#f59e0b':'#3b82f6',borderRadius:2}})
+                    )
                   ),
                   // Remarks
-                  h('td',{style:{padding:'4px 6px',border:'1px solid #ddd'}},
+                  h('td',{style:{padding:'6px 10px',borderBottom:'1px solid #e2e8f0'}},
                     editMode
                       ?h('input',{type:'text',value:row.remarks||'',placeholder:'Notes...',
                           onChange:e=>updateRow(cat,row._ri,'remarks',e.target.value),
-                          style:{width:'100%',border:'1px solid #d1d5db',borderRadius:3,padding:'3px 6px',fontSize:11}})
-                      :h('span',{style:{fontSize:11,color:'#555'}},row.remarks||'')
+                          style:{width:'100%',border:'1px solid #e2e8f0',borderRadius:4,padding:'4px 6px',fontSize:11,background:'#fff'}})
+                      :h('span',{style:{fontSize:11,color:'#64748b'}},row.remarks||'')
                   ),
-                  editMode&&h('td',{style:{padding:'4px',border:'1px solid #ddd',textAlign:'center'}},
-                    h('button',{onClick:()=>removeRow(cat,row._ri),style:{border:'none',background:'none',cursor:'pointer',color:'#dc2626',fontSize:14,fontWeight:700}},'✕')
+                  editMode&&h('td',{style:{padding:'4px',borderBottom:'1px solid #e2e8f0',textAlign:'center'}},
+                    h('button',{onClick:()=>removeRow(cat,row._ri),style:{border:'none',background:'none',cursor:'pointer',color:'#ef4444',fontSize:15,lineHeight:1,padding:'2px 4px'}},'×')
                   )
                 );
               });
             }),
             // Empty state
             rows.length===0&&h('tr',null,
-              h('td',{colSpan:editMode?10:9,style:{padding:'20px',textAlign:'center',color:'#9ca3af',fontSize:13,fontStyle:'italic'}},
-                editMode?'Use the form below to add activities':'No activities added yet — click Edit to start')
+              h('td',{colSpan:editMode?12:11,style:{padding:'32px',textAlign:'center',color:'#94a3b8',fontSize:13}},
+                h('div',{style:{fontSize:24,marginBottom:8}},'📋'),
+                editMode?'Use the form below to add planned activities':'No activities added — click Edit IPT to start')
             ),
-            // Totals row
-            rows.length>0&&h('tr',{style:{background:'#fde047'}},
-              h('td',{colSpan:3,style:{padding:'8px 12px',border:'2px solid #333',fontWeight:700,fontSize:13,textAlign:'right'}},'TOTAL'),
-              h('td',{style:{padding:'8px 10px',border:'2px solid #333',textAlign:'right',fontFamily:'monospace',fontWeight:700,color:'#166534',fontSize:13}},
+            // Totals row — clean amber strip
+            rows.length>0&&h('tr',{style:{background:'#fef9c3'}},
+              h('td',{colSpan:3,style:{padding:'9px 12px',borderTop:'2px solid #fbbf24',fontWeight:700,fontSize:12,color:'#78350f',textAlign:'right',letterSpacing:'.04em'}},'TOTAL'),
+              h('td',{style:{padding:'9px 12px',borderTop:'2px solid #fbbf24',textAlign:'right',fontFamily:'monospace',fontWeight:700,color:'#166534',fontSize:13}},
                 totals.mat>0?fmt(totals.mat):'—'
               ),
-              h('td',{style:{padding:'8px 10px',border:'2px solid #333',textAlign:'right',fontFamily:'monospace',fontWeight:700,color:'#1e40af',fontSize:13}},
+              h('td',{style:{padding:'9px 12px',borderTop:'2px solid #fbbf24',textAlign:'right',fontFamily:'monospace',fontWeight:700,color:'#1e40af',fontSize:13}},
                 totals.inst>0?fmt(totals.inst):'—'
               ),
-              h('td',{colSpan:editMode?5:4,style:{padding:'8px 10px',border:'2px solid #333',textAlign:'right',fontFamily:'monospace',fontWeight:700,fontSize:13}},
-                fmt(totals.mat+totals.inst)
+              h('td',{colSpan:editMode?7:6,style:{padding:'9px 12px',borderTop:'2px solid #fbbf24',textAlign:'right',fontFamily:'monospace',fontWeight:700,fontSize:13,color:'#1e293b'}},
+                totals.mat+totals.inst>0?fmt(totals.mat+totals.inst):'—'
               )
             )
           )
@@ -2904,7 +3463,7 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
             })
           )
         ),
-        h('button',{className:'btn btn-amber',onClick:addRow,style:{flexShrink:0}},h(Icon,{name:'plus',size:13}),'Add Row')
+        h('button',{className:'btn btn-amber',onClick:()=>addRow(cat),style:{flexShrink:0}},h(Icon,{name:'plus',size:13}),'Add Row')
       )
     );
   };
@@ -2937,14 +3496,16 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
     ),
     h('div',{className:'content'},
 
-      // Title banner (matches image)
+      // Title banner — light theme
       h('div',{style:{
-        background:'#1e2d45',color:'#f5c842',fontWeight:800,fontSize:15,
+        background:'#fff',color:'#1e293b',fontWeight:800,fontSize:15,
         textAlign:'center',padding:'10px',letterSpacing:'.05em',
-        borderRadius:'var(--radius)',marginBottom:4,border:'2px solid #f5c842'
+        borderRadius:'var(--radius)',marginBottom:4,
+        border:'1px solid #e2e8f0',boxShadow:'0 1px 4px rgba(0,0,0,.06)'
       }},
-        h('div',null,'MEP — TARGET COST BREAKDOWN AS PER IPT'),
-        h('div',{style:{fontSize:13,fontWeight:600,marginTop:4,letterSpacing:'.02em'}},
+        h('div',{style:{color:'#1d4ed8'}},
+          'MEP — TARGET COST BREAKDOWN AS PER IPT'),
+        h('div',{style:{fontSize:13,fontWeight:600,marginTop:4,letterSpacing:'.02em',color:'#475569'}},
           '1st '+MONTHS[selMonth]+' to '+lastDayOfMonth(selMonth,selYear)+'th '+MONTHS[selMonth]+' '+selYear
         )
       ),
@@ -2989,17 +3550,6 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
             fontWeight:600,fontSize:12,cursor:'pointer',transition:'all .15s'
           }},label)
         )
-      ),
-
-      // Add row: discipline selector (only in edit mode)
-      editMode&&h('div',{style:{marginBottom:12,display:'flex',alignItems:'center',gap:10}},
-        h('label',{style:{fontSize:12,fontWeight:600,color:'var(--text2)'}},'Adding to:'),
-        CATEGORIES.map(cat=>h('button',{key:cat,onClick:()=>setSelCat(cat),style:{
-          padding:'4px 14px',border:`2px solid ${CAT_COLOR[cat]}`,borderRadius:20,
-          background:selCat===cat?CAT_COLOR[cat]:'#fff',
-          color:selCat===cat?'#fff':CAT_COLOR[cat],
-          fontWeight:600,fontSize:12,cursor:'pointer'
-        }},cat))
       ),
 
       // Discipline tables
