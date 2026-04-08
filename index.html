@@ -1477,12 +1477,12 @@ const DashboardPage=({data})=>{
 
       // ── Top Summary Cards ──
       h('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}},
-        // Grand total dry cost
-        h('div',{style:{background:'linear-gradient(135deg,#1e2d45,#2d4a6e)',borderRadius:'var(--radius2)',padding:'16px 18px',boxShadow:'0 2px 8px rgba(0,0,0,.12)'}},
-          h('div',{style:{fontSize:10,fontWeight:600,color:'#7a99bb',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}},'Total Dry Cost'),
-          h('div',{style:{fontFamily:'monospace',fontWeight:800,fontSize:16,color:'#f5c842',marginBottom:4}},fmt(grand.total)),
-          h('div',{style:{fontSize:11,color:'#7a99bb'}},'Mat: ',h('span',{style:{color:'#4ade80'}},fmt(grand.totalMat))),
-          h('div',{style:{fontSize:11,color:'#7a99bb'}},'Inst: ',h('span',{style:{color:'#60a5fa'}},fmt(grand.totalInst)))
+        // Grand total dry cost — light white card
+        h('div',{style:{background:'#fff',border:'1px solid #e2e8f0',borderTop:'3px solid #1e293b',borderRadius:'var(--radius2)',padding:'14px 16px',boxShadow:'0 1px 4px rgba(0,0,0,.06)'}},
+          h('div',{style:{fontSize:10,fontWeight:600,color:'#64748b',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}},'Total Dry Cost'),
+          h('div',{style:{fontFamily:'monospace',fontWeight:800,fontSize:16,color:'#1e293b',marginBottom:4}},fmt(grand.total)),
+          h('div',{style:{fontSize:11,color:'#64748b'}},'Mat: ',h('span',{style:{color:'#166534',fontWeight:600}},fmt(grand.totalMat))),
+          h('div',{style:{fontSize:11,color:'#64748b'}},'Inst: ',h('span',{style:{color:'#1e40af',fontWeight:600}},fmt(grand.totalInst)))
         ),
         // Material IPT claimed
         h('div',{style:{background:'#fff',border:'1px solid #e2e8f0',borderTop:'3px solid #16a34a',borderRadius:'var(--radius2)',padding:'14px 16px'}},
@@ -1560,30 +1560,30 @@ const DashboardPage=({data})=>{
                   h('td',{style:{padding:'10px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,fontWeight:700,color:'#92400e'}},fmt(s.totalMat+s.totalInst))
                 );
               }),
-              // Grand total row
-              h('tr',{style:{background:'#1e2d45',borderTop:'2px solid #f5c842'}},
-                h('td',{style:{padding:'11px 14px',fontWeight:700,fontSize:12,color:'#f5c842'}},'GRAND TOTAL'),
-                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#4ade80',fontWeight:600}},fmt(grand.totalMat)),
-                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#4ade80',fontWeight:700}},fmt(grand.usedMat)),
+              // Grand total row — light
+              h('tr',{style:{background:'#f8fafc',borderTop:'2px solid #1e293b'}},
+                h('td',{style:{padding:'11px 14px',fontWeight:700,fontSize:12,color:'#1e293b'}},'GRAND TOTAL'),
+                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#166534',fontWeight:600}},fmt(grand.totalMat)),
+                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#166534',fontWeight:700}},fmt(grand.usedMat)),
                 h('td',{style:{padding:'11px 14px',minWidth:160}},
                   h('div',{style:{display:'flex',alignItems:'center',gap:8}},
-                    h('div',{style:{flex:1,height:6,background:'rgba(255,255,255,.15)',borderRadius:3,overflow:'hidden'}},
-                      h('div',{style:{height:'100%',width:grand.matPct+'%',background:'#4ade80',borderRadius:3}})
+                    h('div',{style:{flex:1,height:6,background:'#dcfce7',borderRadius:3,overflow:'hidden'}},
+                      h('div',{style:{height:'100%',width:grand.matPct+'%',background:'#22c55e',borderRadius:3}})
                     ),
-                    h('span',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#4ade80',minWidth:34,textAlign:'right'}},grand.matPct+'%')
+                    h('span',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#166534',minWidth:34,textAlign:'right'}},grand.matPct+'%')
                   )
                 ),
-                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#60a5fa',fontWeight:600}},fmt(grand.totalInst)),
-                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#60a5fa',fontWeight:700}},fmt(grand.usedInst)),
+                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#1e40af',fontWeight:600}},fmt(grand.totalInst)),
+                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,color:'#1e40af',fontWeight:700}},fmt(grand.usedInst)),
                 h('td',{style:{padding:'11px 14px',minWidth:160}},
                   h('div',{style:{display:'flex',alignItems:'center',gap:8}},
-                    h('div',{style:{flex:1,height:6,background:'rgba(255,255,255,.15)',borderRadius:3,overflow:'hidden'}},
-                      h('div',{style:{height:'100%',width:grand.instPct+'%',background:'#60a5fa',borderRadius:3}})
+                    h('div',{style:{flex:1,height:6,background:'#dbeafe',borderRadius:3,overflow:'hidden'}},
+                      h('div',{style:{height:'100%',width:grand.instPct+'%',background:'#3b82f6',borderRadius:3}})
                     ),
-                    h('span',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#60a5fa',minWidth:34,textAlign:'right'}},grand.instPct+'%')
+                    h('span',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#1e40af',minWidth:34,textAlign:'right'}},grand.instPct+'%')
                   )
                 ),
-                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,fontWeight:700,color:'#f5c842'}},fmt(grand.total))
+                h('td',{style:{padding:'11px 14px',textAlign:'right',fontFamily:'monospace',fontSize:12,fontWeight:700,color:'#92400e'}},fmt(grand.total))
               )
             )
           )
@@ -2245,23 +2245,23 @@ const DryCostPage=({data,setData})=>{
           )),
           // Grand total card
           h('div',{style:{
-            background:'linear-gradient(135deg,var(--sidebar) 0%,#2d4a6e 100%)',
+            background:'#fff',border:'1px solid #e2e8f0',borderTop:'3px solid #1e293b',
             borderRadius:'var(--radius2)',padding:'14px 16px',
-            boxShadow:'0 2px 6px rgba(0,0,0,.12)'
+            boxShadow:'0 1px 4px rgba(0,0,0,.06)'
           }},
-            h('div',{style:{fontSize:10,fontWeight:700,color:'#7a99bb',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:8}},'Grand Total'),
-            h('div',{style:{fontFamily:'monospace',fontWeight:800,fontSize:17,color:'#f5c842',marginBottom:6}},
+            h('div',{style:{fontSize:10,fontWeight:700,color:'#64748b',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:8}},'Grand Total'),
+            h('div',{style:{fontFamily:'monospace',fontWeight:800,fontSize:17,color:'#1e293b',marginBottom:6}},
               projMat+projInst>0?fmt(projMat+projInst):'—'
             ),
             h('div',{style:{display:'flex',gap:10}},
               h('div',null,
-                h('div',{style:{fontSize:9,color:'#7a99bb',marginBottom:2}},'MAT'),
-                h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:12,color:'#4ade80'}},projMat>0?fmt(projMat):'—')
+                h('div',{style:{fontSize:9,color:'#94a3b8',marginBottom:2}},'MAT'),
+                h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:12,color:'#166534'}},projMat>0?fmt(projMat):'—')
               ),
-              h('div',{style:{width:1,background:'rgba(255,255,255,.15)'}}),
+              h('div',{style:{width:1,background:'#e2e8f0'}}),
               h('div',null,
-                h('div',{style:{fontSize:9,color:'#7a99bb',marginBottom:2}},'INSTALL'),
-                h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:12,color:'#60a5fa'}},projInst>0?fmt(projInst):'—')
+                h('div',{style:{fontSize:9,color:'#94a3b8',marginBottom:2}},'INSTALL'),
+                h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:12,color:'#1e40af'}},projInst>0?fmt(projInst):'—')
               )
             )
           )
@@ -2293,7 +2293,7 @@ const DryCostPage=({data,setData})=>{
       curVilla&&h('div',null,
         // Villa type header banner
         h('div',{style:{
-          background:'linear-gradient(135deg,var(--sidebar) 0%,#2d4a6e 100%)',
+          background:'#fff',border:'1px solid #e2e8f0',
           borderRadius:'var(--radius2)',padding:'16px 24px',marginBottom:22,
           display:'flex',justifyContent:'space-between',alignItems:'center'
         }},
@@ -3530,12 +3530,12 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
             )
           );
         }),
-        h('div',{style:{background:'linear-gradient(135deg,#1e2d45,#2d4a6e)',borderRadius:'var(--radius2)',padding:'12px 16px'}},
-          h('div',{style:{fontSize:10,fontWeight:700,color:'#f5c842',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}},'Grand Total'),
-          h('div',{style:{fontFamily:'monospace',fontWeight:800,fontSize:18,color:'#f5c842',marginBottom:6}},grandTotals.mat+grandTotals.inst>0?fmt(grandTotals.mat+grandTotals.inst):'—'),
+        h('div',{style:{background:'#fff',border:'1px solid #e2e8f0',borderTop:'3px solid #1e293b',borderRadius:'var(--radius2)',padding:'12px 16px'}},
+          h('div',{style:{fontSize:10,fontWeight:700,color:'#64748b',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}},'Grand Total'),
+          h('div',{style:{fontFamily:'monospace',fontWeight:800,fontSize:18,color:'#1e293b',marginBottom:6}},grandTotals.mat+grandTotals.inst>0?fmt(grandTotals.mat+grandTotals.inst):'—'),
           h('div',{style:{display:'flex',gap:12}},
-            h('div',null,h('div',{style:{fontSize:9,color:'#7a99bb'}},'Material'),h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#4ade80'}},grandTotals.mat>0?fmt(grandTotals.mat):'—')),
-            h('div',null,h('div',{style:{fontSize:9,color:'#7a99bb'}},'Installation'),h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#60a5fa'}},grandTotals.inst>0?fmt(grandTotals.inst):'—'))
+            h('div',null,h('div',{style:{fontSize:9,color:'#94a3b8'}},'Material'),h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#166534'}},grandTotals.mat>0?fmt(grandTotals.mat):'—')),
+            h('div',null,h('div',{style:{fontSize:9,color:'#94a3b8'}},'Installation'),h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:11,color:'#1e40af'}},grandTotals.inst>0?fmt(grandTotals.inst):'—'))
           )
         )
       ),
