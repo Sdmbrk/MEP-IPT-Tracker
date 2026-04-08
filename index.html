@@ -515,7 +515,23 @@ const seedData=()=>{
 };
 
 /* ============ STORAGE ============ */
-const STORE_KEY='mep_tracker_v6';
+// Project namespace: ?project=XYZ in URL uses that key, otherwise 'default'
+// Users added inside the app share the same project key (shared data)
+// Users opening a bare link get their own 'default' namespace (own data)
+const getProjectKey=()=>{
+  try{
+    const p=new URLSearchParams(window.location.search).get('project');
+    return'mep_tracker_v6_'+(p||'default');
+  }catch{return'mep_tracker_v6_default';}
+};
+let STORE_KEY=getProjectKey();
+
+const getTeamUrl=()=>{
+  const base=window.location.href.split('?')[0];
+  const p=new URLSearchParams(window.location.search).get('project')||'modun';
+  return base+'?project='+p;
+};
+const getShareUrl=()=>window.location.href.split('?')[0];
 
 const loadStore=()=>{
   try{const d=localStorage.getItem(STORE_KEY);return d?JSON.parse(d):null}catch{return null}
@@ -3559,7 +3575,7 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
 };
 
 
-const App=()=>{
+const App=({currentUser,onLogout,onSecurity})=>{
   const[page,setPage]=useState('dashboard');
   const[selMonth,setSelMonth]=useState(today.getMonth());
   const[selYear,setSelYear]=useState(CY);
@@ -3601,7 +3617,20 @@ const App=()=>{
         onClick:()=>navigate(n.id)
       },h(Icon,{name:n.icon,size:16}),n.label))
     ),
-    h('div',{className:'sidebar-footer'},data.projectInfo?.brandName||'Sdmbrk Collections')
+    h('div',{style:{padding:'12px 16px',borderTop:'1px solid var(--border)'}},
+      h('div',{style:{fontSize:11,fontWeight:600,color:'#334155',marginBottom:2}},currentUser?.name||currentUser?.email||'User'),
+      h('div',{style:{fontSize:10,color:'#94a3b8',marginBottom:10}},currentUser?.email),
+      h('div',{style:{display:'flex',flexDirection:'column',gap:6}},
+        currentUser?.role==='admin'&&h('button',{
+          onClick:()=>{setSidebarOpen(false);onSecurity();},
+          style:{width:'100%',padding:'6px 10px',background:'#eff6ff',border:'1px solid #bfdbfe',color:'#1d4ed8',borderRadius:6,fontSize:11,fontWeight:600,cursor:'pointer',textAlign:'left'}
+        },'🔒 Security & Access'),
+        h('button',{
+          onClick:()=>{setSidebarOpen(false);onLogout();},
+          style:{width:'100%',padding:'6px 10px',background:'#fef2f2',border:'1px solid #fecaca',color:'#dc2626',borderRadius:6,fontSize:11,fontWeight:600,cursor:'pointer',textAlign:'left'}
+        },'→ Sign Out')
+      )
+    )
   );
 
   return h('div',{className:'app'},
@@ -3666,7 +3695,245 @@ const App=()=>{
   );
 };
 
-ReactDOM.createRoot(document.getElementById('root')).render(h(App,null));
+
+/* ============ AUTH ============ */
+const AUTH_KEY='mep_auth_v1';
+const SESSION_KEY='mep_session_v1';
+
+// Hash password — simple but better than plain text
+const hashPwd=(pwd)=>{
+  let h=0;
+  for(let i=0;i<pwd.length;i++){h=Math.imul(31,h)+pwd.charCodeAt(i)|0;}
+  return(h>>>0).toString(36)+'_'+pwd.length;
+};
+
+const getUsers=()=>{
+  try{return JSON.parse(localStorage.getItem(AUTH_KEY)||'[]');}catch{return[];}
+};
+const saveUsers=(users)=>localStorage.setItem(AUTH_KEY,JSON.stringify(users));
+const getSession=()=>{
+  try{const s=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');return s;}catch{return null;}
+};
+const saveSession=(user)=>sessionStorage.setItem(SESSION_KEY,JSON.stringify(user));
+const clearSession=()=>sessionStorage.removeItem(SESSION_KEY);
+
+// Seed default admin if no users exist
+const ensureDefaultAdmin=()=>{
+  const users=getUsers();
+  if(!users.length){
+    saveUsers([{email:'admin@modungulf.ae',hash:hashPwd('Admin@1234'),role:'admin',name:'Admin'}]);
+  }
+};
+
+/* ── Login Page ── */
+const LoginPage=({onLogin})=>{
+  const[email,setEmail]=useState('');
+  const[pwd,setPwd]=useState('');
+  const[err,setErr]=useState('');
+  const[loading,setLoading]=useState(false);
+  const submit=()=>{
+    setErr('');
+    if(!email.trim()||!pwd){setErr('Enter email and password.');return;}
+    setLoading(true);
+    setTimeout(()=>{
+      const users=getUsers();
+      const user=users.find(u=>u.email.toLowerCase()===email.trim().toLowerCase()&&u.hash===hashPwd(pwd));
+      if(user){saveSession(user);onLogin(user);}
+      else{setErr('Incorrect email or password.');setLoading(false);}
+    },400);
+  };
+  return h('div',{style:{minHeight:'100vh',background:'#f4f6f9',display:'flex',alignItems:'center',justifyContent:'center',padding:16}},
+    h('div',{style:{background:'#fff',borderRadius:12,boxShadow:'0 4px 24px rgba(0,0,0,.1)',width:'100%',maxWidth:380,overflow:'hidden'}},
+      h('div',{style:{background:'#1e2d45',padding:'28px 32px 22px',textAlign:'center'}},
+        h('div',{style:{fontSize:13,fontWeight:700,color:'#1d4ed8',letterSpacing:'.1em',textTransform:'uppercase',marginBottom:6,background:'#fff',display:'inline-block',padding:'4px 14px',borderRadius:20}},'MEP IPT TRACKER'),
+        h('div',{style:{color:'#7a99bb',fontSize:12,marginTop:8}},'Sign in to continue')
+      ),
+      h('div',{style:{padding:'28px 32px'}},
+        h('div',{style:{marginBottom:14}},
+          h('label',{style:{fontSize:12,fontWeight:600,color:'#475569',display:'block',marginBottom:6}},'Email Address'),
+          h('input',{type:'email',value:email,onChange:e=>setEmail(e.target.value),onKeyDown:e=>e.key==='Enter'&&submit(),placeholder:'you@example.com',autoFocus:true,style:{width:'100%',padding:'10px 12px',border:'1px solid #e2e8f0',borderRadius:8,fontSize:13}})
+        ),
+        h('div',{style:{marginBottom:20}},
+          h('label',{style:{fontSize:12,fontWeight:600,color:'#475569',display:'block',marginBottom:6}},'Password'),
+          h('input',{type:'password',value:pwd,onChange:e=>setPwd(e.target.value),onKeyDown:e=>e.key==='Enter'&&submit(),placeholder:'••••••••',style:{width:'100%',padding:'10px 12px',border:'1px solid #e2e8f0',borderRadius:8,fontSize:13}})
+        ),
+        err&&h('div',{style:{background:'#fef2f2',border:'1px solid #fecaca',color:'#dc2626',borderRadius:6,padding:'8px 12px',fontSize:12,marginBottom:14}},err),
+        h('button',{onClick:submit,disabled:loading,style:{width:'100%',padding:'11px',background:loading?'#93c5fd':'#1d4ed8',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:600,cursor:loading?'default':'pointer'}},loading?'Signing in\u2026':'Sign In')
+      ),
+      h('div',{style:{padding:'0 32px 20px',textAlign:'center',fontSize:11,color:'#94a3b8'}},'MODUN GULF BUILDING CONTRACTING LLC')
+    )
+  );
+};
+
+/* ── Security Modal: Profile + Users + Share ── */
+const SecurityModal=({currentUser,onClose,onLogout})=>{
+  const[tab,setTab]=useState('profile');
+  const[name,setName]=useState(currentUser?.name||'');
+  const[newEmail,setNewEmail]=useState(currentUser?.email||'');
+  const[curPwd,setCurPwd]=useState('');
+  const[newPwd,setNewPwd]=useState('');
+  const[confPwd,setConfPwd]=useState('');
+  const[profMsg,setProfMsg]=useState({});
+  const[users,setUsersState]=useState(getUsers());
+  const[uEmail,setUEmail]=useState('');
+  const[uName,setUName]=useState('');
+  const[uPwd,setUPwd]=useState('');
+  const[uMsg,setUMsg]=useState({});
+  const[copied,setCopied]=useState('');
+
+  const saveProfile=()=>{
+    setProfMsg({});
+    if(!curPwd){setProfMsg({err:'Enter current password to confirm.'});return;}
+    const all=getUsers();
+    const idx=all.findIndex(u=>u.email===currentUser.email);
+    if(idx<0||all[idx].hash!==hashPwd(curPwd)){setProfMsg({err:'Current password is incorrect.'});return;}
+    if(newPwd&&newPwd.length<6){setProfMsg({err:'New password must be at least 6 characters.'});return;}
+    if(newPwd&&newPwd!==confPwd){setProfMsg({err:'New passwords do not match.'});return;}
+    const emailChanged=newEmail.trim()&&newEmail.trim()!==currentUser.email;
+    if(emailChanged&&all.find((u,i)=>i!==idx&&u.email.toLowerCase()===newEmail.trim().toLowerCase())){setProfMsg({err:'Email already in use.'});return;}
+    all[idx]={...all[idx],name:name.trim()||all[idx].name,email:newEmail.trim()||all[idx].email};
+    if(newPwd)all[idx].hash=hashPwd(newPwd);
+    saveUsers(all);saveSession(all[idx]);
+    setCurPwd('');setNewPwd('');setConfPwd('');
+    setProfMsg({ok:'Profile updated.'+(emailChanged||newPwd?' Please sign in again.':'')});
+    if(emailChanged||newPwd)setTimeout(()=>onLogout(),1800);
+  };
+
+  const addUser=()=>{
+    setUMsg({});
+    if(!uEmail.trim()||!uPwd){setUMsg({err:'Email and password required.'});return;}
+    if(uPwd.length<6){setUMsg({err:'Password must be at least 6 characters.'});return;}
+    const all=getUsers();
+    if(all.find(u=>u.email.toLowerCase()===uEmail.trim().toLowerCase())){setUMsg({err:'Email already exists.'});return;}
+    const updated=[...all,{email:uEmail.trim(),hash:hashPwd(uPwd),role:'user',name:uName.trim()||uEmail.trim()}];
+    saveUsers(updated);setUsersState(updated);
+    setUEmail('');setUName('');setUPwd('');
+    setUMsg({ok:'User added. Share the Team Link so they can access your project data.'});
+  };
+
+  const removeUser=(email)=>{
+    if(!confirm('Remove '+email+'?'))return;
+    const updated=getUsers().filter(u=>u.email!==email);
+    saveUsers(updated);setUsersState(updated);
+  };
+
+  const copy=(text,key)=>{
+    navigator.clipboard.writeText(text).then(()=>{setCopied(key);setTimeout(()=>setCopied(''),2200);});
+  };
+
+  const teamUrl=getTeamUrl();
+  const personalUrl=getShareUrl();
+  const tabs=[{id:'profile',label:'My Profile'},{id:'users',label:'Users & Access',admin:true},{id:'share',label:'Share Links'}];
+
+  return h('div',{className:'modal-overlay',onClick:e=>{if(e.target.className==='modal-overlay')onClose();}},
+    h('div',{className:'modal',style:{maxWidth:540}},
+      h('div',{className:'modal-header'},
+        h('span',{className:'modal-title'},'\uD83D\uDD12 Security & Access'),
+        h('button',{className:'close-btn',onClick:onClose},'\xD7')
+      ),
+      h('div',{style:{display:'flex',borderBottom:'1px solid var(--border)',padding:'0 22px',background:'var(--surface2)'}},
+        tabs.filter(t=>!t.admin||currentUser?.role==='admin').map(t=>
+          h('div',{key:t.id,onClick:()=>setTab(t.id),style:{
+            padding:'10px 16px',cursor:'pointer',fontSize:13,
+            fontWeight:tab===t.id?600:400,
+            color:tab===t.id?'#1d4ed8':'var(--text2)',
+            borderBottom:tab===t.id?'2px solid #1d4ed8':'2px solid transparent',marginBottom:-1
+          }},t.label)
+        )
+      ),
+      h('div',{className:'modal-body'},
+
+        /* Profile */
+        tab==='profile'&&h('div',{style:{display:'grid',gap:12}},
+          h('div',null,h('label',null,'Display Name'),h('input',{value:name,onChange:e=>setName(e.target.value),placeholder:'Your name'})),
+          h('div',null,h('label',null,'Email Address'),h('input',{type:'email',value:newEmail,onChange:e=>setNewEmail(e.target.value)})),
+          h('div',{style:{borderTop:'1px solid var(--border)',paddingTop:12,marginTop:4}},
+            h('div',{style:{fontSize:12,fontWeight:600,color:'var(--text2)',marginBottom:10}},'Change Password'),
+            h('label',null,'Current Password'),
+            h('input',{type:'password',value:curPwd,onChange:e=>setCurPwd(e.target.value),placeholder:'Required to save any changes',style:{marginBottom:10}}),
+            h('label',null,'New Password'),
+            h('input',{type:'password',value:newPwd,onChange:e=>setNewPwd(e.target.value),placeholder:'Leave blank to keep current',style:{marginBottom:10}}),
+            h('label',null,'Confirm New Password'),
+            h('input',{type:'password',value:confPwd,onChange:e=>setConfPwd(e.target.value),placeholder:'Repeat new password'})
+          ),
+          profMsg.err&&h('div',{style:{background:'#fef2f2',border:'1px solid #fecaca',color:'#dc2626',borderRadius:6,padding:'8px 12px',fontSize:12}},profMsg.err),
+          profMsg.ok&&h('div',{style:{background:'#f0fdf4',border:'1px solid #86efac',color:'#16a34a',borderRadius:6,padding:'8px 12px',fontSize:12}},profMsg.ok),
+          h('button',{className:'btn btn-amber',onClick:saveProfile},'Save Changes')
+        ),
+
+        /* Users */
+        tab==='users'&&h('div',null,
+          h('div',{style:{marginBottom:16}},
+            h('div',{style:{fontWeight:600,fontSize:13,color:'#334155',marginBottom:10}},'Team Members'),
+            users.map(u=>h('div',{key:u.email,style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'9px 12px',background:'#f8fafc',borderRadius:6,marginBottom:6,border:'1px solid #e2e8f0'}},
+              h('div',null,
+                h('div',{style:{fontWeight:600,fontSize:13,color:'#1e293b'}},u.name||u.email),
+                h('div',{style:{fontSize:11,color:'#94a3b8'}},u.email,' \xB7 ',h('span',{style:{color:u.role==='admin'?'#1d4ed8':'#16a34a',fontWeight:600}},u.role))
+              ),
+              u.role!=='admin'&&h('button',{onClick:()=>removeUser(u.email),style:{background:'#fef2f2',border:'1px solid #fecaca',color:'#dc2626',borderRadius:4,padding:'3px 8px',fontSize:11,cursor:'pointer'}},'Remove')
+            ))
+          ),
+          h('div',{style:{borderTop:'1px solid var(--border)',paddingTop:14}},
+            h('div',{style:{fontWeight:600,fontSize:13,color:'#334155',marginBottom:4}},'Add Team Member'),
+            h('div',{style:{fontSize:12,color:'#94a3b8',marginBottom:10}},'Added users share your project data. Give them the Team Link after adding.'),
+            h('div',{style:{display:'grid',gap:10}},
+              h('input',{value:uName,onChange:e=>setUName(e.target.value),placeholder:'Full Name'}),
+              h('input',{type:'email',value:uEmail,onChange:e=>setUEmail(e.target.value),placeholder:'Email address'}),
+              h('input',{type:'password',value:uPwd,onChange:e=>setUPwd(e.target.value),placeholder:'Password (min 6 chars)'})
+            ),
+            uMsg.err&&h('div',{style:{color:'#dc2626',fontSize:12,marginTop:8}},uMsg.err),
+            uMsg.ok&&h('div',{style:{color:'#16a34a',fontSize:12,marginTop:8}},uMsg.ok),
+            h('button',{className:'btn btn-amber',style:{marginTop:10},onClick:addUser},h(Icon,{name:'plus',size:13}),'Add User')
+          )
+        ),
+
+        /* Share */
+        tab==='share'&&h('div',{style:{display:'grid',gap:16}},
+          h('div',{style:{background:'#eff6ff',border:'1px solid #bfdbfe',borderRadius:8,padding:'14px 16px'}},
+            h('div',{style:{fontWeight:700,fontSize:13,color:'#1d4ed8',marginBottom:4}},'\uD83D\uDD17 Team Link \u2014 Shared Data'),
+            h('div',{style:{fontSize:12,color:'#475569',marginBottom:10}},'Use for colleagues who should see and edit YOUR project. They must have a user account on this device/browser.'),
+            h('div',{style:{display:'flex',gap:8}},
+              h('input',{readOnly:true,value:teamUrl,style:{flex:1,fontSize:11,color:'#334155',background:'#fff'}}),
+              h('button',{className:'btn btn-amber',onClick:()=>copy(teamUrl,'team'),style:{flexShrink:0,fontSize:12}},copied==='team'?'\u2713 Copied':'Copy')
+            )
+          ),
+          h('div',{style:{background:'#f0fdf4',border:'1px solid #86efac',borderRadius:8,padding:'14px 16px'}},
+            h('div',{style:{fontWeight:700,fontSize:13,color:'#16a34a',marginBottom:4}},'\uD83D\uDC64 Personal Link \u2014 Own Data'),
+            h('div',{style:{fontSize:12,color:'#475569',marginBottom:10}},'Share with users who should have their OWN separate blank project. They start fresh and create their own account.'),
+            h('div',{style:{display:'flex',gap:8}},
+              h('input',{readOnly:true,value:personalUrl,style:{flex:1,fontSize:11,color:'#334155',background:'#fff'}}),
+              h('button',{className:'btn btn-ghost',onClick:()=>copy(personalUrl,'personal'),style:{flexShrink:0,fontSize:12}},copied==='personal'?'\u2713 Copied':'Copy')
+            )
+          ),
+          h('div',{style:{fontSize:11,color:'#94a3b8',padding:'8px 12px',background:'#f8fafc',borderRadius:6}},
+            '\u2139\uFE0F Data is stored in the browser. The Team Link uses ',
+            h('code',{style:{background:'#e2e8f0',padding:'1px 4px',borderRadius:3,fontSize:11}},'?project=modun'),
+            ' so all team members share the same local data namespace. User accounts are global (not project-specific).'
+          )
+        )
+      )
+    )
+  );
+};
+
+const AppWithAuth=()=>{
+  ensureDefaultAdmin();
+  const[user,setUser]=useState(()=>getSession());
+  const[showSecurity,setShowSecurity]=useState(false);
+  const logout=()=>{clearSession();setUser(null);};
+
+  if(!user)return h(LoginPage,{onLogin:u=>setUser(u)});
+
+  return h('div',null,
+    showSecurity&&h(SecurityModal,{currentUser:user,onClose:()=>setShowSecurity(false),onLogout:logout}),
+    h(App,{
+      currentUser:user,
+      onLogout:logout,
+      onSecurity:()=>setShowSecurity(true)
+    })
+  );
+};
+ReactDOM.createRoot(document.getElementById('root')).render(h(AppWithAuth,null));
 </script>
 </body>
 </html>
