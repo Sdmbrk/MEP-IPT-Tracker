@@ -3727,40 +3727,76 @@ const ensureDefaultAdmin=()=>{
 
 /* ── Login Page ── */
 const LoginPage=({onLogin})=>{
+  const[mode,setMode]=useState('login'); // 'login' | 'register'
   const[email,setEmail]=useState('');
   const[pwd,setPwd]=useState('');
+  const[name,setName]=useState('');
+  const[conf,setConf]=useState('');
   const[err,setErr]=useState('');
   const[loading,setLoading]=useState(false);
+
   const submit=()=>{
     setErr('');
-    if(!email.trim()||!pwd){setErr('Enter email and password.');return;}
-    setLoading(true);
-    setTimeout(()=>{
+    if(mode==='login'){
+      if(!email.trim()||!pwd){setErr('Enter email and password.');return;}
+      setLoading(true);
+      setTimeout(()=>{
+        const users=getUsers();
+        const user=users.find(u=>u.email.toLowerCase()===email.trim().toLowerCase()&&u.hash===hashPwd(pwd));
+        if(user){saveSession(user);onLogin(user);}
+        else{setErr('Incorrect email or password.');setLoading(false);}
+      },400);
+    }else{
+      if(!email.trim()||!pwd){setErr('Email and password are required.');return;}
+      if(pwd.length<6){setErr('Password must be at least 6 characters.');return;}
+      if(pwd!==conf){setErr('Passwords do not match.');return;}
       const users=getUsers();
-      const user=users.find(u=>u.email.toLowerCase()===email.trim().toLowerCase()&&u.hash===hashPwd(pwd));
-      if(user){saveSession(user);onLogin(user);}
-      else{setErr('Incorrect email or password.');setLoading(false);}
-    },400);
+      if(users.find(u=>u.email.toLowerCase()===email.trim().toLowerCase())){setErr('An account with this email already exists.');return;}
+      setLoading(true);
+      setTimeout(()=>{
+        const newUser={email:email.trim(),hash:hashPwd(pwd),role:'user',name:name.trim()||email.trim()};
+        saveUsers([...users,newUser]);
+        saveSession(newUser);onLogin(newUser);
+      },400);
+    }
   };
+
+  const switchMode=(m)=>{setMode(m);setErr('');setEmail('');setPwd('');setName('');setConf('');};
+
   return h('div',{style:{minHeight:'100vh',background:'#f4f6f9',display:'flex',alignItems:'center',justifyContent:'center',padding:16}},
     h('div',{style:{background:'#fff',borderRadius:12,boxShadow:'0 4px 24px rgba(0,0,0,.1)',width:'100%',maxWidth:380,overflow:'hidden'}},
-      h('div',{style:{background:'#1e2d45',padding:'28px 32px 22px',textAlign:'center'}},
+      h('div',{style:{background:'#1e2d45',padding:'24px 32px 18px',textAlign:'center'}},
         h('div',{style:{fontSize:13,fontWeight:700,color:'#1d4ed8',letterSpacing:'.1em',textTransform:'uppercase',marginBottom:6,background:'#fff',display:'inline-block',padding:'4px 14px',borderRadius:20}},'MEP IPT TRACKER'),
-        h('div',{style:{color:'#7a99bb',fontSize:12,marginTop:8}},'Sign in to continue')
+        h('div',{style:{color:'#7a99bb',fontSize:12,marginTop:8}},mode==='login'?'Sign in to continue':'Create your account')
       ),
-      h('div',{style:{padding:'28px 32px'}},
-        h('div',{style:{marginBottom:14}},
-          h('label',{style:{fontSize:12,fontWeight:600,color:'#475569',display:'block',marginBottom:6}},'Email Address'),
-          h('input',{type:'email',value:email,onChange:e=>setEmail(e.target.value),onKeyDown:e=>e.key==='Enter'&&submit(),placeholder:'you@example.com',autoFocus:true,style:{width:'100%',padding:'10px 12px',border:'1px solid #e2e8f0',borderRadius:8,fontSize:13}})
+      // Mode tabs
+      h('div',{style:{display:'flex',borderBottom:'1px solid #e2e8f0'}},
+        h('div',{onClick:()=>switchMode('login'),style:{flex:1,textAlign:'center',padding:'10px',fontSize:13,fontWeight:mode==='login'?600:400,color:mode==='login'?'#1d4ed8':'#94a3b8',borderBottom:mode==='login'?'2px solid #1d4ed8':'2px solid transparent',cursor:'pointer'}},'Sign In'),
+        h('div',{onClick:()=>switchMode('register'),style:{flex:1,textAlign:'center',padding:'10px',fontSize:13,fontWeight:mode==='register'?600:400,color:mode==='register'?'#1d4ed8':'#94a3b8',borderBottom:mode==='register'?'2px solid #1d4ed8':'2px solid transparent',cursor:'pointer'}},'Create Account')
+      ),
+      h('div',{style:{padding:'24px 32px'}},
+        mode==='register'&&h('div',{style:{marginBottom:12}},
+          h('label',{style:{fontSize:12,fontWeight:600,color:'#475569',display:'block',marginBottom:6}},'Full Name'),
+          h('input',{value:name,onChange:e=>setName(e.target.value),onKeyDown:e=>e.key==='Enter'&&submit(),placeholder:'Your name',autoFocus:true,style:{width:'100%',padding:'10px 12px',border:'1px solid #e2e8f0',borderRadius:8,fontSize:13}})
         ),
-        h('div',{style:{marginBottom:20}},
+        h('div',{style:{marginBottom:12}},
+          h('label',{style:{fontSize:12,fontWeight:600,color:'#475569',display:'block',marginBottom:6}},'Email Address'),
+          h('input',{type:'email',value:email,onChange:e=>setEmail(e.target.value),onKeyDown:e=>e.key==='Enter'&&submit(),placeholder:'you@example.com',autoFocus:mode==='login',style:{width:'100%',padding:'10px 12px',border:'1px solid #e2e8f0',borderRadius:8,fontSize:13}})
+        ),
+        h('div',{style:{marginBottom:mode==='register'?12:20}},
           h('label',{style:{fontSize:12,fontWeight:600,color:'#475569',display:'block',marginBottom:6}},'Password'),
-          h('input',{type:'password',value:pwd,onChange:e=>setPwd(e.target.value),onKeyDown:e=>e.key==='Enter'&&submit(),placeholder:'••••••••',style:{width:'100%',padding:'10px 12px',border:'1px solid #e2e8f0',borderRadius:8,fontSize:13}})
+          h('input',{type:'password',value:pwd,onChange:e=>setPwd(e.target.value),onKeyDown:e=>e.key==='Enter'&&submit(),placeholder:mode==='register'?'Min 6 characters':'••••••••',style:{width:'100%',padding:'10px 12px',border:'1px solid #e2e8f0',borderRadius:8,fontSize:13}})
+        ),
+        mode==='register'&&h('div',{style:{marginBottom:20}},
+          h('label',{style:{fontSize:12,fontWeight:600,color:'#475569',display:'block',marginBottom:6}},'Confirm Password'),
+          h('input',{type:'password',value:conf,onChange:e=>setConf(e.target.value),onKeyDown:e=>e.key==='Enter'&&submit(),placeholder:'Repeat password',style:{width:'100%',padding:'10px 12px',border:'1px solid #e2e8f0',borderRadius:8,fontSize:13}})
         ),
         err&&h('div',{style:{background:'#fef2f2',border:'1px solid #fecaca',color:'#dc2626',borderRadius:6,padding:'8px 12px',fontSize:12,marginBottom:14}},err),
-        h('button',{onClick:submit,disabled:loading,style:{width:'100%',padding:'11px',background:loading?'#93c5fd':'#1d4ed8',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:600,cursor:loading?'default':'pointer'}},loading?'Signing in\u2026':'Sign In')
+        h('button',{onClick:submit,disabled:loading,style:{width:'100%',padding:'11px',background:loading?'#93c5fd':'#1d4ed8',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:600,cursor:loading?'default':'pointer'}},
+          loading?(mode==='login'?'Signing in\u2026':'Creating account\u2026'):(mode==='login'?'Sign In':'Create Account')
+        )
       ),
-      h('div',{style:{padding:'0 32px 20px',textAlign:'center',fontSize:11,color:'#94a3b8'}},'MODUN GULF BUILDING CONTRACTING LLC')
+      h('div',{style:{padding:'0 32px 16px',textAlign:'center',fontSize:11,color:'#94a3b8'}},'MODUN GULF BUILDING CONTRACTING LLC')
     )
   );
 };
