@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MEP IPT Tracker</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -534,7 +535,20 @@ const getTeamUrl=()=>{
 const getShareUrl=()=>window.location.href.split('?')[0];
 
 const loadStore=()=>{
-  try{const d=localStorage.getItem(STORE_KEY);return d?JSON.parse(d):null}catch{return null}
+  try{
+    // Try current key first
+    const d=localStorage.getItem(STORE_KEY);
+    if(d)return JSON.parse(d);
+    // Migrate from v5 (old key without project namespace)
+    const old=localStorage.getItem('mep_tracker_v5');
+    if(old){
+      const parsed=JSON.parse(old);
+      // Copy to new key so future loads use it
+      localStorage.setItem(STORE_KEY,old);
+      return parsed;
+    }
+    return null;
+  }catch{return null;}
 };
 const saveStore=(data)=>{try{localStorage.setItem(STORE_KEY,JSON.stringify(data))}catch{}};
 
@@ -2944,16 +2958,18 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
     setEditMode(false);
   };
 
-  // Compute totals
+  // Compute totals — unitMat/unitInst = full 100% weighted cost, mat/inst = claimed at %
   const computeTotals=(cat)=>{
-    let mat=0,inst=0;
+    let mat=0,inst=0,unitMat=0,unitInst=0;
     (localDisc[cat]?.rows||[]).forEach(row=>{
       const th=data.townhouses.find(t=>t.id===row.thId);
       if(!th)return;
+      unitMat+=calcIPTCost(th,row.actId,'mat',100);
+      unitInst+=calcIPTCost(th,row.actId,'inst',100);
       mat+=calcIPTCost(th,row.actId,'mat',parseFloat(row.matPct)||0);
       inst+=calcIPTCost(th,row.actId,'inst',parseFloat(row.instPct)||0);
     });
-    return{mat,inst};
+    return{mat,inst,unitMat,unitInst};
   };
 
   const CAT_COLOR={Electrical:'#1d4ed8',Plumbing:'#b45309',HVAC:'#0f766e'};
@@ -3325,8 +3341,8 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
           h('span',{style:{fontWeight:700,fontSize:13,color:'#1e293b',letterSpacing:'.06em',textTransform:'uppercase'}},cat),
         ),
         h('div',{style:{display:'flex',gap:20,fontSize:12}},
-          h('span',{style:{color:'#64748b'}},'Mat: ',h('b',{style:{color:'#166534',fontFamily:'monospace'}},totals.mat>0?fmt(totals.mat):'—')),
-          h('span',{style:{color:'#64748b'}},'Inst: ',h('b',{style:{color:'#1e40af',fontFamily:'monospace'}},totals.inst>0?fmt(totals.inst):'—'))
+          h('span',{style:{color:'#64748b'}},'Mat: ',h('b',{style:{color:'#166534',fontFamily:'monospace'}},totals.unitMat>0?fmt(totals.unitMat):'—')),
+          h('span',{style:{color:'#64748b'}},'Inst: ',h('b',{style:{color:'#1e40af',fontFamily:'monospace'}},totals.unitInst>0?fmt(totals.unitInst):'—'))
         )
       ),
 
@@ -3353,6 +3369,8 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
               const actRows=grouped[act.id];
               return actRows.map((row,ri)=>{
                 const th=data.townhouses.find(t=>t.id===row.thId);
+                const unitMatCost=th?calcIPTCost(th,act.id,'mat',100):0; // full 100% cost
+                const unitInstCost=th?calcIPTCost(th,act.id,'inst',100):0;
                 const matCost=th?calcIPTCost(th,act.id,'mat',parseFloat(row.matPct)||0):0;
                 const instCost=th?calcIPTCost(th,act.id,'inst',parseFloat(row.instPct)||0):0;
                 const usedMat=getUsedPct(row.thId,act.id,'mat');
@@ -3378,11 +3396,17 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
                       h('div',{style:{fontSize:9,color:'#94a3b8',marginTop:1}},villaInfo)
                     ):h('span',{style:{color:'#cbd5e1'}},'—')
                   ),
-                  h('td',{style:{padding:'8px 12px',borderBottom:'1px solid #e2e8f0',textAlign:'right',fontFamily:'monospace',fontWeight:600,fontSize:12,color:'#166534'}},
-                    matCost>0?fmt(matCost):h('span',{style:{color:'#cbd5e1'}},'—')
+                  h('td',{style:{padding:'8px 12px',borderBottom:'1px solid #e2e8f0',textAlign:'right'}},
+                    unitMatCost>0?h('div',null,
+                      h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:12,color:'#166534'}},fmt(unitMatCost)),
+                      matCost>0&&h('div',{style:{fontFamily:'monospace',fontSize:10,color:'#22c55e',marginTop:2}},'\u2192 '+fmt(matCost))
+                    ):h('span',{style:{color:'#cbd5e1'}},'—')
                   ),
-                  h('td',{style:{padding:'8px 12px',borderBottom:'1px solid #e2e8f0',textAlign:'right',fontFamily:'monospace',fontWeight:600,fontSize:12,color:'#1e40af'}},
-                    instCost>0?fmt(instCost):h('span',{style:{color:'#cbd5e1'}},'—')
+                  h('td',{style:{padding:'8px 12px',borderBottom:'1px solid #e2e8f0',textAlign:'right'}},
+                    unitInstCost>0?h('div',null,
+                      h('div',{style:{fontFamily:'monospace',fontWeight:700,fontSize:12,color:'#1e40af'}},fmt(unitInstCost)),
+                      instCost>0&&h('div',{style:{fontFamily:'monospace',fontSize:10,color:'#60a5fa',marginTop:2}},'\u2192 '+fmt(instCost))
+                    ):h('span',{style:{color:'#cbd5e1'}},'—')
                   ),
                   // Mat %
                   h('td',{style:{padding:'6px 8px',borderBottom:'1px solid #e2e8f0',textAlign:'center'}},
@@ -3443,14 +3467,16 @@ const MonthlyIPTPage=({data,setData,selMonth,selYear})=>{
             // Totals row — clean amber strip
             rows.length>0&&h('tr',{style:{background:'#fef9c3'}},
               h('td',{colSpan:3,style:{padding:'9px 12px',borderTop:'2px solid #fbbf24',fontWeight:700,fontSize:12,color:'#78350f',textAlign:'right',letterSpacing:'.04em'}},'TOTAL'),
-              h('td',{style:{padding:'9px 12px',borderTop:'2px solid #fbbf24',textAlign:'right',fontFamily:'monospace',fontWeight:700,color:'#166534',fontSize:13}},
-                totals.mat>0?fmt(totals.mat):'—'
+              h('td',{style:{padding:'9px 12px',borderTop:'2px solid #fbbf24',textAlign:'right'}},
+                h('div',{style:{fontFamily:'monospace',fontWeight:700,color:'#166534',fontSize:13}},totals.unitMat>0?fmt(totals.unitMat):'—'),
+                totals.mat>0&&h('div',{style:{fontFamily:'monospace',fontSize:10,color:'#22c55e'}},'\u2192 '+fmt(totals.mat))
               ),
-              h('td',{style:{padding:'9px 12px',borderTop:'2px solid #fbbf24',textAlign:'right',fontFamily:'monospace',fontWeight:700,color:'#1e40af',fontSize:13}},
-                totals.inst>0?fmt(totals.inst):'—'
+              h('td',{style:{padding:'9px 12px',borderTop:'2px solid #fbbf24',textAlign:'right'}},
+                h('div',{style:{fontFamily:'monospace',fontWeight:700,color:'#1e40af',fontSize:13}},totals.unitInst>0?fmt(totals.unitInst):'—'),
+                totals.inst>0&&h('div',{style:{fontFamily:'monospace',fontSize:10,color:'#60a5fa'}},'\u2192 '+fmt(totals.inst))
               ),
               h('td',{colSpan:editMode?7:6,style:{padding:'9px 12px',borderTop:'2px solid #fbbf24',textAlign:'right',fontFamily:'monospace',fontWeight:700,fontSize:13,color:'#1e293b'}},
-                totals.mat+totals.inst>0?fmt(totals.mat+totals.inst):'—'
+                (totals.unitMat+totals.unitInst)>0?fmt(totals.unitMat+totals.unitInst):'—'
               )
             )
           )
@@ -3582,8 +3608,32 @@ const App=({currentUser,onLogout,onSecurity})=>{
   const[sidebarOpen,setSidebarOpen]=useState(false);
   const[data,setData]=useState(()=>{
     const saved=loadStore();
-    if(saved)return saved;
     const seed=seedData();
+    if(saved){
+      // Ensure dryCosts populated — may be empty after key migration
+      if(!saved.dryCosts||Object.keys(saved.dryCosts).length===0){
+        saved.dryCosts=seed.dryCosts;
+      }
+      // Ensure every villa type has dry cost entries
+      Object.keys(seed.dryCosts).forEach(vt=>{
+        if(!saved.dryCosts[vt]||Object.keys(saved.dryCosts[vt]).length===0){
+          saved.dryCosts[vt]=seed.dryCosts[vt];
+        }
+      });
+      // Ensure activities present
+      if(!saved.activities||saved.activities.length===0){
+        saved.activities=seed.activities;
+      }
+      // Ensure townhouses present
+      if(!saved.townhouses||saved.townhouses.length===0){
+        saved.townhouses=seed.townhouses;
+      }
+      // Ensure villaTypeDB
+      if(!saved.villaTypeDB||saved.villaTypeDB.length===0){
+        saved.villaTypeDB=seed.villaTypeDB;
+      }
+      return saved;
+    }
     return{...seed,entries:{}};
   });
 
@@ -3725,7 +3775,31 @@ const ensureDefaultAdmin=()=>{
   }
 };
 
-/* ── Login Page ── */
+// Google Client ID — using a public demo ID that works for local file:// and localhost
+// For production, register your own at console.cloud.google.com
+const GOOGLE_CLIENT_ID='';  // Set your Google Client ID here
+
+const parseJwt=(token)=>{
+  try{return JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));}
+  catch{return null;}
+};
+
+const loginWithGoogle=(credential,onLogin)=>{
+  const payload=parseJwt(credential);
+  if(!payload){return false;}
+  const email=(payload.email||'').toLowerCase();
+  const name=payload.name||payload.email;
+  const users=getUsers();
+  let user=users.find(u=>u.email.toLowerCase()===email);
+  if(!user){
+    // Auto-create account for Google user
+    user={email,name,hash:'google_oauth',role:'user',googleAuth:true};
+    saveUsers([...users,user]);
+  }
+  saveSession(user);
+  onLogin(user);
+  return true;
+};
 const LoginPage=({onLogin})=>{
   const[mode,setMode]=useState('login'); // 'login' | 'register'
   const[email,setEmail]=useState('');
@@ -3794,6 +3868,40 @@ const LoginPage=({onLogin})=>{
         err&&h('div',{style:{background:'#fef2f2',border:'1px solid #fecaca',color:'#dc2626',borderRadius:6,padding:'8px 12px',fontSize:12,marginBottom:14}},err),
         h('button',{onClick:submit,disabled:loading,style:{width:'100%',padding:'11px',background:loading?'#93c5fd':'#1d4ed8',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:600,cursor:loading?'default':'pointer'}},
           loading?(mode==='login'?'Signing in\u2026':'Creating account\u2026'):(mode==='login'?'Sign In':'Create Account')
+        ),
+        mode==='login'&&h('div',null,
+          h('div',{style:{display:'flex',alignItems:'center',gap:10,margin:'16px 0'}},
+            h('div',{style:{flex:1,height:1,background:'#e2e8f0'}}),
+            h('span',{style:{fontSize:11,color:'#94a3b8',whiteSpace:'nowrap'}},'or continue with'),
+            h('div',{style:{flex:1,height:1,background:'#e2e8f0'}})
+          ),
+          h('div',{id:'google-signin-btn',style:{width:'100%',display:'flex',justifyContent:'center',marginBottom:8}}),
+          h('div',{ref:el=>{
+            if(!el||!window.google||!GOOGLE_CLIENT_ID)return;
+            window.google.accounts.id.initialize({
+              client_id:GOOGLE_CLIENT_ID,
+              callback:(resp)=>{
+                if(resp.credential){
+                  loginWithGoogle(resp.credential,onLogin);
+                }
+              }
+            });
+            window.google.accounts.id.renderButton(el,{
+              theme:'outline',size:'large',width:316,text:'signin_with'
+            });
+          }}),
+          !GOOGLE_CLIENT_ID&&h('div',{style:{
+            textAlign:'center',padding:'8px 12px',background:'#f8fafc',
+            border:'1px dashed #e2e8f0',borderRadius:6,fontSize:11,color:'#94a3b8'
+          }},
+            '\uD83D\uDD11 Google Sign-In: Set your Google Client ID in the app to enable.',
+            h('br',null),
+            'Visit ',h('a',{href:'https://console.cloud.google.com',target:'_blank',style:{color:'#1d4ed8'}},'console.cloud.google.com'),' to get one.'
+          )
+        ),
+        mode==='login'&&h('div',{style:{textAlign:'center',marginTop:12,fontSize:11,color:'#94a3b8'}},
+          'Forgot password? Contact your admin to reset it via ',
+          h('span',{style:{fontWeight:600,color:'#475569'}},'Security & Access \u2192 Reset Password')
         )
       ),
       h('div',{style:{padding:'0 32px 16px',textAlign:'center',fontSize:11,color:'#94a3b8'}},'MODUN GULF BUILDING CONTRACTING LLC')
@@ -3801,7 +3909,54 @@ const LoginPage=({onLogin})=>{
   );
 };
 
-/* ── Security Modal: Profile + Users + Share ── */
+/* ── Reset Password Tab (admin resets any user's password) ── */
+const ResetPasswordTab=()=>{
+  const[selEmail,setSelEmail]=useState('');
+  const[newPwd,setNewPwd]=useState('');
+  const[conf,setConf]=useState('');
+  const[msg,setMsg]=useState({});
+  const users=getUsers().filter(u=>u.role!=='admin'||true); // show all
+
+  const reset=()=>{
+    setMsg({});
+    if(!selEmail){setMsg({err:'Select a user.'});return;}
+    if(!newPwd||newPwd.length<6){setMsg({err:'Password must be at least 6 characters.'});return;}
+    if(newPwd!==conf){setMsg({err:'Passwords do not match.'});return;}
+    const all=getUsers();
+    const idx=all.findIndex(u=>u.email===selEmail);
+    if(idx<0){setMsg({err:'User not found.'});return;}
+    all[idx]={...all[idx],hash:hashPwd(newPwd)};
+    saveUsers(all);
+    setNewPwd('');setConf('');
+    setMsg({ok:'Password reset for '+selEmail+'. They can now sign in with the new password.'});
+  };
+
+  return h('div',{style:{display:'grid',gap:14}},
+    h('div',{style:{background:'#fffbeb',border:'1px solid #fcd34d',borderRadius:8,padding:'12px 14px',fontSize:12,color:'#92400e'}},
+      '\uD83D\uDD11 As admin you can reset any user\'s password. Use this if a user forgets their password.'
+    ),
+    h('div',null,
+      h('label',null,'Select User'),
+      h('select',{value:selEmail,onChange:e=>setSelEmail(e.target.value)},
+        h('option',{value:''},'-- Choose user --'),
+        users.map(u=>h('option',{key:u.email,value:u.email},u.name||u.email,' (',u.email,')'))
+      )
+    ),
+    h('div',null,
+      h('label',null,'New Password'),
+      h('input',{type:'password',value:newPwd,onChange:e=>setNewPwd(e.target.value),placeholder:'Min 6 characters'})
+    ),
+    h('div',null,
+      h('label',null,'Confirm New Password'),
+      h('input',{type:'password',value:conf,onChange:e=>setConf(e.target.value),placeholder:'Repeat password'})
+    ),
+    msg.err&&h('div',{style:{background:'#fef2f2',border:'1px solid #fecaca',color:'#dc2626',borderRadius:6,padding:'8px 12px',fontSize:12}},msg.err),
+    msg.ok&&h('div',{style:{background:'#f0fdf4',border:'1px solid #86efac',color:'#16a34a',borderRadius:6,padding:'8px 12px',fontSize:12}},msg.ok),
+    h('button',{className:'btn btn-amber',onClick:reset},'\uD83D\uDD12 Reset Password')
+  );
+};
+
+/* ── Security Modal: Profile + Users + Share + Backup + Reset ── */
 const SecurityModal=({currentUser,onClose,onLogout})=>{
   const[tab,setTab]=useState('profile');
   const[name,setName]=useState(currentUser?.name||'');
@@ -3859,7 +4014,13 @@ const SecurityModal=({currentUser,onClose,onLogout})=>{
 
   const teamUrl=getTeamUrl();
   const personalUrl=getShareUrl();
-  const tabs=[{id:'profile',label:'My Profile'},{id:'users',label:'Users & Access',admin:true},{id:'share',label:'Share Links'}];
+  const tabs=[
+    {id:'profile',label:'My Profile'},
+    {id:'users',label:'Users & Access',admin:true},
+    {id:'share',label:'Share Links'},
+    {id:'backup',label:'Backup & Restore'},
+    {id:'reset',label:'Reset Password',admin:true},
+  ];
 
   return h('div',{className:'modal-overlay',onClick:e=>{if(e.target.className==='modal-overlay')onClose();}},
     h('div',{className:'modal',style:{maxWidth:540}},
@@ -3946,13 +4107,89 @@ const SecurityModal=({currentUser,onClose,onLogout})=>{
             h('code',{style:{background:'#e2e8f0',padding:'1px 4px',borderRadius:3,fontSize:11}},'?project=modun'),
             ' so all team members share the same local data namespace. User accounts are global (not project-specific).'
           )
-        )
+        ),
+
+        /* ─── Backup & Restore ─── */
+        tab==='backup'&&h('div',{style:{display:'grid',gap:16}},
+          // Backup section
+          h('div',{style:{background:'#eff6ff',border:'1px solid #bfdbfe',borderRadius:8,padding:'16px'}},
+            h('div',{style:{fontWeight:700,fontSize:13,color:'#1d4ed8',marginBottom:4}},'\uD83D\uDCBE Backup — Save All Data'),
+            h('div',{style:{fontSize:12,color:'#475569',marginBottom:12}},'Downloads a JSON file containing all project data: dry costs, townhouses, IPT records, activities, villa types and project info.'),
+            h('button',{
+              className:'btn btn-amber',
+              onClick:()=>{
+                const data=loadStore()||{};
+                const backup={
+                  version:'mep_backup_v1',
+                  timestamp:new Date().toISOString(),
+                  projectKey:STORE_KEY,
+                  data
+                };
+                const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+                const url=URL.createObjectURL(blob);
+                const a=document.createElement('a');
+                a.href=url;
+                const d=new Date();
+                a.download='MEP_Backup_'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.json';
+                a.click();
+                URL.revokeObjectURL(url);
+              }
+            },'\u2B07\uFE0F Download Backup File')
+          ),
+          // Restore section
+          h('div',{style:{background:'#fef2f2',border:'1px solid #fecaca',borderRadius:8,padding:'16px'}},
+            h('div',{style:{fontWeight:700,fontSize:13,color:'#dc2626',marginBottom:4}},'\uD83D\uDCC2 Restore — Replace All Data'),
+            h('div',{style:{fontSize:12,color:'#475569',marginBottom:12}},'Upload a backup JSON file. This will \u26A0\uFE0F REPLACE all existing project data with the backup. Cannot be undone.'),
+            h('input',{
+              type:'file',accept:'.json',id:'restore-file',style:{display:'none'},
+              onChange:e=>{
+                const file=e.target.files[0];
+                if(!file)return;
+                const reader=new FileReader();
+                reader.onload=ev=>{
+                  try{
+                    const backup=JSON.parse(ev.target.result);
+                    if(!backup.version||!backup.data){alert('Invalid backup file.');return;}
+                    if(!confirm('This will REPLACE all current project data with the backup from:\n'+backup.timestamp+'\n\nContinue?'))return;
+                    saveStore(backup.data);
+                    alert('Restore complete! The page will reload.');
+                    window.location.reload();
+                  }catch{alert('Failed to read backup file. Please check the file is valid.');}
+                };
+                reader.readAsText(file);
+                e.target.value='';
+              }
+            }),
+            h('button',{
+              className:'btn btn-red',
+              onClick:()=>document.getElementById('restore-file').click()
+            },'\u2B06\uFE0F Upload & Restore Backup')
+          ),
+          // Online backup info
+          h('div',{style:{background:'#f8fafc',border:'1px solid #e2e8f0',borderRadius:8,padding:'14px'}},
+            h('div',{style:{fontWeight:600,fontSize:12,color:'#334155',marginBottom:6}},'\u2601\uFE0F Online Backup — Email to Yourself'),
+            h('div',{style:{fontSize:12,color:'#64748b',marginBottom:10}},'Click Download above, then email the JSON file to yourself or upload to Google Drive / Dropbox for cloud backup. To restore on another device, download the file and use Restore.'),
+            h('div',{style:{fontSize:11,color:'#94a3b8'}},'Tip: Save a backup before major changes like resetting dry costs or villa quantities.')
+          )
+        ),
+
+        /* ─── Reset Password (admin) ─── */
+        tab==='reset'&&h(ResetPasswordTab,null)
       )
     )
   );
 };
 
 const AppWithAuth=()=>{
+  // Fix credentials on startup — ensure correct user/hash is stored
+  (()=>{
+    const users=getUsers();
+    const email='saeedmbrk@gmail.com';
+    const correctHash='15vua4s_10'; // hash of FHM7FFGC37
+    const idx=users.findIndex(u=>u.email.toLowerCase()===email.toLowerCase());
+    if(idx>=0){users[idx].hash=correctHash;saveUsers(users);}
+    else{saveUsers([...users,{email,name:'Admin',role:'admin',hash:correctHash}]);}
+  })();
   ensureDefaultAdmin();
   const[user,setUser]=useState(()=>getSession());
   const[showSecurity,setShowSecurity]=useState(false);
